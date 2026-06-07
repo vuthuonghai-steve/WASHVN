@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PlannerConfig",
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "string"
+    },
+    "planner_settings": {
+      "type": "object",
+      "properties": {
+        "enforce_traces": {
+          "type": "boolean"
+        },
+        "allow_suggestions": {
+          "type": "boolean"
+        },
+        "max_estimation_hours": {
+          "type": "integer"
+        }
+      },
+      "required": ["enforce_traces", "allow_suggestions", "max_estimation_hours"]
+    }
+  },
+  "required": ["version", "planner_settings"]
+}

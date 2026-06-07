@@ -1,0 +1,22 @@
+# Gate Checklist for production-quality-gatekeeper
+
+checks:
+  - name: "Schema validation"
+    description: "Verify that the generated criteria and results match target specifications."
+    validator: "schema_validator.py"
+    severity: "critical"
+
+  - name: "Binary check completeness"
+    description: "Ensure every selected criterion has a clear PASS or FAIL verdict."
+    validator: "loop_refiner.py"
+    severity: "critical"
+
+  - name: "Refinement loop validation"
+    description: "Ensure that output edits are highly targeted, correcting ONLY the failed criteria."
+    validator: "loop_refiner.py"
+    severity: "major"
+
+  - name: "AI cliché check"
+    description: "Verify that zero AI clichés or Vietnamese translations thereof remain in the final output."
+    validator: "trace_validator.py"
+    severity: "critical"

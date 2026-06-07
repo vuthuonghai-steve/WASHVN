@@ -1,0 +1,31 @@
+# 🔍 Google Code Review Report
+
+## 1. Summary of CL/PR Health
+* **Reviewed File**: {target_file}
+* **Review Date**: {timestamp}
+* **Overall Health Score**: {health_score}/100
+* **Verdict**: {verdict} (LGTM / LGTM with Comments / Rej - Requires Refactoring)
+
+---
+
+## 2. Executive Design Review
+{design_critique}
+
+---
+
+## 3. Detailed Review Comments (Labeled)
+
+{detailed_comments}
+
+---
+
+## 4. Static Code Auditor Metrics
+* **Total Lines**: {total_lines}
+* **Complexity Heuristic**: {complexity_score}
+* **Function Counts**: {function_count}
+* **Docstring Coverage**: {docstring_coverage}
+* **Programmatic Violations**:
+{static_violations}
+
+---
+*Report compiled according to Google Engineering Standards.*

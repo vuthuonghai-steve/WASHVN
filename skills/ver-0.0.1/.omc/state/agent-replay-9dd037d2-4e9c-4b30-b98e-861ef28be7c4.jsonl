@@ -1,0 +1,8 @@
+{"t":0,"agent":"abeb2c2","agent_type":"workflow-subagent","event":"agent_start","parent_mode":"none"}
+{"t":0,"agent":"abeb2c2","agent_type":"workflow-subagent","event":"agent_stop","success":true,"duration_ms":397342}
+{"t":0,"agent":"af145da","agent_type":"workflow-subagent","event":"agent_start","parent_mode":"none"}
+{"t":0,"agent":"af145da","agent_type":"workflow-subagent","event":"agent_stop","success":true,"duration_ms":448454}
+{"t":0,"agent":"a124435","agent_type":"workflow-subagent","event":"agent_start","parent_mode":"none"}
+{"t":0,"agent":"a124435","agent_type":"workflow-subagent","event":"agent_stop","success":true,"duration_ms":483583}
+{"t":0,"agent":"a74cfeb","agent_type":"workflow-subagent","event":"agent_start","parent_mode":"none"}
+{"t":0,"agent":"a74cfeb","agent_type":"workflow-subagent","event":"agent_stop","success":true,"duration_ms":113676}

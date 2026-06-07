@@ -1,0 +1,6 @@
+# Default configuration template for skill-planner
+version: 1.0.0
+planner_settings:
+  enforce_traces: true
+  allow_suggestions: true
+  max_estimation_hours: 16

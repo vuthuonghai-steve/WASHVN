@@ -1,0 +1,83 @@
+# {Domain Name} — Tài liệu Kiến thức Domain
+
+> Template cho tài liệu domain knowledge trong resources/
+> Sử dụng khi Planner xác định cần tạo tài liệu domain mới
+
+---
+
+## 1. Tổng quan
+
+{Mô tả ngắn về domain - 2-3 câu}
+
+**Phạm vi**: {Những gì tài liệu này bao gồm}
+
+**Đối tượng**: {AI Agent sử dụng tài liệu này cần biết gì}
+
+---
+
+## 2. Quy tắc & Tiêu chuẩn
+
+### 2.1 Quy tắc cơ bản
+
+| # | Quy tắc | Mô tả | Ví dụ |
+|---|---------|--------|--------|
+| 1 | ... | ... | ... |
+| 2 | ... | ... | ... |
+
+### 2.2 Naming Conventions
+
+```
+{Pattern examples}
+```
+
+### 2.3 Best Practices
+
+- **Nên làm**: ...
+- **Không nên**: ...
+
+---
+
+## 3. Ví dụ minh họa
+
+### 3.1 Ví dụ tốt (✅)
+
+```mermaid
+{Good example in Mermaid or code}
+```
+
+Giải thích: {Tại sao đây là ví dụ tốt}
+
+### 3.2 Ví dụ sai (❌)
+
+```mermaid
+{Bad example in Mermaid or code}
+```
+
+Giải thích: {Tại sao đây là ví dụ sai}
+
+---
+
+## 4. Anti-patterns
+
+| Anti-pattern | Vấn đề | Giải pháp |
+|-------------|---------|-----------|
+| ... | ... | ... |
+
+---
+
+## 5. Reference & Nguồn tham khảo
+
+- [Link 1 - Title](URL)
+- [Link 2 - Title](URL)
+
+---
+
+## 6. Audit Trail
+
+| Version | Date | Changes |
+|---------|------|---------|
+| 1.0.0 | {Date} | Initial creation |
+
+---
+
+*Template được tạo bởi skill-planner v2.0*

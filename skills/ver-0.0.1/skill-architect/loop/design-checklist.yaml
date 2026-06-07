@@ -1,0 +1,186 @@
+# Design Quality Checklist (YAML Machine-Readable Format)
+# Đọc bởi AI agent để validate design.md một cách tự động
+
+version: "1.0.0"
+artifact_type: "design-quality-checklist"
+
+quality_gates:
+  structure:
+    required_sections:
+      - "§1_problem_statement"
+      - "§2_capability_map"
+      - "§3_zone_mapping"
+      - "§4_folder_structure"
+      - "§5_execution_flow"
+      - "§6_interaction_points"
+      - "§7_progressive_disclosure"
+      - "§8_risks"
+      - "§9_open_questions"
+      - "§10_metadata"
+    min_diagrams: 3
+    interaction_points_min: 1
+    checks:
+      - id: "S1"
+        description: "§1 có đủ Pain Point + User + Lý do"
+        field: "problem_statement"
+        rule: "has_all_fields"
+      - id: "S2"
+        description: "§2 có đủ 3 Pillars (Knowledge/Process/Guardrails)"
+        field: "capability_map"
+        rule: "has_all_pillars"
+      - id: "S3"
+        description: "§3 Zone Mapping đúng format chuẩn"
+        field: "zone_mapping"
+        rule: "zone_mapping_contract"
+      - id: "S4"
+        description: "§4 Folder Structure có Mermaid mindmap"
+        field: "folder_structure"
+        rule: "has_mermaid_diagram"
+      - id: "S5"
+        description: "§5 Execution Flow có Mermaid sequence/flowchart"
+        field: "execution_flow"
+        rule: "has_mermaid_diagram"
+      - id: "S6"
+        description: "§6 có ít nhất 1 interaction point"
+        field: "interaction_points"
+        rule: "min_count_1"
+      - id: "S7"
+        description: "§7 phân biệt rõ Tier 1 và Tier 2"
+        field: "progressive_disclosure"
+        rule: "has_tier_distinction"
+      - id: "S8"
+        description: "§8 có ít nhất 3 risks kèm mitigation"
+        field: "risks"
+        rule: "min_count_with_mitigation"
+      - id: "S9"
+        description: "§9 không để trống hoàn toàn"
+        field: "open_questions"
+        rule: "not_all_empty"
+      - id: "S10"
+        description: "§10 có đủ metadata"
+        field: "metadata"
+        rule: "has_required_fields"
+
+  zone_mapping_contract:
+    checks:
+      - id: "Z1"
+        description: "Tất cả Zone có giá trị trong cột Files cần tạo"
+        rule: "no_blank_cells"
+      - id: "Z2"
+        description: "Zone không dùng → ghi 'Không cần'"
+        rule: "explicit_skip"
+      - id: "Z3"
+        description: "Tên file cụ thể (không placeholder như 'xxx.md')"
+        rule: "no_placeholder_names"
+      - id: "Z4"
+        description: "Cột Bắt buộc? có đánh dấu ✅ hoặc ❌"
+        rule: "has_required_mark"
+
+  diagram_quality:
+    min_count: 3
+    required_types:
+      - "mindmap"        # D1 - Folder Structure
+      - "sequenceDiagram" # D2 - Execution Flow
+      - "flowchart"      # D3 - Workflow Phases
+    checks:
+      - id: "D1"
+        description: "D1 Folder Structure (mindmap) tồn tại"
+        diagram_type: "mindmap"
+      - id: "D2"
+        description: "D2 Execution Flow (sequenceDiagram) tồn tại"
+        diagram_type: "sequenceDiagram"
+      - id: "D3"
+        description: "D3 Workflow Phases (flowchart) tồn tại"
+        diagram_type: "flowchart"
+      - id: "D4"
+        description: "Tất cả diagram có Mermaid syntax hợp lệ"
+        rule: "valid_mermaid_syntax"
+      - id: "D5"
+        description: "Interaction points được đánh dấu rõ trong diagram"
+        rule: "interaction_points_marked"
+
+  handoff_readiness:
+    checks:
+      - id: "H1"
+        description: "§3 Zone Mapping đủ thông tin để Planner decompose"
+        field: "zone_mapping"
+        rule: "sufficient_for_decomposition"
+      - id: "H2"
+        description: "§7 Progressive Disclosure Plan đủ để Builder"
+        field: "progressive_disclosure"
+        rule: "sufficient_for_build"
+      - id: "H3"
+        description: "§8 Risks đủ để Builder thiết lập Guardrails"
+        field: "risks"
+        rule: "sufficient_for_guardrails"
+      - id: "H4"
+        description: "§9 Open Questions đã flagged rõ ràng"
+        field: "open_questions"
+        rule: "properly_flagged"
+
+  process_gate:
+    checks:
+      - id: "P1"
+        description: "Phase 1 Gate: User đã xác nhận §1"
+        field: "problem_statement"
+        rule: "user_confirmed"
+      - id: "P2"
+        description: "Phase 2 Gate: User đã xác nhận §2+§3+§8"
+        field: "capability_map"
+        rule: "user_confirmed"
+      - id: "P3"
+        description: "Phase 3 Gate: User đã xác nhận toàn bộ design"
+        field: "all_sections"
+        rule: "user_confirmed"
+      - id: "P4"
+        description: "design.md không còn HTML comment placeholder"
+        field: "all_sections"
+        rule: "no_html_comments"
+
+  final_deliver:
+    checks:
+      - id: "F1"
+        description: "Tất cả tên file trong §3 khớp với §4"
+        rule: "zone_structure_match"
+      - id: "F2"
+        description: "User đã nhận thông báo bước tiếp theo"
+        rule: "next_step_communicated"
+
+# Trace Tag Validation (Anti-hallucination)
+trace_validation:
+  enabled: true
+  valid_tags:
+    - "[TỪ USER INPUT]"
+    - "[TỪ DESIGN §N]"
+    - "[TỪ NGUỒN EXTERNAL]"
+    - "[GỢI Ý BỔ SUNG]"
+    - "[CẦN LÀM RÕ]"
+  rules:
+    - id: "T1"
+      description: "Mọi task trong §3 phải có trace tag"
+      rule: "all_zone_files_traced"
+    - id: "T2"
+      description: "Không được dùng tag không có trong valid_tags"
+      rule: "only_valid_tags"
+    - id: "T3"
+      description: "Mọi §2 pillar analysis phải có nguồn attribution"
+      rule: "all_pillars_traced"
+
+# Output format khi chạy checklist
+output_format:
+  show_passed: true
+  show_failed: true
+  show_warnings: true
+  severity_levels:
+    - "MUST"   # Fail = cannot deliver
+    - "SHOULD" # Fail = warning but can deliver
+    - "INFO"   # Always shown
+
+severity_assignment:
+  structure: "MUST"
+  zone_mapping_contract: "MUST"
+  diagram_quality: "MUST"
+  handoff_readiness: "MUST"
+  process_gate: "MUST"
+  final_deliver: "SHOULD"
+  trace_validation: "MUST"
