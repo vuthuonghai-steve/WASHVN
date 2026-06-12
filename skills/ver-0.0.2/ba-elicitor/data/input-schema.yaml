@@ -1,0 +1,72 @@
+# Lược đồ Dữ liệu Đầu vào (Structured Input Schema) - BA Elicitor
+# Định dạng YAML để chuẩn hóa cấu trúc đầu vào khi người dùng cung cấp thông tin dạng cấu trúc.
+
+$schema: "http://json-schema.org/draft-07/schema#"
+title: "BAElicitorInputSchema"
+type: "object"
+required:
+  - "skill_name"
+  - "description"
+  - "core_objective"
+  - "actors"
+properties:
+  skill_name:
+    type: "string"
+    description: "Tên của kỹ năng cần xây dựng (ví dụ: ba-elicitor, format-converter)"
+    pattern: "^[a-z0-9-]+$"
+  description:
+    type: "string"
+    description: "Mô tả ngắn gọn về kỹ năng nghiệp vụ hoặc kỹ thuật"
+  core_objective:
+    type: "string"
+    description: "Mục tiêu cốt lõi tối thượng của kỹ năng"
+  actors:
+    type: "array"
+    description: "Danh sách các tác nhân tham gia vào quá trình vận hành kỹ năng"
+    minItems: 1
+    items:
+      type: "object"
+      required:
+        - "name"
+        - "role"
+      properties:
+        name:
+          type: "string"
+          description: "Tên tác nhân (ví dụ: Developer, System, Third-party API)"
+        role:
+          type: "string"
+          description: "Vai trò hoặc nhiệm vụ của tác nhân trong hệ thống"
+  environment:
+    type: "string"
+    description: "Môi trường chạy hoặc hệ điều hành yêu cầu (ví dụ: linux, docker, nodejs)"
+  constraints:
+    type: "array"
+    description: "Danh sách các ràng buộc kỹ thuật hoặc nghiệp vụ bắt buộc"
+    items:
+      type: "string"
+  nfr:
+    type: "object"
+    description: "Các yêu cầu phi chức năng (Non-Functional Requirements)"
+    properties:
+      performance:
+        type: "object"
+        properties:
+          latency_ms:
+            type: "integer"
+            description: "Độ trễ tối đa cho phép (ms)"
+          throughput_fps:
+            type: "integer"
+            description: "Thông lượng xử lý (ví dụ: số frames hoặc requests trên giây)"
+      security:
+        type: "object"
+        properties:
+          auth_method:
+            type: "string"
+            description: "Phương thức xác thực yêu cầu"
+          encryption:
+            type: "string"
+            description: "Chuẩn mã hóa dữ liệu"
+      token_budget:
+        type: "integer"
+        description: "Ngân sách token tối đa cho phép sử dụng trong ngữ cảnh (tokens)"
+additionalProperties: false

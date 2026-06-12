@@ -1,0 +1,75 @@
+---
+skill_name: "${SKILL_NAME}"
+elicitation_date: "${CURRENT_DATE}"
+confidence_score: "${CONFIDENCE_SCORE}" # Ví dụ: 85%
+status: "${STATUS}" # clarify_needed / ready_for_analyst
+---
+
+# 📋 Báo Cáo Khơi Gợi Yêu Cầu Nghiệp Vụ: ${SKILL_NAME}
+
+## 1. Yêu Cầu Đã Chuẩn Hóa (Normalized Input)
+
+*Mô tả: Dữ liệu thô đã loại bỏ nhiễu và cấu trúc hóa.*
+
+- **Mục tiêu cốt lõi**: ${CORE_OBJECTIVE} `[TỪ INPUT]` hoặc `[SUY LUẬN]`
+- **Môi trường vận hành**: ${OPERATING_ENVIRONMENT} `[TỪ INPUT]`
+- **Các tác nhân chính**:
+  - ${ACTOR_1}: ${ACTOR_1_ROLE} `[TỪ INPUT]`
+- **Các yêu cầu chức năng sơ khởi (Initial FRs)**:
+  - FR-1: ${FR_1_DESC} `[TỪ INPUT]`
+- **Các yêu cầu phi chức năng (NFRs) đã lượng hóa**:
+  - NFR-1 (Hiệu năng/Tài nguyên): ${NFR_1_METRIC} `[TỪ INPUT]` hoặc `[SUY LUẬN]`
+
+## 2. Phân Tích Khoảng Trống Nghiệp Vụ (Gap Analysis)
+
+*Mô tả: Phân tích các điểm thiếu logic, mơ hồ hoặc mâu thuẫn sử dụng 6 mindset keywords.*
+
+- **Khoảng trống 1 (Systems Thinking)**: ${GAP_1_DESC} `[SUY LUẬN]`
+- **Khoảng trống 2 (MECE)**: ${GAP_2_DESC} `[SUY LUẬN]`
+- **Khoảng trống 3 (First Principles)**: ${GAP_3_DESC} `[SUY LUẬN]`
+
+## 3. Bộ Câu Hỏi Khơi Gợi Phản Biện (Elicitation Questionnaires)
+
+*Mô tả: Sử dụng khung 5W1H để tạo câu hỏi định hướng lựa chọn làm rõ thông tin.*
+
+### Tác nhân & Hành động (Who / What)
+- **Câu hỏi 1**: ${WHO_WHAT_QUESTION_1}
+  - [ ] Phương án A: ${OPTION_A}
+  - [ ] Phương án B: ${OPTION_B}
+  - [ ] Phương án C: ${OPTION_C}
+  - Tag trace: `[CẦN LÀM RÕ]`
+
+### Quy trình & Phương thức (How / When)
+- **Câu hỏi 2**: ${HOW_WHEN_QUESTION_1}
+  - [ ] Phương án A: ${OPTION_A}
+  - [ ] Phương án B: ${OPTION_B}
+  - Tag trace: `[CẦN LÀM RÕ]`
+
+## 4. Phân Rã Luồng Xử Lý Sơ Bộ (3-Path Decomposition)
+
+*Mô tả: Phác thảo 3 luồng xử lý chính.*
+
+- **Happy Path (Luồng chuẩn)**:
+  - Quy trình thành công chính: ${HAPPY_PATH_DESC} `[SUY LUẬN]`
+- **Alternative Path (Luồng thay thế)**:
+  - Luồng rẽ nhánh thành công: ${ALTERNATIVE_PATH_DESC} `[SUY LUẬN]`
+- **Exception Path (Luồng lỗi/ngoại lệ)**:
+  - Xử lý khi xảy ra lỗi/validate fail: ${EXCEPTION_PATH_DESC} `[SUY LUẬN]`
+
+## 5. Đánh Giá Tác Động Ban Đầu (Initial Impact Assessment)
+
+*Mô tả: Phạm vi ảnh hưởng và các ràng buộc hệ thống.*
+
+- **Phân hệ bị ảnh hưởng**: ${AFFECTED_COMPONENTS} `[SUY LUẬN]`
+- **Rủi ro nghiệp vụ**: ${BUSINESS_RISK} `[SUY LUẬN]`
+- **Phương án giảm thiểu rủi ro**: ${MITIGATION_STRATEGY} `[SUY LUẬN]`
+
+## 6. Kết Quả Tự Kiểm Định Chất Lượng (Self-Verification Checklist)
+
+*Mô tả: Đánh giá chất lượng của báo cáo theo checklist.*
+
+- [ ] Đã bọc đầu vào trong XML boundary: ${XML_BOUNDED_STATUS} (Yes/No)
+- [ ] Số lượng thẻ `[CẦN LÀM RÕ]`: ${CLARIFY_TAGS_COUNT}
+- [ ] Số lượng thẻ `[TỪ INPUT]`: ${INPUT_TAGS_COUNT}
+- [ ] Số lượng thẻ `[SUY LUẬN]`: ${INFERENCE_TAGS_COUNT}
+- [ ] Đạt điểm tin cậy tối thiểu: ${CONFIDENCE_MEETS_CRITERIA} (Yes/No)

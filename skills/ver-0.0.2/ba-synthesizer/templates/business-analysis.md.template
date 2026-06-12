@@ -1,0 +1,118 @@
+---
+skill_handoff:
+  target_skill_name: "{{target_skill_name}}"
+  version: "{{version}}"
+  scs_complexity_score: {{scs_complexity_score}}
+  decomposition_recommended: {{decomposition_recommended}}
+  sub_skills_proposed:
+    - "{{sub_skill_1}}"
+    - "{{sub_skill_2}}"
+  scope_boundary:
+    in_scope:
+      - "{{in_scope_item_1}}"
+      - "{{in_scope_item_2}}"
+    out_scope:
+      - "{{out_scope_item_1}}"
+      - "{{out_scope_item_2}}"
+  technical_frameworks_recommended:
+    - "Mermaid.js"
+    - "Gherkin"
+  detected_risks:
+    - "{{detected_risk_1}}"
+    - "{{detected_risk_2}}"
+  quality_gate_status: "{{quality_gate_status}}"
+  quality_score_percentage: {{quality_score_percentage}}
+---
+
+# Báo cáo Phân tích Nghiệp vụ Hợp nhất (Consolidated Business Analysis Report)
+
+## 1. Kết quả Kiểm định Nhất quán chéo (Cross-Reference Validation Results)
+
+### A. So khớp Actor - Thực thể (Actor-Entity Matching)
+- **Danh sách Actor & Participant từ Sequence Diagram**:
+  - Actor 1: `{{actor_1}}`
+  - Participant 1: `{{participant_1}}`
+- **Danh sách Thực thể (Entities) từ ERD**:
+  - Entity 1: `{{entity_1}}`
+- **Kết quả đối chiếu**:
+  - Trạng thái: `{{actor_entity_status}}`
+  - Cảnh báo (nếu có): `{{actor_entity_warning}}`
+
+### B. So khớp MoSCoW - Gherkin (MoSCoW-Gherkin Matching)
+- **Tính năng Must-Have**:
+  - Feature 1: `{{must_have_feature_1}}`
+- **Kịch bản kiểm thử (Scenario Gherkin)**:
+  - Scenario 1: `{{gherkin_scenario_1}}`
+- **Kết quả đối chiếu**:
+  - Trạng thái: `{{moscow_gherkin_status}}`
+  - Cảnh báo (nếu có): `{{moscow_gherkin_warning}}`
+
+### C. Đánh giá Điểm chất lượng (Quality Score Assessment)
+- **Bảng điểm thành phần**:
+  1. elicitation_report: `{{elicitation_report_score}}` (Trọng số: 0.15)
+  2. requirements_classification: `{{requirements_classification_score}}` (Trọng số: 0.15)
+  3. sequence_diagram: `{{sequence_diagram_score}}` (Trọng số: 0.15)
+  4. flowchart_activity: `{{flowchart_activity_score}}` (Trọng số: 0.15)
+  5. erd_schema: `{{erd_schema_score}}` (Trọng số: 0.15)
+  6. acceptance_criteria: `{{acceptance_criteria_score}}` (Trọng số: 0.15)
+  7. risk_matrix: `{{risk_matrix_score}}` (Trọng số: 0.10)
+- **Điểm chất lượng tổng hợp (Weighted Quality Score)**: `{{calculated_quality_score}}` / 1.0 (Phần trăm: `{{quality_score_percentage}}%`)
+- **Trạng thái cổng chất lượng (Quality Gate Status)**: `{{quality_gate_status}}` (PASS nếu >= 80%, WARNING nếu < 80%)
+
+---
+
+## 2. Chi tiết 7 Deliverables Hợp nhất
+
+### Deliverable 1: Báo cáo Khơi gợi Yêu cầu (Elicitation Report)
+- **Chuẩn hóa mô tả hệ thống**:
+  `{{elicitation_system_description}}`
+- **Pain Points**:
+  - Pain Point 1: `{{pain_point_1}}`
+  - Pain Point 2: `{{pain_point_2}}`
+- **Giả định hệ thống**:
+  - Assumption 1: `{{assumption_1}}`
+  - Assumption 2: `{{assumption_2}}`
+
+### Deliverable 2: Phân loại Yêu cầu & Bảng MoSCoW (Requirements & MoSCoW)
+- **Functional Requirements (FR)**:
+  - FR-1: `{{fr_1}}`
+  - FR-2: `{{fr_2}}`
+- **Non-Functional Requirements (NFR)**:
+  - NFR-1: `{{nfr_1}}`
+  - NFR-2: `{{nfr_2}}`
+- **Bảng MoSCoW**:
+  - **Must-Have**:
+    - `{{must_have_item_1}}`
+  - **Should-Have**:
+    - `{{should_have_item_1}}`
+  - **Could-Have**:
+    - `{{could_have_item_1}}`
+  - **Won't-Have**:
+    - `{{wont_have_item_1}}`
+
+### Deliverable 3: Biểu đồ Tuần tự (Sequence Diagram)
+```mermaid
+{{sequence_diagram_mermaid_code}}
+```
+
+### Deliverable 4: Biểu đồ Luồng Nghiệp vụ (Activity Flowchart)
+```mermaid
+{{flowchart_mermaid_code}}
+```
+
+### Deliverable 5: Thiết kế Cơ sở Dữ liệu (ERD Schema)
+```mermaid
+{{erd_mermaid_code}}
+```
+
+### Deliverable 6: Tiêu chí Nghiệm thu (Acceptance Criteria)
+```gherkin
+{{gherkin_scenarios_code}}
+```
+
+### Deliverable 7: Ma trận Rủi ro (Risk Matrix)
+| ID | Mô tả Rủi ro | Mức độ | Phương án Giảm thiểu (Mitigation) |
+|---|---|---|---|
+| R-1 | `{{risk_1_desc}}` | `{{risk_1_level}}` | `{{risk_1_mitigation}}` |
+| R-2 | `{{risk_2_desc}}` | `{{risk_2_level}}` | `{{risk_2_mitigation}}` |
+| R-3 | `{{risk_3_desc}}` | `{{risk_3_level}}` | `{{risk_3_mitigation}}` |

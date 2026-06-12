@@ -1,0 +1,181 @@
+# Plan Quality & Resource Checklist (YAML Machine-Readable Format)
+# Đọc bởi AI agent để validate todo.md một cách tự động
+
+version: "1.0.0"
+artifact_type: "plan-quality-checklist"
+
+quality_gates:
+  structure:
+    required_sections:
+      - "pre_requisites_table"
+      - "phase_breakdown"
+      - "knowledge_resources_list"
+      - "definition_of_done"
+      - "notes"
+      - "builder_feedback_integration"
+    checks:
+      - id: "S1"
+        description: "Pre-requisites table có đủ columns: #, Tài liệu/Kiến thức, Tier, Mục đích, Trace, Status"
+        field: "pre_requisites"
+        rule: "has_required_columns"
+      - id: "S2"
+        description: "Phase Breakdown có Phase 0: Resource Preparation"
+        field: "phases"
+        rule: "has_phase_0"
+      - id: "S3"
+        description: "Notes section có flags [CẦN LÀM RÕ]"
+        field: "notes"
+        rule: "has_clarification_flags"
+      - id: "S4"
+        description: "Definition of Done có checklist items"
+        field: "definition_of_done"
+        rule: "is_checklist"
+
+  schema_compliance:
+    yaml_frontmatter:
+      - skill_schema_version: "3.0.0"
+      - artifact_type: "todo"
+      - skill_name: "{matches_design}"
+      - generated_by: "skill-planner"
+      - generated_at: "{iso8601}"
+      - stage: "planner"
+      - status: "in_progress|ready_for_builder|blocked"
+      - trace_to_design: "design.md"
+    checks:
+      - id: "Y1"
+        description: "YAML frontmatter present với required fields"
+        rule: "has_frontmatter"
+      - id: "Y2"
+        description: "skill_schema_version = 3.0.0"
+        rule: "version_is_3_0_0"
+      - id: "Y3"
+        description: "status is valid enum value"
+        rule: "valid_status"
+
+  phases_tasks:
+    phase_pattern: "^PH[0-9]+$"
+    task_pattern: "^T[0-9]+\\.[0-9]+$"
+    checks:
+      - id: "P1"
+        description: "Every phase has id, name, tasks"
+        rule: "phase_structure_valid"
+      - id: "P2"
+        description: "Every task has id, title, zone, priority, trace, status"
+        rule: "task_structure_valid"
+      - id: "P3"
+        description: "Phase IDs form logical order"
+        rule: "phase_order_logical"
+      - id: "P4"
+        description: "Dependencies form DAG (no cycles)"
+        rule: "no_circular_dependencies"
+
+  trace_validation:
+    enabled: true
+    severity: MUST
+    valid_tags:
+      - "[TỪ DESIGN §N]"
+      - "[GỢI Ý BỔ SUNG]"
+      - "[TỪ AUDIT TÀI NGUYÊN]"
+      - "[CẦN LÀM RÕ]"
+    legacy_tags:
+      - "[GỢI Ý]"  # Use [GỢI Ý BỔ SUNG] instead
+      - "[TỪ AUDIT]"  # Use [TỪ AUDIT TÀI NGUYÊN] instead
+      - "[TỪ AUDIT CUSTOM]"  # Invalid format
+      - "[CẦU LÀM RÕ]"  # Typo - use [CẦN LÀM RÕ]
+    checks:
+      - id: "T1"
+        description: "Every task has trace tag"
+        rule: "all_tasks_traced"
+        severity: MUST
+      - id: "T2"
+        description: "No legacy/invalid trace tags"
+        rule: "only_valid_tags"
+        severity: MUST
+      - id: "T3"
+        description: "Trace tags match design.md sections"
+        rule: "sections_exist"
+        severity: MUST
+
+  blockers:
+    checks:
+      - id: "B1"
+        description: "blockers array present (may be empty)"
+        rule: "field_exists"
+      - id: "B2"
+        description: "No unresolved blockers when status = ready_for_builder"
+        rule: "no_unresolved_blockers"
+      - id: "B3"
+        description: "Blocker types are valid enum"
+        rule: "valid_blocker_types"
+
+  prerequisites:
+    tier_values:
+      - "Domain"
+      - "Technical"
+      - "Packaging"
+    status_values:
+      - "ready"
+      - "missing"
+      - "thin"
+    checks:
+      - id: "PR1"
+        description: "prerequisites array present"
+        rule: "field_exists"
+      - id: "PR2"
+        description: "Every prerequisite has item, tier, status"
+        rule: "prerequisite_structure"
+      - id: "PR3"
+        description: "Missing prerequisites have action_if_missing"
+        rule: "has_remediation"
+
+  handoff_readiness:
+    checks:
+      - id: "H1"
+        description: "handoff.next_stage = builder"
+        rule: "correct_successor"
+      - id: "H2"
+        description: "ready_condition can be satisfied"
+        rule: "conditions_achievable"
+      - id: "H3"
+        description: "PH0 tasks all done before ready_for_builder"
+        rule: "phase_0_complete"
+      - id: "H4"
+        description: "No missing critical prerequisites"
+        rule: "prerequisites_ready"
+
+  resource_verification:
+    description: "Core resource integrity checks"
+    checks:
+      - id: "R1"
+        description: "All resources listed in prerequisites exist in resources/"
+        rule: "resources_exist"
+      - id: "R2"
+        description: "Critical resources are Rich (not Thin)"
+        rule: "critical_resources_rich"
+      - id: "R3"
+        description: "Every task traces to a specific resource or design section"
+        rule: "traceability_complete"
+
+output_format:
+  show_passed: true
+  show_failed: true
+  show_warnings: true
+  severity_levels:
+    - "MUST"   # Fail = cannot deliver
+    - "SHOULD" # Fail = warning but can deliver
+    - "INFO"   # Always shown
+
+severity_assignment:
+  structure: "MUST"
+  schema_compliance: "MUST"
+  phases_tasks: "MUST"
+  trace_validation: "MUST"
+  blockers: "MUST"
+  prerequisites: "MUST"
+  handoff_readiness: "MUST"
+  resource_verification: "MUST"
+
+# Gatekeeper Rule
+gatekeeper:
+  description: "Planner cannot mark ready_for_builder while blockers unresolved"
+  rule: "if status = ready_for_builder AND blockers has unresolved THEN fail"

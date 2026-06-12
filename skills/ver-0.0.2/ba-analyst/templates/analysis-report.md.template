@@ -1,0 +1,148 @@
+---
+skill_name: "${SKILL_NAME}"
+analyzed_by: "ba-analyst"
+analyzed_at: "${ANALYZED_AT}"
+status: "${STATUS}"
+---
+
+# 📊 Báo Cáo Phân Tích Nghiệp Vụ & Đặc Tả Kỹ Thuật: ${SKILL_NAME}
+
+## 1. Phân Loại Yêu Cầu & Ma Trận MoSCoW
+
+Bảng phân loại dưới đây phân tích các yêu cầu thành Yêu cầu chức năng (FR) và Yêu cầu phi chức năng (NFR) lượng hóa, kèm theo mức độ ưu tiên MoSCoW và lý do kỹ thuật.
+
+| ID | Loại yêu cầu | Phân loại cụ thể | Mô tả đặc tả kỹ thuật | Độ ưu tiên MoSCoW | Lý do kỹ thuật |
+|---|---|---|---|---|---|
+| FR-1 | Functional | CRUD / Workflow | Mô tả chi tiết hành động hoặc quy trình hệ thống thực hiện | Must Have | Lý do kỹ thuật cụ thể tại sao là Must Have |
+| NFR-1 | Non-Functional | Performance / Security | Ràng buộc kỹ thuật lượng hóa đo lường được | Should Have | Lý do kỹ thuật cụ thể tại sao là Should Have |
+
+## 2. Sơ Đồ Hệ Thống (System Diagrams)
+
+### A. Sơ Đồ Tuần Tự (Sequence Diagram)
+Sơ đồ thể hiện sự tương tác giữa ít nhất 3 Actors/Participants cho các luồng xử lý.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as "Người dùng"
+    participant System as "Hệ thống"
+    participant DB as "Cơ sở dữ liệu"
+
+    User->>System: "Yêu cầu nghiệp vụ"
+    System->>DB: "Truy vấn / Lưu trữ dữ liệu"
+    DB-->>System: "Kết quả truy vấn"
+    System-->>User: "Phản hồi kết quả"
+```
+
+### B. Sơ Đồ Luồng Hoạt Động (Flowchart)
+Sơ đồ luồng thể hiện đầy đủ các nhánh Happy Path, Alternative Path, và Exception Path.
+
+```mermaid
+flowchart TD
+    Start["Bắt đầu"] --> Check{"Điều kiện kiểm tra?"}
+    Check -- "Hợp lệ (Happy)" --> Process["Xử lý nghiệp vụ chính"]
+    Check -- "Rẽ nhánh (Alternative)" --> AltProcess["Xử lý thay thế"]
+    Check -- "Lỗi (Exception)" --> ErrorEnd["Kết thúc lỗi"]
+    
+    Process --> End["Kết thúc thành công"]
+    AltProcess --> End
+```
+
+### C. Sơ Đồ Thực Thể (ERD)
+Sơ đồ cơ sở dữ liệu định nghĩa các khóa chính (PK), khóa ngoại (FK) và kiểu dữ liệu cụ thể.
+
+```mermaid
+erDiagram
+    ENTITY_A ||--o{ ENTITY_B : "relationship"
+    
+    ENTITY_A {
+        integer id PK
+        string name
+        timestamp created_at
+    }
+    
+    ENTITY_B {
+        integer id PK
+        integer entity_a_id FK
+        string detail
+    }
+```
+
+## 3. Thiết Kế Cơ Sở Dữ Liệu (Data Schema Design)
+
+### Chi tiết bảng cơ sở dữ liệu
+
+#### Bảng: `TABLE_NAME`
+Mô tả mục đích của bảng.
+
+| Tên trường | Kiểu dữ liệu | Ràng buộc | Mô tả |
+|---|---|---|---|
+| `id` | `integer` | `PK, AUTO_INCREMENT` | Khóa chính của bảng |
+| `created_at` | `timestamp` | `NOT NULL` | Thời gian tạo bản ghi |
+
+### JSON Schema tương ứng (cho tích hợp hệ thống)
+```json
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TableSchema",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": ["id", "created_at"]
+}
+```
+
+## 4. Tiêu Chí Nghiệm Thu - Gherkin Acceptance Criteria
+
+### User Story
+```markdown
+**User Story:**
+As a [Actor]
+I want to [Hành động]
+So that [Giá trị đem lại]
+```
+
+### Scenarios
+Yêu cầu tối thiểu 3 kịch bản bao quát Happy, Alternative và Exception paths.
+
+```gherkin
+Feature: Đặc tả tính năng ${SKILL_NAME}
+
+  Scenario: Happy Path — Mô tả kịch bản thành công
+    Given Tiền đề bắt đầu
+    When Hành động kích hoạt
+    Then Kết quả mong đợi
+
+  Scenario: Alternative Path — Mô tả kịch bản thay thế
+    Given Tiền đề bắt đầu rẽ nhánh
+    When Hành động thay thế kích hoạt
+    Then Kết quả thay thế tương ứng
+
+  Scenario: Exception Path — Mô tả kịch bản lỗi
+    Given Tiền đề gây lỗi hoặc sai thông tin
+    When Hành động thực hiện
+    Then Hệ thống báo lỗi và giữ an toàn dữ liệu
+```
+
+## 5. Ma Trận Đánh Giá Rủi Ro (Risk & Impact Assessment Matrix)
+
+Bảng đánh giá rủi ro kỹ thuật và các biện pháp giảm thiểu.
+
+| Mã Rủi ro | Mô tả rủi ro | Xác suất (L/M/H) | Tác động (L/M/H) | Giải pháp giảm thiểu |
+|---|---|---|---|---|
+| RR-01 | Mô tả rủi ro bảo mật hoặc hiệu năng | Medium | High | Giải pháp kỹ thuật cụ thể để phòng tránh |
+
+## 6. Sơ Đồ Ánh Xạ Nguồn Gốc (Traceability Mapping)
+
+Danh sách liên kết nguồn gốc thông tin sử dụng các nhãn trace tags bắt buộc để theo dõi nguồn thông tin.
+
+- **Yêu cầu phân loại**: [TỪ INPUT] Ánh xạ trực tiếp từ `elicitation-report.md` phần Normalized Requirements.
+- **Sơ đồ & Logic nghiệp vụ**: [SUY LUẬN] Suy luận từ các quy tắc nghiệp vụ và sơ đồ thiết kế.
+- **Điểm chưa rõ**: [CẦN LÀM RÕ] Những khoảng trống thông tin cần người dùng hoặc Elicitor xác nhận lại.

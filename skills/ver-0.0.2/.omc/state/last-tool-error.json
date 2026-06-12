@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"python3 _shared/validators/schema_validator.py --schema _shared/schemas/design.schema.yaml _shared/fixtures/bad/design.md 2>&1\",\"description\":\"Validate bad design fixture\"}",
+  "error": "Exit code 1\nstage: schema_validation\nartifact: design.md\ntimestamp: '2026-06-02T01:35:03Z'\npassed: false\nchecks:\n- name: Data File Parsing (JSON/YAML/MD)\n  status: pass\n  error: null\n  severity: null\n  fix_hint: null\n- name: Schema Loading\n  status: pass\n  error: null\n  severity: null\n  fix_hint: null\n- name: 'Schema: root'\n  status: fail\n  error: '''canonical_source'' is a required property'\n  severity: error\n  fix_hint: Ensure this field is of type object\n- name: 'Schema: root'\n  status: fail\n...",
+  "timestamp": "2026-06-02T01:35:03.720Z",
+  "retry_count": 3
+}

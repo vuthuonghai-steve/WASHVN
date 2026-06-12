@@ -1,0 +1,321 @@
+{
+  "suite": "WASHVN",
+  "version": "3.0.0",
+  "description": "Ecosystem Registry for WASHVN Master Skill Suite containing orchestrated pipeline stages and business analysis skills.",
+  "workspace_paths": {
+    "source_dir": "raw/ver-3",
+    "runtime_claude": ".claude/skills",
+    "runtime_agents": ".agents/skills",
+    "context_dir": ".skill-context"
+  },
+  "skills": [
+    {
+      "name": "skill-explorer",
+      "stage": "Stage 0",
+      "type": "Type 1 (Monolithic Stage)",
+      "target_variable": "target_skill",
+      "role": "Explorer - Khảo sát tài nguyên, kiến thức, tiêu chuẩn và đánh giá độ phức tạp SCS trước khi thiết kế",
+      "src_path": "raw/ver-3/skill-explorer",
+      "boot_file": "SKILL.md",
+      "inputs": [
+        {
+          "name": "user_skill_request",
+          "description": "Yêu cầu thô từ người dùng về kỹ năng cần xây dựng",
+          "format": "text"
+        }
+      ],
+      "outputs": [
+        {
+          "file_id": "exploration_report",
+          "path_template": ".skill-context/{target_skill}/exploration.md",
+          "format": "markdown",
+          "schema": "raw/ver-3/_shared/schemas/exploration.schema.yaml"
+        },
+        {
+          "file_id": "test_criteria",
+          "path_template": ".skill-context/{target_skill}/criteria.md",
+          "format": "markdown",
+          "schema": "raw/ver-3/_shared/schemas/criteria.schema.json"
+        }
+      ]
+    },
+    {
+      "name": "skill-knowledge-miner",
+      "stage": "Stage 0.5",
+      "type": "Type 1 (Monolithic Stage)",
+      "target_variable": "target_skill",
+      "role": "Knowledge Miner - Khai thác và lượng hóa tri thức đặc thù dự án hoặc các API liên quan",
+      "src_path": "raw/ver-3/skill-knowledge-miner",
+      "boot_file": "SKILL.md",
+      "inputs": [
+        {
+          "file_id": "exploration_report",
+          "path_template": ".skill-context/{target_skill}/exploration.md",
+          "format": "markdown"
+        }
+      ],
+      "outputs": [
+        {
+          "file_id": "domain_handbook",
+          "path_template": ".skill-context/{target_skill}/domain-handbook.md",
+          "format": "markdown"
+        }
+      ]
+    },
+    {
+      "name": "skill-architect",
+      "stage": "Stage 1",
+      "type": "Type 1 (Monolithic Stage)",
+      "target_variable": "target_skill",
+      "role": "Architect - Thiết kế kiến trúc kỹ năng theo mô hình 7 Zones và tạo sơ đồ Mermaid chi tiết",
+      "src_path": "raw/ver-3/skill-architect",
+      "boot_file": "SKILL.md",
+      "inputs": [
+        {
+          "file_id": "exploration_report",
+          "path_template": ".skill-context/{target_skill}/exploration.md",
+          "format": "markdown"
+        },
+        {
+          "file_id": "domain_handbook",
+          "path_template": ".skill-context/{target_skill}/domain-handbook.md",
+          "format": "markdown",
+          "optional": true
+        }
+      ],
+      "outputs": [
+        {
+          "file_id": "architect_design",
+          "path_template": ".skill-context/{target_skill}/design.md",
+          "format": "markdown",
+          "schema": "raw/ver-3/_shared/schemas/design.schema.yaml"
+        }
+      ]
+    },
+    {
+      "name": "production-quality-gatekeeper",
+      "stage": "Stage 1.5",
+      "type": "Type 1 (Monolithic Stage)",
+      "target_variable": "target_skill",
+      "role": "Quality Gatekeeper - Đóng cổng thiết kế và chạy phản biện tự động nâng cấp chất lượng bản vẽ",
+      "src_path": "raw/ver-3/production-quality-gatekeeper",
+      "boot_file": "SKILL.md",
+      "inputs": [
+        {
+          "file_id": "architect_design",
+          "path_template": ".skill-context/{target_skill}/design.md",
+          "format": "markdown"
+        }
+      ],
+      "outputs": [
+        {
+          "file_id": "quality_matrix",
+          "path_template": ".skill-context/{target_skill}/quality-matrix.yaml",
+          "format": "yaml"
+        },
+        {
+          "file_id": "evaluation_report",
+          "path_template": ".skill-context/{target_skill}/evaluation-report.md",
+          "format": "markdown"
+        },
+        {
+          "file_id": "refinement_feedback",
+          "path_template": ".skill-context/{target_skill}/feedback.yaml",
+          "format": "yaml"
+        }
+      ]
+    },
+    {
+      "name": "skill-planner",
+      "stage": "Stage 2",
+      "type": "Type 1 (Monolithic Stage)",
+      "target_variable": "target_skill",
+      "role": "Planner - Lập kế hoạch thực thi dạng DAG dựa trên các tiêu chí test case và bản vẽ thiết kế",
+      "src_path": "raw/ver-3/skill-planner",
+      "boot_file": "SKILL.md",
+      "inputs": [
+        {
+          "file_id": "architect_design",
+          "path_template": ".skill-context/{target_skill}/design.md",
+          "format": "markdown"
+        },
+        {
+          "file_id": "quality_matrix",
+          "path_template": ".skill-context/{target_skill}/quality-matrix.yaml",
+          "format": "yaml"
+        },
+        {
+          "file_id": "test_criteria",
+          "path_template": ".skill-context/{target_skill}/criteria.md",
+          "format": "markdown"
+        }
+      ],
+      "outputs": [
+        {
+          "file_id": "execution_plan",
+          "path_template": ".skill-context/{target_skill}/todo.md",
+          "format": "markdown",
+          "schema": "raw/ver-3/_shared/schemas/todo.schema.yaml"
+        }
+      ]
+    },
+    {
+      "name": "skill-builder",
+      "stage": "Stage 3",
+      "type": "Type 1 (Monolithic Stage)",
+      "target_variable": "target_skill",
+      "role": "Builder - Xây dựng mã nguồn thực tế và scripts cho kỹ năng đích mà không có placeholder",
+      "src_path": "raw/ver-3/skill-builder",
+      "boot_file": "SKILL.md",
+      "inputs": [
+        {
+          "file_id": "execution_plan",
+          "path_template": ".skill-context/{target_skill}/todo.md",
+          "format": "markdown"
+        },
+        {
+          "file_id": "quality_matrix",
+          "path_template": ".skill-context/{target_skill}/quality-matrix.yaml",
+          "format": "yaml"
+        },
+        {
+          "file_id": "architect_design",
+          "path_template": ".skill-context/{target_skill}/design.md",
+          "format": "markdown"
+        }
+      ],
+      "outputs": [
+        {
+          "file_id": "build_log",
+          "path_template": ".skill-context/{target_skill}/build-log.md",
+          "format": "markdown"
+        }
+      ]
+    },
+    {
+      "name": "production-code-reviewer",
+      "stage": "Stage 3.5",
+      "type": "Type 1 (Monolithic Stage)",
+      "target_variable": "target_skill",
+      "role": "Google Code Reviewer - Phân tích tĩnh code, phát hiện bug, placeholder và chấm điểm chất lượng",
+      "src_path": "raw/ver-3/production-code-reviewer",
+      "boot_file": "SKILL.md",
+      "inputs": [
+        {
+          "file_id": "build_log",
+          "path_template": ".skill-context/{target_skill}/build-log.md",
+          "format": "markdown"
+        }
+      ],
+      "outputs": [
+        {
+          "file_id": "code_review_report",
+          "path_template": ".skill-context/{target_skill}/review-report.md",
+          "format": "markdown"
+        },
+        {
+          "file_id": "audit_metrics",
+          "path_template": ".skill-context/{target_skill}/audit-metrics.yaml",
+          "format": "yaml"
+        }
+      ]
+    },
+    {
+      "name": "ba-elicitor",
+      "stage": "BA Stage -1",
+      "type": "Type 2 (Hierarchical Micro-skill)",
+      "target_variable": "feature_name",
+      "role": "BA Elicitor - Khơi gợi, chuẩn hóa các yêu cầu nghiệp vụ thô và lượng hóa NFRs",
+      "src_path": "raw/ver-3/ba-elicitor",
+      "boot_file": "SKILL.md",
+      "inputs": [
+        {
+          "name": "user_business_requirements",
+          "description": "Các yêu cầu nghiệp vụ thô ban đầu từ người dùng",
+          "format": "text"
+        }
+      ],
+      "outputs": [
+        {
+          "file_id": "elicitation_report",
+          "path_template": ".skill-context/{feature_name}/ba-elicitor/elicitation-report.md",
+          "format": "markdown"
+        }
+      ]
+    },
+    {
+      "name": "ba-analyst",
+      "stage": "BA Stage -0.5",
+      "type": "Type 2 (Hierarchical Micro-skill)",
+      "target_variable": "feature_name",
+      "role": "BA Analyst - Chuyển đổi báo cáo khơi gợi thành đặc tả kỹ thuật lượng hóa, phân loại FR/NFR",
+      "src_path": "raw/ver-3/ba-analyst",
+      "boot_file": "SKILL.md",
+      "inputs": [
+        {
+          "file_id": "elicitation_report",
+          "path_template": ".skill-context/{feature_name}/ba-elicitor/elicitation-report.md",
+          "format": "markdown"
+        }
+      ],
+      "outputs": [
+        {
+          "file_id": "analysis_report",
+          "path_template": ".skill-context/{feature_name}/ba-analyst/analysis-report.md",
+          "format": "markdown"
+        }
+      ]
+    },
+    {
+      "name": "ba-synthesizer",
+      "stage": "BA Stage -0.2",
+      "type": "Type 2 (Hierarchical Micro-skill)",
+      "target_variable": "feature_name",
+      "role": "BA Synthesizer - Hợp nhất, kiểm định chéo và đánh giá chất lượng tài liệu nghiệp vụ",
+      "src_path": "raw/ver-3/ba-synthesizer",
+      "boot_file": "SKILL.md",
+      "inputs": [
+        {
+          "file_id": "elicitation_report",
+          "path_template": ".skill-context/{feature_name}/ba-elicitor/elicitation-report.md",
+          "format": "markdown"
+        },
+        {
+          "file_id": "analysis_report",
+          "path_template": ".skill-context/{feature_name}/ba-analyst/analysis-report.md",
+          "format": "markdown"
+        }
+      ],
+      "outputs": [
+        {
+          "file_id": "synthesized_business_analysis",
+          "path_template": ".skill-context/{feature_name}/business-analysis.md",
+          "format": "markdown"
+        }
+      ]
+    },
+    {
+      "name": "skill-security-reviewer",
+      "stage": "Security Stage",
+      "type": "Type 1 (Monolithic Stage)",
+      "target_variable": "target_skill",
+      "role": "Security Reviewer - Thực hiện đánh giá an ninh cho mã nguồn của kỹ năng dựa trên OWASP",
+      "src_path": "raw/ver-3/skill-security-reviewer",
+      "boot_file": "SKILL.md",
+      "inputs": [
+        {
+          "file_id": "build_log",
+          "path_template": ".skill-context/{target_skill}/build-log.md",
+          "format": "markdown"
+        }
+      ],
+      "outputs": [
+        {
+          "file_id": "security_review_report",
+          "path_template": ".skill-context/{target_skill}/security-review-report.md",
+          "format": "markdown"
+        }
+      ]
+    }
+  ]
+}

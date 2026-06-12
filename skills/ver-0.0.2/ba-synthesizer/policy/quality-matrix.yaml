@@ -1,0 +1,45 @@
+quality_matrix:
+  metadata:
+    name: "ba-synthesizer-quality-matrix"
+    version: "1.0.0"
+  rules:
+    pass_threshold: 0.80
+    calculation_method: "weighted_sum"
+  deliverables:
+    elicitation_report:
+      weight: 0.15
+      min_criteria:
+        - "normalize_system_description"
+        - "pain_points_listed"
+        - "system_assumptions_defined"
+    requirements_classification:
+      weight: 0.15
+      min_criteria:
+        - "fr_nfr_separation"
+        - "moscow_matrix_completed"
+    sequence_diagram:
+      weight: 0.15
+      min_criteria:
+        - "valid_mermaid_syntax"
+        - "minimum_three_actors_or_participants"
+    flowchart_activity:
+      weight: 0.15
+      min_criteria:
+        - "valid_mermaid_syntax"
+        - "three_paths_defined_happy_alternative_exception"
+    erd_schema:
+      weight: 0.15
+      min_criteria:
+        - "valid_mermaid_syntax"
+        - "pk_fk_definitions"
+        - "attribute_data_types"
+    acceptance_criteria:
+      weight: 0.15
+      min_criteria:
+        - "gherkin_format_given_when_then"
+        - "minimum_three_scenarios"
+    risk_matrix:
+      weight: 0.10
+      min_criteria:
+        - "minimum_three_risks_identified"
+        - "mitigation_plans_provided"

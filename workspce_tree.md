@@ -13,6 +13,8 @@
 | `architecture.md` | Kiến trúc Master Skill Suite | 8-Stage Pipeline |
 | `standards.md` | LLM Knowledge Activation Standard | Format rules |
 | `workspce_tree.md` | ⬅️ File này — routing map | Đọc trước mỗi task |
+| [ROADMAP.md](file:///home/steve/Work-space/WASHVN/ROADMAP.md) | Lộ trình phát triển Master Skill Suite | Vẽ lại roadmap bằng Mermaid |
+| [skills-registry.json](file:///home/steve/Work-space/WASHVN/skills-registry.json) | Tệp khai báo & định vị hệ sinh thái | Chứa danh sách skill, input/output |
 
 ---
 

@@ -1,0 +1,17 @@
+# Gate Checklist for production-code-reviewer
+
+checks:
+  - name: "Respectful Tone"
+    description: "Verify that all review comments are polite, focus strictly on the code, and explain the 'why'."
+    validator: "manual_llm"
+    severity: "critical"
+
+  - name: "Comment Labeling"
+    description: "Ensure all comments are labeled correctly using 'Nit:', 'Optional:', 'FYI:', or 'Must Fix:'."
+    validator: "manual_llm"
+    severity: "critical"
+
+  - name: "Linter Compliance"
+    description: "Verify that the linter and python static code auditor output is incorporated into the final report."
+    validator: "code_auditor.py"
+    severity: "major"

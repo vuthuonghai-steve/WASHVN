@@ -106,6 +106,7 @@ must:
   - Chạy validate_suite_integrity.py trước khi đồng bộ hóa sang runtime
   - Viết YAML frontmatter đầy đủ cho mọi SKILL.md mới (gồm version: 0.0.1 và suite: WASHVN)
   - Xác định đầu ra động qua Dynamic Routing Contract (DRC) dưới .skill-context/ thay vì chạy script khởi tạo thủ công
+  - Cập nhật danh sách đăng ký trong skills-registry.json mỗi khi bổ sung hoặc loại bỏ một skill thuộc về các phiên bản chính thức (bỏ qua các skill thử nghiệm bên ngoài)
   - Archive context artifacts trước khi xóa hoặc overwrite
   - Update routing map (workspce_tree.md) khi thay đổi structure
   - Báo cáo summary_of_changes + zones_affected sau mỗi task
@@ -212,6 +213,7 @@ quality_gates:
     - "criteria.md có ≥ 5 tiêu chí nghiệm thu + ≥ 2 kịch bản test case"
     - "verification.md PASS từ sandbox"
     - "Đăng ký vào llms.txt sau khi verified"
+    - "Cập nhật đăng ký trong skills-registry.json khi thêm/bớt skill thuộc các phiên bản chính thức"
     - "Update .skill-context/registry/README.md với lifecycle status"
     - "Thiết lập output_contract dạng YAML tuân thủ chuẩn Dynamic Routing Contract (DRC)"
 

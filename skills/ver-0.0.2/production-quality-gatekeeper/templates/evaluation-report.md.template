@@ -1,0 +1,33 @@
+# 📊 Production Quality Evaluation Report
+
+## 1. Metadata
+* **Evaluated File**: {target_file}
+* **Active Domain**: {domain} ({domain_title})
+* **Validation Date**: {timestamp}
+* **Total Loops Run**: {loop_turns} / 10
+* **Pass Status**: {pass_status} (Score: {passed_count}/{total_count} - {pass_percentage}%)
+
+---
+
+## 2. Multi-Layer Quality Matrix Summary
+
+| Layer | Criterion ID | Criterion Name | Status | Severity | Notes / Feedback |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+{matrix_rows}
+
+---
+
+## 3. Failed Criteria & Actionable Feedback
+
+{feedback_section}
+
+---
+
+## 4. Refinement History (Loop Progress)
+* **Start Score**: {initial_passed}/{total_count}
+* **Final Score**: {final_passed}/{total_count}
+* **Refinement Log**:
+{loop_logs}
+
+---
+*Report generated automatically by production-quality-gatekeeper.*
