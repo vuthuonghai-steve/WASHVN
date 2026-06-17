@@ -1,0 +1,277 @@
+{
+  "version": "0.0.2",
+  "generated_at": "2026-06-17T15:54:52Z",
+  "suite": "WASHVN",
+  "schema_version": "1.0.0",
+  "skills": [
+    {
+      "name": "ba-analyst",
+      "path": "ba-analyst/",
+      "version": "0.0.1",
+      "lifecycle_phase": "verified",
+      "zones": {
+        "core": true,
+        "knowledge": true,
+        "scripts": false,
+        "templates": true,
+        "data": false,
+        "loop": true,
+        "assets": false
+      },
+      "has_skill_md": true,
+      "has_frontmatter": true,
+      "has_criteria": false,
+      "has_verification": false,
+      "tags": ["business-analysis", "analysis", "micro-skill", "ba"],
+      "description": "BA Analyst - chuyển đổi Elicitation Report thành Đặc tả kỹ thuật (Analysis Report) với FR/NFR, MoSCoW, Mermaid, Gherkin.",
+      "registered_at": "2026-06-17T15:54:52Z",
+      "status": "active"
+    },
+    {
+      "name": "ba-elicitor",
+      "path": "ba-elicitor/",
+      "version": "0.0.1",
+      "lifecycle_phase": "verified",
+      "zones": {
+        "core": true,
+        "knowledge": true,
+        "scripts": false,
+        "templates": true,
+        "data": false,
+        "loop": true,
+        "assets": false
+      },
+      "has_skill_md": true,
+      "has_frontmatter": true,
+      "has_criteria": false,
+      "has_verification": false,
+      "tags": ["business-analysis", "elicitation", "micro-skill", "ba"],
+      "description": "Micro-skill khơi gợi, chuẩn hóa yêu cầu nghiệp vụ thô và lượng hóa NFR.",
+      "registered_at": "2026-06-17T15:54:52Z",
+      "status": "active"
+    },
+    {
+      "name": "ba-synthesizer",
+      "path": "ba-synthesizer/",
+      "version": "0.0.1",
+      "lifecycle_phase": "verified",
+      "zones": {
+        "core": true,
+        "knowledge": true,
+        "scripts": false,
+        "templates": true,
+        "data": false,
+        "loop": true,
+        "assets": false
+      },
+      "has_skill_md": true,
+      "has_frontmatter": true,
+      "has_criteria": false,
+      "has_verification": false,
+      "tags": ["ba", "synthesis", "quality-gate"],
+      "description": "Hợp nhất và kiểm định chéo báo cáo BA (Sequence Diagram với ERD, MoSCoW với Gherkin).",
+      "registered_at": "2026-06-17T15:54:52Z",
+      "status": "active"
+    },
+    {
+      "name": "production-code-reviewer",
+      "path": "production-code-reviewer/",
+      "version": "0.0.1",
+      "lifecycle_phase": "verified",
+      "zones": {
+        "core": true,
+        "knowledge": true,
+        "scripts": true,
+        "templates": true,
+        "data": false,
+        "loop": true,
+        "assets": false
+      },
+      "has_skill_md": true,
+      "has_frontmatter": true,
+      "has_criteria": false,
+      "has_verification": false,
+      "tags": ["code-review", "google-standards", "stage-3.5", "static-analysis"],
+      "description": "Senior Google Code Reviewer - đánh giá mã nguồn dựa trên Google Code Review Guidelines với static audit + constructive comments.",
+      "registered_at": "2026-06-17T15:54:52Z",
+      "status": "active"
+    },
+    {
+      "name": "production-quality-gatekeeper",
+      "path": "production-quality-gatekeeper/",
+      "version": "0.0.1",
+      "lifecycle_phase": "verified",
+      "zones": {
+        "core": true,
+        "knowledge": true,
+        "scripts": true,
+        "templates": true,
+        "data": false,
+        "loop": true,
+        "assets": false
+      },
+      "has_skill_md": true,
+      "has_frontmatter": true,
+      "has_criteria": false,
+      "has_verification": false,
+      "tags": ["quality-gate", "self-refining", "stage-1.5", "production-grade"],
+      "description": "Tự động thiết lập và thực thi vòng lặp tự phản biện cho AI Agent đạt chuẩn Production-grade.",
+      "registered_at": "2026-06-17T15:54:52Z",
+      "status": "active"
+    },
+    {
+      "name": "skill-architect",
+      "path": "skill-architect/",
+      "version": "0.0.1",
+      "lifecycle_phase": "verified",
+      "zones": {
+        "core": true,
+        "knowledge": true,
+        "scripts": true,
+        "templates": true,
+        "data": false,
+        "loop": true,
+        "assets": false
+      },
+      "has_skill_md": true,
+      "has_frontmatter": true,
+      "has_criteria": false,
+      "has_verification": false,
+      "tags": ["architect", "design", "stage-1", "7-zones"],
+      "description": "Senior Architect thiết kế kiến trúc Agent Skill mới dựa trên 3 Pillars & 7 Zones.",
+      "registered_at": "2026-06-17T15:54:52Z",
+      "status": "active"
+    },
+    {
+      "name": "skill-builder",
+      "path": "skill-builder/",
+      "version": "0.0.1",
+      "lifecycle_phase": "verified",
+      "zones": {
+        "core": true,
+        "knowledge": true,
+        "scripts": true,
+        "templates": true,
+        "data": false,
+        "loop": true,
+        "assets": false
+      },
+      "has_skill_md": true,
+      "has_frontmatter": true,
+      "has_criteria": false,
+      "has_verification": false,
+      "tags": ["builder", "implementation", "stage-3", "engineer"],
+      "description": "Kỹ sư triển khai Agent Skill (Senior Implementation Engineer). Thực thi design.md và todo.md.",
+      "registered_at": "2026-06-17T15:54:52Z",
+      "status": "active"
+    },
+    {
+      "name": "skill-explorer",
+      "path": "skill-explorer/",
+      "version": "0.0.1",
+      "lifecycle_phase": "verified",
+      "zones": {
+        "core": true,
+        "knowledge": true,
+        "scripts": true,
+        "templates": true,
+        "data": false,
+        "loop": true,
+        "assets": false
+      },
+      "has_skill_md": true,
+      "has_frontmatter": true,
+      "has_criteria": false,
+      "has_verification": false,
+      "tags": ["explorer", "stage-0", "discovery", "7-golden-standards"],
+      "description": "Khai thác tài nguyên, kiến thức, tiêu chuẩn, vấn đề trước khi thiết kế, lập kế hoạch hay lập trình một skill AI.",
+      "registered_at": "2026-06-17T15:54:52Z",
+      "status": "active"
+    },
+    {
+      "name": "skill-knowledge-miner",
+      "path": "skill-knowledge-miner/",
+      "version": "0.0.1",
+      "lifecycle_phase": "verified",
+      "zones": {
+        "core": true,
+        "knowledge": true,
+        "scripts": false,
+        "templates": false,
+        "data": true,
+        "loop": true,
+        "assets": false
+      },
+      "has_skill_md": true,
+      "has_frontmatter": true,
+      "has_criteria": false,
+      "has_verification": false,
+      "tags": ["miner", "stage-0.5", "knowledge", "domain-handbook"],
+      "description": "Stage 0.5: Khai thác sâu, tổng hợp và cấu trúc hóa tài nguyên kiến thức chuyên môn chuẩn Kỷ luật — Trung thực — Sáng tạo.",
+      "registered_at": "2026-06-17T15:54:52Z",
+      "status": "active"
+    },
+    {
+      "name": "skill-planner",
+      "path": "skill-planner/",
+      "version": "0.0.1",
+      "lifecycle_phase": "verified",
+      "zones": {
+        "core": true,
+        "knowledge": true,
+        "scripts": false,
+        "templates": false,
+        "data": true,
+        "loop": true,
+        "assets": false
+      },
+      "has_skill_md": true,
+      "has_frontmatter": true,
+      "has_criteria": false,
+      "has_verification": false,
+      "tags": ["planner", "stage-2", "todo", "traceability"],
+      "description": "Đọc bản thiết kế kiến trúc (design.md) và lập kế hoạch triển khai chi tiết (todo.md).",
+      "registered_at": "2026-06-17T15:54:52Z",
+      "status": "active"
+    },
+    {
+      "name": "skill-security-reviewer",
+      "path": "skill-security-reviewer/",
+      "version": "0.0.1",
+      "lifecycle_phase": "verified",
+      "zones": {
+        "core": true,
+        "knowledge": true,
+        "scripts": true,
+        "templates": true,
+        "data": false,
+        "loop": true,
+        "assets": false
+      },
+      "has_skill_md": true,
+      "has_frontmatter": true,
+      "has_criteria": false,
+      "has_verification": false,
+      "tags": ["security", "OWASP", "review", "gatekeeper"],
+      "description": "OWASP-based security review skill for sensitive AI Agent skills (auth/payment/upload).",
+      "registered_at": "2026-06-17T15:54:52Z",
+      "status": "active"
+    }
+  ],
+  "summary": {
+    "total": 11,
+    "by_phase": {
+      "raw": 0,
+      "designed": 0,
+      "planned": 0,
+      "built": 0,
+      "verified": 11,
+      "installed": 0
+    },
+    "by_status": {
+      "active": 11,
+      "deprecated": 0,
+      "experimental": 0
+    }
+  }
+}
