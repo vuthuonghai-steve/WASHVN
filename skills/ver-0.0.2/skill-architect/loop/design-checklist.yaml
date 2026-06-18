@@ -17,6 +17,8 @@ quality_gates:
       - "§8_risks"
       - "§9_open_questions"
       - "§10_metadata"
+      - "§11_knowledge_requirements"
+      - "§12_when_not_to_use"
     min_diagrams: 3
     interaction_points_min: 1
     checks:
@@ -60,6 +62,14 @@ quality_gates:
         description: "§10 có đủ metadata"
         field: "metadata"
         rule: "has_required_fields"
+      - id: "S11"
+        description: "§11 lists all knowledge files with FR trace"
+        field: "knowledge_requirements"
+        rule: "lists_all_knowledge_files"
+      - id: "S12"
+        description: "§12 has misuse scenarios + decision rule"
+        field: "when_not_to_use"
+        rule: "has_misuse_scenarios"
 
   zone_mapping_contract:
     checks:
@@ -98,6 +108,33 @@ quality_gates:
       - id: "D5"
         description: "Interaction points được đánh dấu rõ trong diagram"
         rule: "interaction_points_marked"
+
+  knowledge_scan:
+    checks:
+      - id: "K1"
+        description: "Boot scan found knowledge files"
+        rule: "knowledge_dir_boot_scan"
+      - id: "K2"
+        description: "exploration.md checked (IF EXISTS)"
+        rule: "check_exploration_md_if_exists"
+      - id: "K3"
+        description: "domain-handbook.md checked (IF EXISTS)"
+        rule: "check_domain_handbook_if_exists"
+      - id: "K4"
+        description: "Knowledge gap protocol triggered if needed"
+        rule: "trigger_knowledge_gap_protocol"
+
+  script_boundary:
+    checks:
+      - id: "B1"
+        description: "init_context.py has no template-writing (FR-17/18)"
+        rule: "no_template_writing"
+      - id: "B2"
+        description: "All scripts have deterministic boundary comment"
+        rule: "has_boundary_comment"
+      - id: "B3"
+        description: "All scripts declare input/output schema"
+        rule: "has_io_schema"
 
   handoff_readiness:
     checks:
@@ -155,6 +192,7 @@ trace_validation:
     - "[TỪ NGUỒN EXTERNAL]"
     - "[GỢI Ý BỔ SUNG]"
     - "[CẦN LÀM RÕ]"
+    - "[TỰ SUY LUẬN]"
   rules:
     - id: "T1"
       description: "Mọi task trong §3 phải có trace tag"
@@ -184,3 +222,5 @@ severity_assignment:
   process_gate: "MUST"
   final_deliver: "SHOULD"
   trace_validation: "MUST"
+  knowledge_scan: "MUST"
+  script_boundary: "MUST"

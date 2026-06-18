@@ -23,6 +23,8 @@ output_contract:
     - "§8_risks"
     - "§9_open_questions"
     - "§10_metadata"
+    - "§11_knowledge_requirements"
+    - "§12_when_not_to_use"
   handoff_to: "skill-planner"
 ```
 
@@ -42,6 +44,8 @@ output_contract:
 | §8 | Risks & Blind Spots | Risks + mitigation | Phase 2 |
 | §9 | Open Questions | Điểm chưa rõ | Phase 3 |
 | §10 | Metadata | skill-name, date, author, status | Phase 1 + update |
+| §11 | Knowledge Requirements | List every knowledge file needed for the skill, each traced to source FR | Phase 3 |
+| §12 | When NOT to Use | Explicit negative contract — misuse scenarios + decision rule | Phase 3 |
 
 ---
 
@@ -56,6 +60,7 @@ Handoff A→P:
   § design.md §3 (Zone Mapping)    → Planner decompose thành Tasks
   § design.md §7 (PD Plan)         → Planner + Builder biết Tier 1/2 files
   § design.md §8 (Risks)           → Builder tham chiếu khi Guardrails
+  § design.md §11 (Knowledge Requirements) → Planner lên lịch thu thập knowledge files
 ```
 
 **Architect phải đảm bảo trước khi handoff**:

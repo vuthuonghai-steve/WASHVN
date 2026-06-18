@@ -76,9 +76,12 @@
 |------|---------|
 | `.agents/knowledge/` | Agent knowledge base |
 | `.claude/knowledge/` | Claude-specific knowledge |
+| `.claude/agents/` | **Custom Claude Code subagents (project scope, priority 3)** |
+| `.claude/agents/_staging/` | Subagent staging area (writable by subagent-forge only) |
 | `docs/context-to-work/` | Scope analysis documents |
 | `.codegraph/` | Codegraph index (auto-generated) |
 | `.omc/` | OMC orchestration state |
+| `.skill-context/_subagent-staging/` | Subagent eval evidence + deployed archives |
 
 ---
 
@@ -103,4 +106,11 @@ routing_rules:
   add_to_routing_map:
     - "Cập nhật file này khi thay đổi structure"
     - "Đảm bảo file path chính xác"
+
+  deploy_subagent:
+    - "Author tại .claude/agents/_staging/<name>.md trước"
+    - "Run 4-evaluator multi-agent eval (xem subagent-forge)"
+    - "Parent session move file → .claude/agents/<name>.md sau khi user gõ 'deploy <name>'"
+    - "Archive tại .skill-context/_subagent-staging/<name>/deployed/<timestamp>/"
+    - "Restart Claude Code session để subagent được discover"
 ```

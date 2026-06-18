@@ -1,0 +1,42 @@
+version: "1.0.0"
+artifact_type: "knowledge-source-registry"
+generated_by: "skill-architect"
+generated_at: ""
+# Boot config — defines all knowledge sources the Architect scans at startup
+# Read by SKILL.md boot sequence Step 3-7
+
+sources:
+  - source_id: "KS-01"
+    path: ".claude/knowledge/agents/"
+    type: "agents"
+    load_condition: "WHEN designing skill that uses subagents"
+    priority: "tier2"
+    required: false
+
+  - source_id: "KS-02"
+    path: ".claude/knowledge/skills/"
+    type: "skills_framework"
+    load_condition: "ALWAYS — core skill design framework"
+    priority: "tier1"
+    required: true
+
+  - source_id: "KS-03"
+    path: ".claude/knowledge/hooks/"
+    type: "hooks"
+    load_condition: "WHEN skill needs hook integration"
+    priority: "tier2"
+    required: false
+
+  - source_id: "KS-04"
+    path: ".skill-context/{target_skill}/exploration.md"
+    type: "exploration"
+    load_condition: "IF EXISTS — primary upstream context"
+    priority: "tier1"
+    required: false
+
+  - source_id: "KS-05"
+    path: ".skill-context/{target_skill}/domain-handbook.md"
+    type: "domain_handbook"
+    load_condition: "IF EXISTS — domain knowledge from Knowledge Miner"
+    priority: "tier1"
+    required: false

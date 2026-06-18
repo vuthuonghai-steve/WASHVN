@@ -5,7 +5,7 @@
 
 ---
 
-## ✅ Structure Check — 10 Sections (required_sections from schema)
+## ✅ Structure Check — 12 Sections (required_sections from schema)
 
 - [ ] §1 problem_statement: rõ ràng (Pain Point + Người dùng + Lý do)
 - [ ] §2 capability_map: đủ 3 Pillars (Knowledge / Process / Guardrails)
@@ -17,6 +17,17 @@
 - [ ] §8 risks: ít nhất 3 risks kèm mitigation cụ thể
 - [ ] §9 open_questions: không để trống (ghi "Không có" nếu đã giải quyết hết)
 - [ ] §10 metadata: có skill-name, date, status
+- [ ] §11 knowledge_requirements: lists all knowledge files with FR trace
+- [ ] §12 when_not_to_use: has misuse scenarios + decision rule
+
+---
+
+## ✅ Knowledge Scan Check
+
+- [ ] Boot scan: knowledge/ directory scanned for Tier 1 files
+- [ ] exploration.md checked (IF EXISTS)
+- [ ] domain-handbook.md checked (IF EXISTS)
+- [ ] Knowledge gap protocol triggered if no Tier 1 found
 
 ---
 
@@ -25,6 +36,7 @@
 - [ ] D1 — Folder Structure (mindmap): có
 - [ ] D2 — Execution Flow (sequenceDiagram): có
 - [ ] D3 — Workflow Phases (flowchart LR): có
+- [ ] D4 — Pipeline (flowchart TD): có (optional but recommended)
 - [ ] Mermaid syntax hợp lệ (không lỗi render — kiểm tra bằng mắt)
 - [ ] Tất cả participant/node labels ngắn gọn, dễ đọc
 - [ ] Interaction points với user được đánh dấu rõ trong diagram
@@ -56,6 +68,14 @@
 - [ ] Phase 3 Gate: user đã xác nhận toàn bộ design
 - [ ] `init_context.py` đã chạy và tạo `.skill-context/{target_skill}/`
 - [ ] design.md đã được ghi đầy đủ (không còn comment placeholder `<!-- -->`)
+
+---
+
+## ✅ Script Boundary Compliance Check
+
+- [ ] init_context.py: no template-writing code (FR-17/18)
+- [ ] All scripts: have deterministic boundary comment (first 3 lines)
+- [ ] All scripts: declare input/output schema
 
 ---
 

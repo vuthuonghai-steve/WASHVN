@@ -1,4 +1,7 @@
 .claude
 .agents
+.sisyphus
+.codegraph
 .omc
+_subagent-staging
 raw

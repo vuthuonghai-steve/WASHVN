@@ -4,6 +4,47 @@
 
 Phần này được trích từ SKILL.md cũ, lines 224-324.
 
+
+
+## Phase 0: Boot Sequence — Nạp tri thức nền
+
+**Mục tiêu**: Xây dựng context đầy đủ trước khi thiết kế — tích hợp knowledge scan trước Phase 1.
+
+### 8-Step Knowledge-Aware Boot
+
+1. **Read** `SKILL.md` — nắm cấu trúc và constraints của skill-architect
+2. **Read** `_shared/knowledge/framework.md` — framework chuẩn
+3. **Scan** `skills/ver-0.0.2/{target_skill}/knowledge/` — Tier 1 source
+4. **Read** knowledge files tìm thấy ở step 3
+5. **Check** `.skill-context/{target_skill}/` — upstream artifacts từ các stage trước
+6. **IF** `.skill-context/{target_skill}/exploration.md` exists → read (primary upstream)
+7. **IF** `.skill-context/{target_skill}/domain-handbook.md` exists → read (domain knowledge)
+8. **Proceed to Phase 1** — chỉ sau khi context đã built
+
+### Knowledge Source Priority
+
+| Tier | Nguồn | Điều kiện load | Bắt buộc? |
+|------|-------|---------------|-----------|
+| Tier 1 | `skill-architect/knowledge/*.md` | ALWAYS | ✅ |
+| Tier 1 | `.skill-context/{target}/exploration.md` | IF EXISTS | ✅ |
+| Tier 1 | `.skill-context/{target}/domain-handbook.md` | IF EXISTS | ✅ |
+| Tier 2 | `_shared/knowledge/*.md` | ALWAYS | ✅ |
+| Tier 3 | `skill-architect/references/examples/*.md` | WHEN cần reference | ❌ |
+
+### Knowledge Gap Protocol
+
+```yaml
+condition: "No Tier 1 knowledge files found"
+action:
+  - "Set confidence < 70% — STOP, cannot proceed"
+  - "ASK user: provide domain knowledge before continuing"
+  - "DO NOT hallucinate §2 (Capability Map) content"
+if_user_cannot_provide:
+  - "Log knowledge gap to design.md §9 Open Questions"
+  - "Flag [CẦN LÀM RÕ] trên mọi assertion"
+  - "Proceed with 'LIMITED KNOWLEDGE' warning in design.md frontmatter"
+```
+
 ---
 
 ## Phase 1: Collect — Thu thập yêu cầu
@@ -57,7 +98,11 @@ Phần này được trích từ SKILL.md cũ, lines 224-324.
 
 4. **Risks Identification**: ít nhất 3 rủi ro cụ thể.
 
-> **⏸️ Gate 2**: Trình bày bảng phân tích. Chờ confirm → ghi §2 + §3 + §8 → Proceed to Phase 3.
+5. **§11 Knowledge Requirements**: mọi tri thức design phải trace về knowledge source (xem Knowledge Boot §2 attribution rules).
+
+6. **§12 When NOT to Use**: mọi design phải có ít nhất 3 tình huống skill KHÔNG nên được dùng (out-of-scope, thiếu context, user expectation mismatch).
+
+> **⏸️ Gate 2**: Trình bày bảng phân tích. Chờ confirm → ghi §2 + §3 + §8 + §11 + §12 → Proceed to Phase 3.
 
 ---
 
@@ -88,16 +133,17 @@ Phần này được trích từ SKILL.md cũ, lines 224-324.
 | Sau Phase | Ghi vào design.md |
 | --------- | ------------------|
 | Phase 1 | §1 Problem Statement, §10 Metadata (IN PROGRESS) |
-| Phase 2 | §2 Capability Map, §3 Zone Mapping, §8 Risks |
-| Phase 3 | §4-§7, §9, §10 (COMPLETED) |
+| Phase 2 | §2 Capability Map, §3 Zone Mapping, §8 Risks, §11 Knowledge Requirements, §12 When NOT to Use |
+| Phase 3 | §4-§7, §9, §10 (COMPLETED) — bao gồm §11 + §12 refinement nếu cần |
 
 ---
 
 ## Quality Gate — Trước khi Deliver
 
-1. Chạy `loop/design-checklist.md`
-2. Nếu fail → sửa trước khi thông báo hoàn thành
-3. Sau pass → thông báo cho user
+1. Chạy `loop/design-checklist.md` — kiểm tra nội dung toàn diện
+2. Chạy `validate_design.py` (nếu có) — kiểm tra schema và tính hợp lệ
+3. Nếu fail → sửa trước khi thông báo hoàn thành
+4. Sau pass → thông báo cho user
 
 ```
 ✅ design.md hoàn thành tại: .skill-context/{target_skill}/design.md

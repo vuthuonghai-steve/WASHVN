@@ -1,4 +1,4 @@
-# Guardrails — skill-architect
+# Guardrails — skill-architect v2.0.0
 
 ## Nguồn gốc
 
@@ -22,9 +22,14 @@ guardrails:
 
   G3:
     rule: "Confidence Threshold"
-    condition: "confidence < 70"
-    action: "ask_user_for_clarification_before_proceeding"
-    bonus: "confidence < 85% = consider K=8 chains for complex analysis"
+    conditions:
+      - condition: "confidence < 70%"
+        action: "STOP + BLOCK Phase — cannot proceed without domain knowledge. Ask user to provide knowledge files."
+      - condition: "70% <= confidence < 85%"
+        action: "Ask user for clarification, activate K=8 chains BEFORE presenting analysis"
+      - condition: "confidence >= 85%"
+        action: "Proceed normally"
+    note: "Per FR-11: knowledge gap is a hard stop, not a soft pause"
 
   G4:
     rule: "Zone Mapping Contract"
@@ -56,6 +61,24 @@ guardrails:
       - missing_yaml_must_must_not
       - token_budget_exceeded_without_justification
     enforce: hard
+
+  G8:
+    rule: "Script Determinism"
+    must:
+      - scripts_zone_io_only
+      - no_business_logic_in_scripts
+      - each_script_has_deterministic_boundary_comment
+      - input_output_schema_required
+    must_not:
+      - business_logic_in_scripts
+      - decision_trees_in_scripts
+      - prompt_templates_in_scripts
+
+  G9:
+    rule: "Knowledge Traceability"
+    must:
+      - trace_every_s2_assertion_to_source
+      - specific_trace_tags_required
 ```
 
 ---
