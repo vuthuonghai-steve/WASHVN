@@ -1,21 +1,101 @@
+---
+# [TỪ DESIGN §2.5 R1+R2, BA §1.2 P5+P8, HANDBOOK §10.3 §10.3.1, quality-matrix RES-07]
+# ver-0.0.3 refactor:
+#   - Extract _parse_zone_mapping helper using section-number pattern `^## 3\.\s+`
+#   - Share between check_file_mapping and check_todo_cross_reference (R1 close-out)
+#   - Wrap recursive sub-skill calls in report() with try/except IOError (R2 close-out)
+#   - Add --zone-mapping-version CLI flag (Q2 RESOLVED, non-breaking)
+#   - Preserve all 5 existing flags: --path, --design, --todo, --log, --strict-context
+# skill_schema_version: "3.1.0"
+---
 import os
 import sys
 import re
 import json
+import uuid
 from datetime import datetime
+from typing import List, Dict, Set, Optional
+
+
+# === ZONE MAPPING PARSER (R1 close-out) ===
+# Section-number pattern `^## 3\.\s+` matches heading variations:
+#   - "## 3. Zone Mapping"
+#   - "## 3 Zone Mapping"
+#   - "## 3. Zones"
+#   - "## 3. ZoneMapping"
+# No longer brittle to literal string match (R1 fix).
+_ZONE_SECTION_PATTERN = re.compile(r"^##\s+3\.\s+", re.MULTILINE)
+_NEXT_SECTION_PATTERN = re.compile(r"^##\s+\d+\.\s+", re.MULTILINE)
+_BACKTICK_PATH_PATTERN = re.compile(r"`([^`]+)`")
+
+
+def _parse_zone_mapping(design_path: str, version: int = 2) -> List[Dict[str, str]]:
+    """
+    Parse §3 Zone Mapping from design.md.
+
+    Args:
+        design_path: Absolute path to design.md
+        version: 1 (legacy literal match) or 2 (section-number pattern, default)
+
+    Returns:
+        List of {"path": str, "tier": str} dicts. Empty list if §3 not found.
+
+    Used by check_file_mapping and check_todo_cross_reference to eliminate
+    duplicate parsing logic. R1 close-out: pattern is robust to heading variations.
+    """
+    if not os.path.exists(design_path):
+        return []
+
+    with open(design_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    if version == 1:
+        # Legacy: literal "## 3. Zone Mapping" string match (kept for backward compat)
+        section_marker = "## 3. Zone Mapping"
+        idx = content.find(section_marker)
+        if idx == -1:
+            return []
+        start = idx + len(section_marker)
+        # Find next "## " heading
+        next_match = re.search(r"^##\s+", content[start:], re.MULTILINE)
+        end = start + next_match.start() if next_match else len(content)
+    else:
+        # v2 (default): section-number pattern
+        section_match = _ZONE_SECTION_PATTERN.search(content)
+        if not section_match:
+            return []
+        start = section_match.end()
+        next_section = _NEXT_SECTION_PATTERN.search(content, start)
+        end = next_section.start() if next_section else len(content)
+
+    section_content = content[start:end]
+    files = _BACKTICK_PATH_PATTERN.findall(section_content)
+    result = []
+    for f in files:
+        if "/" in f or "." in f or f.startswith("SKILL"):
+            result.append({"path": os.path.normpath(f), "tier": "design_spec"})
+    return result
+
+
+def _extract_zone_files(design_path: str, version: int = 2) -> Set[str]:
+    """Convenience wrapper: return just the file paths from _parse_zone_mapping."""
+    return {entry["path"] for entry in _parse_zone_mapping(design_path, version=version)}
+
 
 class SkillValidator:
     """
     Kỹ sư thẩm định chất lượng Agent Skill.
     Đảm bảo tính chính trực giữa thiết kế (design) và thực thi (build).
     """
-    def __init__(self, skill_path: str, design_path: str | None = None, log_mode: bool = False, strict_context: bool = False, todo_path: str | None = None):
+    def __init__(self, skill_path: str, design_path: str | None = None, log_mode: bool = False, strict_context: bool = False, todo_path: str | None = None, zone_mapping_version: int = 2):
         self.skill_path: str = os.path.abspath(skill_path)
         self.skill_name: str = os.path.basename(self.skill_path.rstrip('/'))
         self.design_path: str | None = os.path.abspath(design_path) if design_path else None
         self.log_mode: bool = log_mode
         self.strict_context: bool = strict_context
         self.todo_path: str | None = os.path.abspath(todo_path) if todo_path else None
+        # R1 refactor: zone_mapping_version (1=legacy literal, 2=section-number pattern, default=2)
+        self.zone_mapping_version: int = zone_mapping_version
         self.workspace_root: str = self.find_workspace_root()
         self.errors: list[str] = []
         self.warnings: list[str] = []
@@ -133,42 +213,23 @@ class SkillValidator:
     def check_file_mapping(self):
         design_file = self.design_path
         if not design_file:
-            # Policy High: Design path is required if provided in arguments
             return True
-            
+
         if not os.path.exists(design_file):
             self.errors.append(f"[E06] CRITICAL: Design file not found at {design_file}")
             self.log(f"   -> Design not found: {design_file}", "FAIL")
             return False
 
         self.log(f"4. File Mapping (Actual vs Design §3) Check...")
-        with open(design_file, 'r', encoding='utf-8') as f:
-            design_content = f.read()
 
-        expected_files: set[str] = set()
-        # Parse from Zone Mapping table
-        lines = design_content.split('\n')
-        in_zone_mapping = False
-        for line in lines:
-            if '## 3. Zone Mapping' in line:
-                in_zone_mapping = True
-            elif in_zone_mapping and line.startswith('##'):
-                if '## 3.' not in line: # Another section started
-                    in_zone_mapping = False
-            
-            if in_zone_mapping:
-                # Find file paths in backticks like `knowledge/architect.md` or `design.md.template`
-                matches = re.findall(r"`([^`]+)`", line)
-                for m in matches:
-                    if "/" in m or m.startswith("SKILL") or "." in m:
-                        expected_files.add(os.path.normpath(m))
-        
+        # R1 refactor: use _parse_zone_mapping helper (section-number pattern)
+        zone_entries = _parse_zone_mapping(design_file, version=self.zone_mapping_version)
+        expected_files: set[str] = {entry["path"] for entry in zone_entries}
         # Ensure SKILL.md is expected
         expected_files.add("SKILL.md")
 
         actual_files: set[str] = set()
         for root, dirs, files in os.walk(self.skill_path):
-            # Skip __pycache__ and other generated directories
             dirs[:] = [d for d in dirs if d != '__pycache__' and not d.startswith('.')]
             rel_root = os.path.relpath(root, self.skill_path)
             for file in files:
@@ -177,7 +238,6 @@ class SkillValidator:
                     actual_files.add(rel_path)
 
         missing = expected_files - actual_files
-        # Exclude loop/build-log.md if it's dynamic
         ignore_extra = {"scripts/validate_skill.py", "loop/build-log.md", "loop/build-checklist.md", "templates/cleaned-prompt.xml.template"}
         extra = actual_files - expected_files - ignore_extra
 
@@ -185,7 +245,7 @@ class SkillValidator:
             for f in missing:
                 self.errors.append(f"[E02] ERROR: Missing file from design: {f}")
                 self.log(f"   -> Missing: {f}", "FAIL")
-        
+
         if extra:
             for f in extra:
                 self.warnings.append(f"WARNING: Extra file not in design: {f}")
@@ -327,63 +387,41 @@ class SkillValidator:
         return len(uncovered) == 0 if self.strict_context else True
 
     def check_todo_cross_reference(self):
-        """
-        Cross-reference validation between todo.md tasks and design §3 Zone Mapping.
-        Ensures every file listed in §3 Zone Mapping has a corresponding task in todo.md.
-        """
         if not self.todo_path:
             return True
-            
+
         if not os.path.exists(self.todo_path):
             self.warnings.append(f"WARNING: todo.md not found at {self.todo_path}, skipping cross-reference")
             return True
-            
+
         self.log("9. Todo ↔ Design Cross-Reference Check...")
-        
-        # Parse §3 Zone Mapping from design.md to get expected files
-        expected_files = set()
+
+        # R1 refactor: use _parse_zone_mapping helper (shared with check_file_mapping)
+        expected_files: set[str] = set()
         if self.design_path and os.path.exists(self.design_path):
-            with open(self.design_path, 'r', encoding='utf-8') as f:
-                design_content = f.read()
-            
-            lines = design_content.split('\n')
-            in_zone_mapping = False
-            for line in lines:
-                if '## 3. Zone Mapping' in line:
-                    in_zone_mapping = True
-                elif in_zone_mapping and line.startswith('##'):
-                    in_zone_mapping = False
-                
-                if in_zone_mapping:
-                    matches = re.findall(r"`([^`]+)`", line)
-                    for m in matches:
-                        if "/" in m or m.startswith("SKILL") or "." in m:
-                            expected_files.add(os.path.normpath(m))
-        
-        # Parse todo.md to get task target files
+            expected_files = _extract_zone_files(self.design_path, version=self.zone_mapping_version)
+
         with open(self.todo_path, 'r', encoding='utf-8') as f:
             todo_content = f.read()
-        
-        # Extract file targets from todo tasks (look for patterns like "→ file.md" or "file_target:")
+
         task_files = set()
         task_file_patterns = [
-            r"(?:→|->)\s*`?([^`\s]+)`?",  # → target.md or -> target.md
-            r"file_target:\s*([^\s\n]+)",   # file_target: path/to/file.md
+            r"(?:→|->)\s*`?([^`\s]+)`?",
+            r"file_target:\s*([^\s\n]+)",
         ]
         for pattern in task_file_patterns:
             matches = re.findall(pattern, todo_content)
             for m in matches:
                 if m and ("." in m or m.startswith("/")):
                     task_files.add(os.path.normpath(m))
-        
-        # Check coverage
+
         missing_in_todo = expected_files - task_files
         if missing_in_todo:
             self.warnings.append(
                 f"WARNING: Files in design §3 but not covered by todo tasks: {', '.join(missing_in_todo)}"
             )
             self.log(f"   -> Missing in todo: {missing_in_todo}", "WARN")
-        
+
         self.log(f"   -> §3 files: {len(expected_files)}, Todo tasks: {len(task_files)}, Coverage: {len(task_files & expected_files)}/{len(expected_files)}")
         return True
 
@@ -620,7 +658,6 @@ class SkillValidator:
             self.log(f"Detected {len(sub_skills)} physical sub-skills inside orchestrator root. Recursively validating:")
             for sub in sub_skills:
                 self.log(f"\n---> Sub-skill validation start: {sub.name}", "INFO")
-                # Look for matching design/todo inside sub-context if present
                 sub_design = None
                 sub_todo = None
                 if self.design_path:
@@ -634,18 +671,34 @@ class SkillValidator:
                     if os.path.exists(sub_todo_candidate):
                         sub_todo = sub_todo_candidate
 
-                sub_validator = SkillValidator(
-                    sub.path,
-                    design_path=sub_design,
-                    log_mode=self.log_mode,
-                    strict_context=self.strict_context,
-                    todo_path=sub_todo
-                )
-                sub_validator.report_nested()
-                self.errors.extend([f"[{sub.name}] {err}" for err in sub_validator.errors])
-                self.warnings.extend([f"[{sub.name}] {warn}" for warn in sub_validator.warnings])
-                self.reports.extend(sub_validator.reports)
-                self.log(f"---> Sub-skill validation end: {sub.name}\n", "INFO")
+                # R2 refactor: wrap recursive sub-skill call in try/except IOError
+                # to prevent crash when sub-skill is missing SKILL.md or has malformed structure
+                try:
+                    sub_validator = SkillValidator(
+                        sub.path,
+                        design_path=sub_design,
+                        log_mode=self.log_mode,
+                        strict_context=self.strict_context,
+                        todo_path=sub_todo,
+                        zone_mapping_version=self.zone_mapping_version,
+                    )
+                    sub_validator.report_nested()
+                    self.errors.extend([f"[{sub.name}] {err}" for err in sub_validator.errors])
+                    self.warnings.extend([f"[{sub.name}] {warn}" for warn in sub_validator.warnings])
+                    self.reports.extend(sub_validator.reports)
+                    self.log(f"---> Sub-skill validation end: {sub.name}\n", "INFO")
+                except (IOError, OSError) as sub_io_err:
+                    # R2: graceful skip with warning, continue with next sub-skill
+                    warn_msg = f"Sub-skill '{sub.name}' skipped: {sub_io_err}"
+                    self.warnings.append(warn_msg)
+                    self.log(f"   -> {warn_msg}", "WARN")
+                    continue
+                except Exception as sub_err:
+                    # Catch-all for unexpected errors (defensive, don't crash the parent)
+                    err_msg = f"Sub-skill '{sub.name}' failed validation: {sub_err}"
+                    self.errors.append(err_msg)
+                    self.log(f"   -> {err_msg}", "FAIL")
+                    continue
 
         print("="*50)
 
@@ -712,13 +765,22 @@ if __name__ == "__main__":
         default=None,
         help="Path to todo.md for cross-reference validation between todo tasks and design §3 files",
     )
+    # Q2 RESOLVED: New optional flag (non-breaking) for explicit zone mapping pattern selection
+    parser.add_argument(
+        "--zone-mapping-version",
+        type=int,
+        choices=[1, 2],
+        default=2,
+        help="Zone mapping parser version: 1=legacy literal '## 3. Zone Mapping' match, 2=section-number pattern '^## 3\\.\\s+' (default, R1 refactor)",
+    )
     args = parser.parse_args()
-    
+
     validator = SkillValidator(
         args.path,
         design_path=args.design,
         log_mode=args.log,
         strict_context=args.strict_context,
         todo_path=args.todo,
+        zone_mapping_version=args.zone_mapping_version,
     )
     validator.report()

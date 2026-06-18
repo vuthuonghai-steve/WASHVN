@@ -1,0 +1,107 @@
+file: data/fixtures/sample_dirty.py
+total_lines: 47
+violations_count: 16
+blocking_count: 15
+violations:
+- id: REV-STY-01
+  name: Function Naming Style
+  line: 17
+  severity: blocking
+  error: Tên hàm 'BadFunction' không tuân thủ snake_case chuẩn PEP 8.
+  fix_hint: 'Đổi tên hàm thành chữ thường ngăn cách bởi dấu gạch dưới, ví dụ: ''calculate_billing_total''.'
+- id: REV-CMP-01
+  name: Too Many Function Arguments
+  line: 17
+  severity: optional
+  error: Hàm 'BadFunction' nhận quá nhiều tham số (7 > 5).
+  fix_hint: Đóng gói các tham số liên quan vào một dataclass hoặc dictionary cấu trúc.
+- id: REV-CMP-02
+  name: Excessive Nesting Depth
+  line: 17
+  severity: blocking
+  error: Độ lồng điều khiển trong hàm 'BadFunction' đạt 6 lớp (tối đa 3).
+  fix_hint: Tái cấu trúc hàm, dùng guard clauses hoặc helper methods để làm phẳng
+    logic.
+- id: REV-CMT-02
+  name: Missing Public Docstring
+  line: 44
+  severity: blocking
+  error: Entity public 'run_command' thiếu docstring mô tả hành vi.
+  fix_hint: Bổ sung docstring Google-style (Args:, Returns:, Raises:) cho 'run_command'.
+- id: REV-FUN-02
+  name: Swallowed Exception
+  line: 28
+  severity: blocking
+  error: Nuốt ngoại lệ bằng pass trống rỗng trong khối except.
+  fix_hint: Thêm logging.error() hoặc re-raise để giữ khả năng debug.
+- id: REV-FUN-05
+  name: Missing Network Timeout
+  line: 26
+  severity: blocking
+  error: Cuộc gọi mạng requests.get() thiếu tham số 'timeout'.
+  fix_hint: Thiết lập timeout=10 (hoặc giá trị phù hợp) để tránh treo vô hạn trên
+    production.
+- id: REV-FUN-03
+  name: Unsafe File Open
+  line: 36
+  severity: blocking
+  error: Mở file bằng open() thô mà không dùng context manager 'with'.
+  fix_hint: Thay bằng 'with open(...) as f:' để tự giải phóng tài nguyên.
+- id: REV-FUN-04
+  name: Unprotected File IO
+  line: 36
+  severity: blocking
+  error: Thao tác IO không nằm trong khối try/except bảo vệ.
+  fix_hint: Bọc mở file trong 'try ... except IOError'.
+- id: REV-FUN-08
+  name: Shell Injection Risk
+  line: 46
+  severity: blocking
+  error: subprocess với shell=True gây rủi ro bảo mật shell injection.
+  fix_hint: 'Truyền lệnh dạng list và đặt shell=False, ví dụ: subprocess.run([''ls'',
+    ''-la'']).'
+- id: REV-FUN-11
+  name: Hardcoded Secrets Leak
+  line: 13
+  severity: blocking
+  error: Phát hiện gán cứng chuỗi mật mã cho biến nhạy cảm 'api_key'.
+  fix_hint: Tải khóa từ os.environ.get() hoặc file config bảo mật.
+- id: REV-FUN-11
+  name: Hardcoded Secrets Leak
+  line: 14
+  severity: blocking
+  error: Phát hiện gán cứng chuỗi mật mã cho biến nhạy cảm 'password'.
+  fix_hint: Tải khóa từ os.environ.get() hoặc file config bảo mật.
+- id: REV-STY-04
+  name: Unused Import
+  line: 7
+  severity: blocking
+  error: Module/hàm 'os' được import nhưng không sử dụng.
+  fix_hint: Xóa dòng import 'os' để giữ code sạch.
+- id: REV-STY-04
+  name: Unused Import
+  line: 8
+  severity: blocking
+  error: Module/hàm 'json' được import nhưng không sử dụng.
+  fix_hint: Xóa dòng import 'json' để giữ code sạch.
+- id: REV-CMT-03
+  name: Unregistered TODO
+  line: 40
+  severity: blocking
+  error: 'Dòng TODO thiếu mã ticket ID tham chiếu (ví dụ: TODO(bug-101): ...).'
+  fix_hint: 'Thêm ID bug/task vào trong dấu ngoặc đơn, ví dụ: ''# TODO(billing-12):
+    ...''.'
+- id: REV-CMT-03
+  name: Unregistered TODO
+  line: 41
+  severity: blocking
+  error: 'Dòng TODO thiếu mã ticket ID tham chiếu (ví dụ: TODO(bug-101): ...).'
+  fix_hint: 'Thêm ID bug/task vào trong dấu ngoặc đơn, ví dụ: ''# TODO(billing-12):
+    ...''.'
+- id: REV-TST-01
+  name: Missing Unit Test File
+  line: 1
+  severity: blocking
+  error: Không tìm thấy file unit test đi kèm cho 'sample_dirty.py'.
+  fix_hint: Tạo 'test_sample_dirty.py' cùng thư mục để cover module này.
+exit_code: 1

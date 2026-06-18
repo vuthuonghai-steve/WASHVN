@@ -1,10 +1,15 @@
 ---
 # Snapshot từ feedback.yaml. Builder KHÔNG update trực tiếp.
-skill_schema_version: "3.0.0"
+# [TỪ DESIGN §3 loop zone, BA FR-05, R-12 idempotency, S5]
+# ver-0.0.3 — refactored with execution_trace array, quality_metrics block, feedback arrays
+# ver-0.0.3 — added execution_id UUID + timestamp normalization (R12, Q7 RESOLVED)
+# ver-0.0.3 — added Stage 3.5 review-report reference
+skill_schema_version: "3.1.0"
 artifact_type: "build-log"
 skill_name: "{skill_name}"
 generated_by: "skill-builder"
 generated_at: "{generated_at}"
+execution_id: "{execution_id_uuid}"
 stage: "builder"
 status: "in_progress"
 execution_trace:
@@ -32,6 +37,7 @@ quality_metrics:
   blocker_count: 0
   critical_tasks_done: false
   validator_pass: false
+  stage_3_5_review_reference: "review-report.md will be produced by production-code-reviewer (Stage 3.5) — see loop/build-checklist.yaml §stage_3_5_review_reference"
 ---
 # {skill_name} — Build Log
 

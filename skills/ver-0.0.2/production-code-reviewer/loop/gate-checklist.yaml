@@ -1,17 +1,33 @@
-# Gate Checklist for production-code-reviewer
+# Gate Checklist — production-code-reviewer (Phase 4 self-test)
+
+> Verify skill đạt chuẩn production trước khi ký off.
+> Tất cả 5 checks phải PASS.
 
 checks:
-  - name: "Respectful Tone"
-    description: "Verify that all review comments are polite, focus strictly on the code, and explain the 'why'."
-    validator: "manual_llm"
+  - name: "Auditor runnable"
+    description: "scripts/code_auditor.py chạy được và in summary không exception."
+    command: "python3 scripts/code_auditor.py data/fixtures/sample_dirty.py --target-skill _self_test"
+    expected_exit_code: 1
     severity: "critical"
 
-  - name: "Comment Labeling"
-    description: "Ensure all comments are labeled correctly using 'Nit:', 'Optional:', 'FYI:', or 'Must Fix:'."
-    validator: "manual_llm"
+  - name: "Clean fixture passes"
+    description: "data/fixtures/sample_clean.py không có blocking violation."
+    command: "python3 scripts/code_auditor.py data/fixtures/sample_clean.py --target-skill _self_test"
+    expected_exit_code: 0
     severity: "critical"
 
-  - name: "Linter Compliance"
-    description: "Verify that the linter and python static code auditor output is incorporated into the final report."
-    validator: "code_auditor.py"
+  - name: "Dirty fixture catches violations"
+    description: "data/fixtures/sample_dirty.py có >= 3 blocking violation."
+    command: "python3 scripts/code_auditor.py data/fixtures/sample_dirty.py --target-skill _self_test"
+    validation: "grep blocking_count audit-metrics.yaml | awk -F': ' '{print $2}' >= 3"
+    severity: "critical"
+
+  - name: "SKILL.md under 700 tokens"
+    description: "L0 anchor rule — SKILL.md không vượt 700 tokens."
+    command: "awk 'END{print NR}' SKILL.md  # lines check; use token counter"
+    severity: "major"
+
+  - name: "All 7 zones present"
+    description: "Mỗi zone (SKILL.md, knowledge/, scripts/, templates/, data/, loop/, policy/) phải tồn tại."
+    command: "for z in SKILL.md knowledge scripts templates data loop policy; do test -e $z || exit 1; done"
     severity: "major"

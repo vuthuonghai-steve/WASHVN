@@ -1,0 +1,192 @@
+# Data Zone — Builder Knowledge Source Registry
+# [TỪ DESIGN §3 data/builder-knowledge-sources.yaml (NEW, KG-6, P2)]
+# [TỪ BA §6 KG-6, HANDBOOK §10.3 #4]
+# [TỪ sibling: skills/ver-0.0.2/skill-architect/data/knowledge-sources.yaml]
+
+# Registry of all knowledge sources consumed by skill-builder.
+# Consumed by `knowledge/builder-knowledge-boot-sequence.md` at Phase 1.
+# Schema: id, path, tier, priority, load_condition, description, source_ref
+
+schema_version: "3.1.0"
+registry_type: "knowledge_source_registry"
+generated_at: "2026-06-18"
+generated_by: "skill-builder (dogfooding, Stage 3)"
+target_skill: "skill-builder"
+target_version: "0.0.3"
+
+knowledge_sources:
+
+  - id: "KS-01"
+    path: "SKILL.md"
+    tier: 1
+    priority: "P0"
+    load_condition: "always"
+    description: "L0 anchor — persona + 5-phase workflow summary + routing map (≤400 tokens)"
+    source_ref: "design.md §3 Core, §7 Tier 1"
+    trace_tag: "[TỪ DESIGN §3]"
+
+  - id: "KS-02"
+    path: "policy/skill-builder.yaml"
+    tier: 1
+    priority: "P0"
+    load_condition: "always"
+    description: "L1 working policy — G1-G8 guardrails + must/must_not + thresholds + zone contract"
+    source_ref: "design.md §2.3, §3 policy zone, §7 Tier 1, BA §6 KG-5"
+    trace_tag: "[TỪ DESIGN §2.3]"
+
+  - id: "KS-03"
+    path: "policy/workflow.md"
+    tier: 1
+    priority: "P0"
+    load_condition: "always"
+    description: "5-Phase workflow execution contract — PH1-PH5 detail with gate conditions"
+    source_ref: "design.md §2.2, BA §2.1 FR-01..FR-10"
+    trace_tag: "[TỪ DESIGN §2.2]"
+
+  - id: "KS-04"
+    path: "policy/guardrails.md"
+    tier: 1
+    priority: "P0"
+    load_condition: "always"
+    description: "G1-G8 guardrails enforcement contract — severity + actions + tools"
+    source_ref: "design.md §2.3, BA §2.1 FR-17..FR-19"
+    trace_tag: "[TỪ DESIGN §2.3]"
+
+  - id: "KS-05"
+    path: "policy/output-spec.md"
+    tier: 1
+    priority: "P0"
+    load_condition: "always"
+    description: "build-log.md schema spec — 3 mandatory sections + execution_trace + feedback arrays"
+    source_ref: "design.md §6, §7 Tier 3 templates, BA §2.1 FR-05"
+    trace_tag: "[TỪ DESIGN §6]"
+
+  - id: "KS-06"
+    path: "data/builder-knowledge-sources.yaml"
+    tier: 1
+    priority: "P0"
+    load_condition: "always"
+    description: "THIS FILE — knowledge source registry for boot v2 routing"
+    source_ref: "design.md §3 data zone, §7 Tier 1, BA §6 KG-6"
+    trace_tag: "[TỪ DESIGN §3]"
+
+  - id: "KS-07"
+    path: "loop/build-checklist.yaml"
+    tier: 1
+    priority: "P0"
+    load_condition: "always"
+    description: "v2.0.0 quality gate spec — 35 checks across 9 categories incl. tier_knowledge_parity"
+    source_ref: "design.md §3 loop zone, §9 Q5 RESOLVED, BA §8.2 C2"
+    trace_tag: "[TỪ DESIGN §3]"
+
+  - id: "KS-08"
+    path: "knowledge/builder-knowledge-boot-sequence.md"
+    tier: 2
+    priority: "P1"
+    load_condition: "phase_1_prepare"
+    description: "Boot v2 — scan this registry to determine Tier 1/2/3 routing"
+    source_ref: "design.md §3 knowledge/, §7 Tier 2, BA §6 KG-1"
+    trace_tag: "[TỪ DESIGN §3]"
+
+  - id: "KS-09"
+    path: "knowledge/architect.md"
+    tier: 2
+    priority: "P0"
+    load_condition: "phase_1_to_3"
+    description: "10 Builder-specific guardrails (G1-G10) — refactored for L1 split"
+    source_ref: "design.md §3 knowledge/architect.md, HANDBOOK §6.4, BA §1.1 S1"
+    trace_tag: "[TỪ DESIGN §3]"
+
+  - id: "KS-10"
+    path: "knowledge/skill-builder-script-boundary-policy.md"
+    tier: 2
+    priority: "P0"
+    load_condition: "phase_3_zone_design"
+    description: "scripts/ zone deterministic boundary (KG-2) — IO primitives only, NO cognitive logic"
+    source_ref: "design.md §2.5 + §3, BA §6 KG-2, FR-17, FR-18"
+    trace_tag: "[TỪ DESIGN §2.5]"
+
+  - id: "KS-11"
+    path: "knowledge/build-guidelines.md"
+    tier: 2
+    priority: "P0"
+    load_condition: "phase_3_build"
+    description: "4-Layer Knowledge Separation + Format Selection table"
+    source_ref: "design.md §3, BA §1.1 S6, HANDBOOK §6.1"
+    trace_tag: "[TỪ DESIGN §3]"
+
+  - id: "KS-12"
+    path: "knowledge/builder-token-budget.md"
+    tier: 2
+    priority: "P0"
+    load_condition: "phase_4_verify"
+    description: "Concrete L0/L1/L2/L3 token budget numbers + split recipe"
+    source_ref: "design.md §3, BA §6 KG-8, NFR-03"
+    trace_tag: "[TỪ DESIGN §3]"
+
+  - id: "KS-13"
+    path: "knowledge/anthropic-skill-standards.md"
+    tier: 2
+    priority: "P0"
+    load_condition: "phase_3_first_file"
+    description: "Anthropic 9-section SKILL.md standard (frontmatter/PD/tracker/examples/freedom/anti-patterns/scripts/size/discovery)"
+    source_ref: "design.md §3, BA §1.2 P9, HANDBOOK §7.4"
+    trace_tag: "[TỪ DESIGN §3]"
+
+  - id: "KS-14"
+    path: "templates/build-log.md.template"
+    tier: 2
+    priority: "P1"
+    load_condition: "phase_5_deliver"
+    description: "Full target_skill build scaffold (3 mandatory sections per FR-05)"
+    source_ref: "design.md §3 templates zone, BA §6 KG-7, FR-05"
+    trace_tag: "[TỪ DESIGN §3]"
+
+  - id: "KS-15"
+    path: "examples/build-exemplars.md"
+    tier: 2
+    priority: "P1"
+    load_condition: "phase_3_abstract_mapping"
+    description: ">=2 concrete builds: leaf skill (5 files) + meta-skill w/ 3 sub-skills + SSP orchestrate.py"
+    source_ref: "design.md §3 examples zone, BA §6 KG-4, FR-12, FR-15"
+    trace_tag: "[TỪ DESIGN §3]"
+
+  - id: "KS-16"
+    path: "knowledge/build-visualization-guidelines.md"
+    tier: 3
+    priority: "P2"
+    load_condition: "on_demand_mermaid"
+    description: "Mermaid syntax standards for build-log.md sequence + folder mindmap + workflow flowchart"
+    source_ref: "design.md §3 (optional), BA §6 KG-3, HANDBOOK §6.6"
+    trace_tag: "[TỪ DESIGN §3]"
+
+  - id: "KS-17"
+    path: "examples/fidelity-checks.md"
+    tier: 3
+    priority: "P2"
+    load_condition: "on_demand_fidelity"
+    description: "3 case studies fidelity 1:1 — 50→50 PASS, 50→20 WARN, 50→5 FAIL"
+    source_ref: "design.md §3 (optional), BA §6 KG-9, FR-14, NFR-04"
+    trace_tag: "[TỪ DESIGN §3]"
+
+  - id: "KS-18"
+    path: "docs/MIGRATION-0.0.2-to-0.0.3.md"
+    tier: 3
+    priority: "P1"
+    load_condition: "on_demand_migration"
+    description: "Migration guide — 7 breaking changes (C1-C7) + zone additions + policy extraction"
+    source_ref: "design.md §3 references zone, §10.1 versioning, BA §6 KG-10"
+    trace_tag: "[TỪ DESIGN §3]"
+
+# === ROUTING SUMMARY ===
+routing_summary:
+  tier1_count: 7
+  tier2_count: 8
+  tier3_count: 3
+  total_sources: 18
+  load_at_boot: "KS-01, KS-02, KS-03, KS-04, KS-05, KS-06, KS-07 (7 Tier 1)"
+  load_at_phase_1: "KS-08, KS-09, KS-13 (3 Tier 2)"
+  load_at_phase_3: "KS-10, KS-11, KS-15 (3 Tier 2)"
+  load_at_phase_4: "KS-12 (1 Tier 2)"
+  load_at_phase_5: "KS-14 (1 Tier 2)"
+  on_demand: "KS-16, KS-17, KS-18 (3 Tier 3)"

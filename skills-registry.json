@@ -165,8 +165,20 @@
       "type": "Type 1 (Monolithic Stage)",
       "target_variable": "target_skill",
       "role": "Builder - Xây dựng mã nguồn thực tế và scripts cho kỹ năng đích mà không có placeholder",
-      "src_path": "raw/ver-3/skill-builder",
+      "version": "0.0.3",
+      "src_path": "skills/ver-0.0.2/skill-builder",
       "boot_file": "SKILL.md",
+      "updated_at": "2026-06-18",
+      "tags": ["build", "plan2build", "pipeline-stage-3"],
+      "output_contract": {
+        "output_type": "Type 1 (Monolithic Stage)",
+        "target_context_variable": "target_skill",
+        "destination": ".skill-context/{target_skill}/build-log.md",
+        "format": "markdown",
+        "schema": "raw/ver-3/_shared/schemas/build-log.schema.yaml",
+        "required_sections": ["## Resource Inventory", "## Resource Usage Matrix", "## Validation Result"],
+        "handoff_to": "production-code-reviewer (Stage 3.5)"
+      },
       "inputs": [
         {
           "file_id": "execution_plan",
@@ -193,30 +205,44 @@
       ]
     },
     {
-      "name": "production-code-reviewer",
+      "name": "skill-quality-reviewer",
       "stage": "Stage 3.5",
       "type": "Type 1 (Monolithic Stage)",
       "target_variable": "target_skill",
-      "role": "Google Code Reviewer - Phân tích tĩnh code, phát hiện bug, placeholder và chấm điểm chất lượng",
-      "src_path": "raw/ver-3/production-code-reviewer",
+      "role": "Quality Reviewer - Đánh giá chất lượng Agent Skill package theo WASHVN standards (frontmatter, 7-Zone, token budget, placeholder, DRC)",
+      "src_path": "raw/ver-3/skill-quality-reviewer",
       "boot_file": "SKILL.md",
+      "version": "0.0.1",
       "inputs": [
         {
-          "file_id": "build_log",
-          "path_template": ".skill-context/{target_skill}/build-log.md",
-          "format": "markdown"
+          "name": "target_path",
+          "description": "Path tới skill directory cần review",
+          "format": "string",
+          "required": true
+        },
+        {
+          "name": "target_skill",
+          "description": "Tên skill context (default: derived từ path)",
+          "format": "string",
+          "required": false
+        },
+        {
+          "name": "self",
+          "description": "Boolean — self-review mode",
+          "format": "boolean",
+          "required": false
         }
       ],
       "outputs": [
         {
-          "file_id": "code_review_report",
-          "path_template": ".skill-context/{target_skill}/review-report.md",
-          "format": "markdown"
-        },
-        {
           "file_id": "audit_metrics",
           "path_template": ".skill-context/{target_skill}/audit-metrics.yaml",
           "format": "yaml"
+        },
+        {
+          "file_id": "review_report",
+          "path_template": ".skill-context/{target_skill}/review-report.md",
+          "format": "markdown"
         }
       ]
     },

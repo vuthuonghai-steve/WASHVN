@@ -1,8 +1,35 @@
-# Build Checklist: Skill Builder Self-Verification (YAML Machine-Readable Format)
+# Build Checklist: Skill Builder Self-Verification (YAML Machine-Readable Format) — ver-2.0.0
+# [TỪ DESIGN §3 loop/build-checklist.yaml (UPDATE v2.0.0), §9 Q5 RESOLVED, BA §8.2 C2, RES-02]
 # Đọc bởi AI agent để validate built skill một cách tự động
+# v2.0.0 changes vs v1.0.0:
+#   - Bump version 1.0.0 → 2.0.0 (Q5 RESOLVED)
+#   - Add tier_knowledge_parity section (KG-9 closure)
+#   - Unify placeholder threshold to <5 / 5-9 / >=10 (C2)
+#   - Add zone_contract_strictness: true check (G7)
+#   - Add token_budget_enforcement block (NFR-03)
+#   - Add SKILL.md ≤ 400 tokens (Q3 RESOLVED strict) + 700 hard cap
 
-version: "1.0.0"
+version: "2.0.0"
 artifact_type: "build-quality-checklist"
+schema_version: "3.1.0"
+generated_at: "2026-06-18"
+generated_by: "skill-builder (dogfooding, Stage 3)"
+tier_knowledge_parity:
+  description: "KG-9 closure — checks knowledge parity vs sibling skill-architect"
+  required_kg_coverage:
+    - "KG-1: builder-knowledge-boot-sequence.md (Tier 1 boot)"
+    - "KG-2: skill-builder-script-boundary-policy.md (Tier 2 scripts)"
+    - "KG-3: build-visualization-guidelines.md (Tier 3 Mermaid) — DEFERRED to ver-0.0.4"
+    - "KG-4: examples/build-exemplars.md (Tier 2 concrete builds)"
+    - "KG-5: policy/skill-builder.yaml (Tier 1 L1 working policy)"
+    - "KG-6: data/builder-knowledge-sources.yaml (Tier 1 knowledge source registry)"
+    - "KG-7: templates/build-log.md.template (Tier 2 scaffold)"
+    - "KG-8: knowledge/builder-token-budget.md (Tier 2 token budget)"
+    - "KG-9: examples/fidelity-checks.md (Tier 3 case studies) — DEFERRED to ver-0.0.4"
+    - "KG-10: docs/MIGRATION-0.0.2-to-0.0.3.md (Tier 3 migration)"
+  closed_in_0_0_3: 8
+  deferred_to_0_0_4: 2
+  parity_target: "8/10 = 80% (was 3/10 in v0.0.2)"
 
 quality_gates:
   structure:
@@ -115,18 +142,40 @@ quality_gates:
         description: "SKILL.md ≤ 500 lines, knowledge/ ≤ 200 lines per file"
         rule: "token_budget_compliance"
         severity: MUST
+      - id: "F5b"
+        description: "SKILL.md ≤ 400 tokens strict (Q3 RESOLVED); 500-700 = warning; > 700 = FAIL → split to policy/ (NFR-03, R3)"
+        rule: "skill_md_token_budget_400_700"
+        severity: MUST
+      - id: "F5c"
+        description: "policy/*.yaml ≤ 1200 tokens (L1 budget, KG-8)"
+        rule: "policy_yaml_token_budget_1200"
+        severity: MUST
+      - id: "F5d"
+        description: "knowledge/*.md ≤ 2500 tokens/file (L2 budget, KG-8)"
+        rule: "knowledge_md_token_budget_2500"
+        severity: MUST
       - id: "F6"
         description: "YAML frontmatter at line 1 of SKILL.md"
         rule: "yaml_frontmatter_line1"
+        severity: MUST
+      - id: "F7"
+        description: "Zone contract strictness: every file in design.md §3 Zone Mapping must exist in skill (G7)"
+        rule: "zone_contract_strict"
         severity: MUST
 
   completeness_performance:
     description: "Hoàn thiện & Chất lượng"
     checks:
       - id: "C1"
-        description: "Mật độ Placeholder [MISSING_DOMAIN_DATA] < 5"
+        description: "Mật độ Placeholder [MISSING_DOMAIN_DATA] < 5 (C2 unified: <5 PASS / 5-9 WARNING / >=10 FAIL)"
         threshold: 5
+        warning_threshold: 5
+        fail_threshold: 10
         rule: "placeholder_under_threshold"
+      - id: "C1b"
+        description: "Placeholder threshold unified: <5 PASS / 5-9 WARNING / >=10 FAIL across SKILL.md + policy/ + build-checklist.yaml + SPEC.md (C2 RESOLVED)"
+        rule: "placeholder_threshold_unified"
+        severity: MUST
       - id: "C2"
         description: "Zero-Summarization: Đối soát 1:1 với resources"
         rule: "one_to_one_fidelity"
@@ -136,6 +185,11 @@ quality_gates:
       - id: "C4"
         description: "Nhật ký build-log.md phản ánh trung thực trạng thái validation"
         rule: "log_reflects_validation"
+      - id: "C5"
+        description: "Tier knowledge parity: ≥ 8/10 KG coverage (vs sibling skill-architect)"
+        target_coverage: 8
+        rule: "tier_knowledge_parity"
+        severity: MUST
 
   engineer_stance:
     description: "Thẩm định Kỹ sư"
@@ -220,11 +274,44 @@ severity_assignment:
   engineer_stance: "MUST"
   anthropic_standards: "MUST"
 
-# Placeholder Density Thresholds
+# Placeholder Density Thresholds — ver-0.0.3 (C2 unified)
 placeholder_thresholds:
   pass: "< 5"
   warning: "5-9"
   fail: ">= 10"
+  unification_cite: "design.md §9 Q5 RESOLVED, §8 R5, BA §8.2 C2"
+
+# Token Budget Enforcement — ver-0.0.3 (NFR-03, Q3 RESOLVED)
+token_budget_enforcement:
+  L0_skill_md:
+    target: 400
+    warning: 500
+    hard_cap: 700
+    action_on_exceed: "extract_to_policy_yaml"
+    source: "knowledge/builder-token-budget.md"
+  L1_policy_yaml:
+    target: 1200
+    hard_cap: 1500
+    action_on_exceed: "split_by_domain"
+  L2_knowledge_md:
+    target_per_file: 2500
+    hard_cap: 3000
+    action_on_exceed: "split_by_topic"
+  L3_examples_md:
+    target_per_file: 1500
+    hard_cap: 2000
+    action_on_exceed: "split_by_topic"
+
+# Zone Contract Strictness — ver-0.0.3 (G7)
+zone_contract_strictness:
+  enabled: true
+  rule: "every file in design.md §3 must exist in skill dir"
+  parser_pattern: "^## 3\\.\\s+"  # section-number pattern (R1 fix)
+  allow_extra_files:
+    - "scripts/__pycache__/"
+    - ".DS_Store"
+    - "*.pyc"
+  severity: MUST
 
 # Error Policy
 error_policy:
@@ -232,3 +319,18 @@ error_policy:
     - "Append error to loop/build-log.md"
     - "Notify user via AskUserQuestion"
     - "STOP all tasks immediately"
+
+# Stage 3.5 Review Reference — ver-0.0.3
+stage_3_5_review_reference:
+  description: "Stage 3.5 (production-code-reviewer) consumes build-log.md for review"
+  required_artifacts:
+    - ".skill-context/{target_skill}/build-log.md (this file's output)"
+    - ".skill-context/{target_skill}/design.md (Stage 1 input)"
+    - ".skill-context/{target_skill}/todo.md (Stage 2 input)"
+  review_checks:
+    - "trace_tag_coverage >= 1.0"
+    - "placeholder_density < 5"
+    - "skill_md_token_count <= 400"
+    - "zone_count == design.md §3"
+    - "validator_exit_code == 0"
+  source: "todo.md §4 DoD + design.md §10.1 dependencies"

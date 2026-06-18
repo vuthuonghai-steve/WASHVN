@@ -1,0 +1,13 @@
+skill_name: skill-quality-reviewer
+lifecycle_phase: build-completed
+last_checkpoint: 2026-06-18T13:30:00Z
+last_stage_completed: "3"
+confidence_score: 92
+rollback_pending: false
+entry_stage_used: "-1"
+renamed_from: production-code-reviewer
+reason_for_rename: |
+  Skill cũ "production-code-reviewer" thực hiện static analysis Python code
+  (AST visitors, REV-STY/FUN/CMP rules cho Google Code Review).
+  Nghiệp vụ mới: REVIEW/ĐÁNH GIÁ CHẤT LƯỢNG SKILL (Agent Skill package).
+  Domain hoàn toàn khác → đổi tên để khỏi hiểu nhầm.

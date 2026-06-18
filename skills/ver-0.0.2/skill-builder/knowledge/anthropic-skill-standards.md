@@ -1,6 +1,16 @@
-# Anthropic Skill Standards — Chuẩn Bắt Buộc khi Build SKILL.md
+---
+layer: "L2_domain_context"
+zone: "knowledge"
+skill: "skill-builder"
+version: "0.0.3"
+trace: "[TỪ DESIGN §3, BA §1.2 P9, HANDBOOK §7.4, ver-0.0.3 §10 dogfooding]"
+last_updated: "2026-06-18"
+---
+
+# Anthropic Skill Standards — Chuẩn Bắ Buộc khi Build SKILL.md
 
 > **Usage**: Load khi bắt đầu viết file `SKILL.md` trong Step 3 BUILD. Đây là bộ tiêu chuẩn khoa học từ Anthropic nhằm đảm bảo skill hoạt động đáng tin cậy, tiết kiệm token, và hỗ trợ Discovery đúng.
+> **Ver-0.0.3 note**: §10 bổ sung Cognitive Agentic Skill Paradigm (L0/L1/L2/L3) reference implementation trong skill-builder 0.0.3 (dogfooding). §1 frontmatter example thêm `disable-model-invocation: true` rationale. Discovery Checklist (ver-0.0.3) mở rộng với token budget gate + zone contract.
 
 ---
 
@@ -292,3 +302,80 @@ Nếu SKILL.md > 500 lines → split content vào separate files, link từ rele
 □ Scripts handle errors explicitly
 □ No "too many options" confusion
 ```
+
+---
+
+## 10. Cognitive Agentic Skill Paradigm (ver-0.0.3 — Dogfooding)
+
+### 10.1 Bối cảnh
+
+Khi Anthropic standards (`knowledge/anthropic-skill-standards.md` §1-9) yêu cầu SKILL.md phải tuân thủ Progressive Disclosure, đi kèm format selection, token budget, format frontmatter — đó chính là 4-Layer Knowledge Separation trong CLAUDE.md §5.
+
+### 10.2 Reference Implementation — skill-builder ver-0.0.3
+
+skill-builder 0.0.3 self-applies paradigm này cho chính nó (dogfooding). Đây là reference implementation để target skills khác copy:
+
+| Layer | Location (ver-0.0.3) | Format | Token Budget | Example |
+|-------|----------------------|--------|--------------|---------|
+| **L0** | `SKILL.md` (refactored) | YAML frontmatter + XML boundaries | 150-400 (strict) | Persona + 5-Phase workflow summary + routing map |
+| **L1** | `policy/skill-builder.yaml` (NEW) | YAML with `must:` / `must_not:` / G1-G8 | 400-1200 | G1-G8 guardrails + thresholds + zone contract |
+| **L1** | `policy/workflow.md` (NEW) | Markdown + YAML hybrid | 400-1200 | 5-Phase execution contract |
+| **L1** | `policy/guardrails.md` (NEW) | Markdown with YAML guardrail blocks | 400-1200 | G1-G8 enforcement detail |
+| **L1** | `policy/output-spec.md` (NEW) | Markdown + YAML schema | 400-1200 | build-log.md schema |
+| **L2** | `knowledge/*.md` (7 files) | Markdown | 400-2500/file | architect.md, build-guidelines.md, anthropic-skill-standards.md, builder-knowledge-boot-sequence.md, skill-builder-script-boundary-policy.md, builder-token-budget.md |
+| **L2** | `data/builder-knowledge-sources.yaml` (NEW) | YAML | 400-1200 | Knowledge source registry |
+| **L3** | `examples/build-exemplars.md` (NEW) | Markdown + code | 400-1500 | Concrete builds: leaf + meta-skill |
+| **L3** | `templates/build-log.md.template` (NEW) | Markdown + YAML frontmatter | 400-1500 | Full target_skill build scaffold |
+| **L3** | `loop/build-checklist.yaml` (v2.0.0) | YAML | 400-1500 | Quality gate with tier_knowledge_parity |
+
+### 10.3 Why L1 extracted (R3 mitigation)
+
+- **SKILL.md ver-0.0.2**: ~1160 tokens (above 700 cap)
+- **SKILL.md ver-0.0.3**: ~400 tokens (L0 only, 5x reduction)
+- **policy/skill-builder.yaml (NEW)**: 1100 tokens (G1-G8 + thresholds)
+- **policy/workflow.md (NEW)**: 850 tokens
+- **policy/guardrails.md (NEW)**: 1100 tokens
+- **policy/output-spec.md (NEW)**: 800 tokens
+
+Total: 4250 tokens across 5 L1 files (avg 850 each) — distributed, indexed, and Tier 1 always loaded.
+
+### 10.4 Anti-pattern: All in SKILL.md
+
+❌ **KHÔNG làm** (v0.0.2 anti-pattern — fixes R3):
+```markdown
+# SKILL.md v0.0.2 — 1160 tokens
+- Persona
+- 5 Phases
+- G1-G8 guardrails inline (300 tokens)
+- Format selection table inline
+- Token budget rules inline
+- Boot sequence
+- Routing map
+- Examples inline
+- Error policy
+```
+
+✅ **LÀM ĐÚNG** (v0.0.3 — L0 strict + L1 split):
+```markdown
+# SKILL.md v0.0.3 — 400 tokens
+- YAML frontmatter (name, description, version: 0.0.3, suite: WASHVN)
+- <instructions> XML (5 imperative rules + 5 must_not)
+- <context> XML (boot sequence, 1 line per Tier 1 file)
+- 5-Phase workflow summary (5 one-liners)
+- Workflow Progress Tracker (5 phases checklist)
+- <output_contract> XML (3-line DRC summary)
+- Routing map → policy/skill-builder.yaml (L1 split)
+```
+
+### 10.5 disable-model-invocation Rationale (Q1)
+
+`disable-model-invocation: true` trong frontmatter = skill KHÔNG auto-trigger bởi sub-agent. Rationale (Q1 RESOLVED):
+
+| Use case | Trigger pattern | Verdict |
+|----------|----------------|---------|
+| Manual via parent session | User explicitly invokes skill-builder | ✅ Allowed |
+| Via Stage 2 Planner handoff | Stage 2 produces todo.md → Stage 3 explicit call | ✅ Allowed |
+| Auto-trigger in autopilot/ralph | Sub-agent auto-invoke without user | ❌ Blocked (consistent with sibling skill-architect) |
+| Auto-trigger after Stage 3.5 review | Stage 3.5 produces review-report.md → Stage 4 implicit | ❌ Blocked (Stage 4 is sandbox-validator) |
+
+Ver-0.0.3 keeps `disable-model-invocation: true` for sibling consistency (skill-architect also has `true`). Auto-trigger deferred to ver-0.0.4 if Steve changes requirement.

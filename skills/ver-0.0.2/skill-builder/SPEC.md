@@ -1,12 +1,12 @@
 ---
-spec_version: "3.0.0"
+spec_version: "3.1.0"
 skill_name: "skill-builder"
 based_on:
   - "CLAUDE.md AI-First Documentation Standard v1.0"
-  - "skill-architect/SPEC.md v3.0"
+  - "skill-architect/SPEC.md v3.1.0"
   - "skill-planner/SPEC.md v3.0"
   - "Agent Skill Framework architecture.md v3.0.0"
-last_updated: "2026-05-31"
+last_updated: "2026-06-18"
 maintained_by: "Steve Void Team"
 ---
 

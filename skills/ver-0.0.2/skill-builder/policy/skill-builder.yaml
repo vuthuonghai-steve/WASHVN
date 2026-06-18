@@ -1,0 +1,215 @@
+# L1 Working Policy — skill-builder ver-0.0.3
+# [TỪ DESIGN §2.3 + §3 policy zone + §7 Tier 1, BA §6 KG-5, HANDBOOK §7.4]
+# Self-hosted working policy — extracted from SKILL.md body (L0 → L1 split).
+# Consumed by SKILL.md (routing reference) and scripts/validate_skill.py (threshold check).
+
+skill_name: "skill-builder"
+version: "0.0.3"
+policy_type: "L1_working_policy"
+schema_version: "3.1.0"
+generated_at: "2026-06-18"
+generated_by: "skill-builder (dogfooding, Stage 3)"
+target_token_budget: "400-1200"
+
+# === MUST / MUST_NOT PRIORITY ORDER ===
+# Read this section first before any other guardrail block.
+priority_order:
+  - "source_fidelity: 100% content from design.md + todo.md + resources/* + data/*"
+  - "zone_contract: ONLY create files in design.md §3 Zone Mapping"
+  - "phase_discipline: execute PH1→PH2→PH3→PH4→PH5 in order"
+  - "placeholder_control: <5 PASS / 5-9 WARNING / >=10 FAIL"
+  - "format_compliance: YAML/XML/trace tags/token budget"
+
+must:
+  - "create files specified in design.md §3 Zone Mapping and sub-skill plans"
+  - "execute todo.md phases in order"
+  - "mark tasks done only after verification"
+  - "append to build-log.md with every decision (Task -> Output -> Source files)"
+  - "resolve [CẦN LÀM RÕ] before proceeding"
+  - "read `.skill-context/suite_config.yaml` at startup to determine runtime_dest"
+  - "verify Stage 3.5 Quality Gate: review-report.md exists before Phase 5"
+  - "enforce Cognitive Agentic Skill Paradigm: L0/L1/L2/L3 separation"
+  - "restrict Python scripts under `scripts/` to system primitives only (I/O, entropy, API wrapper, math) — NO high-level reasoning"
+  - "if sub-skill todo.md plans exist, physically build them as separate packages"
+  - "auto-generate scripts/orchestrate.py for meta-skills using SSP protocol"
+  - "audit design.md for phi logic before Phase 3 (G1 Engineer-Critic)"
+  - "log every critical file creation to build-log.md Resource Usage Matrix"
+
+must_not:
+  - "create files outside design.md §3 Zone Mapping (G7 violation)"
+  - "skip phases or reorder without user approval"
+  - "mark task done without evidence"
+  - "continue after system error (Log-Notify-Stop, G3)"
+  - "leave placeholder density >= 10"
+  - "skip Stage 3.5 Quality Gate checks"
+  - "embed high-level cognitive reasoning, synthesis, or domain analysis in Python scripts"
+  - "create README.md, LICENSE, Makefile unless listed in design.md §3"
+  - "use legacy trace tags ([GỢI Ý], [TỪ AUDIT], [TỪ AUDIT CUSTOM], [CẦU LÀM RÕ])"
+  - "produce SKILL.md with YAML frontmatter missing name/description/version"
+  - "use literal string match for ## 3. Zone Mapping in validator (use section-number pattern instead)"
+
+# === G1-G8 GUARDRAILS (extracted from SKILL.md body) ===
+guardrails:
+  G1_engineer_critic:
+    severity: "MUST"
+    description: "Thẩm định design trước build. Có quyền sửa phi logic."
+    must: "Challenge phi logic in design before implementation"
+    enforcement: "Phase 1 PREPARE + Phase 2 CLARIFY mandatory audit"
+  G2_phase_driven:
+    severity: "MUST"
+    description: "Chia BUILD theo Phase todo.md. Mark-as-done từng phase."
+    must: "Execute PH1→PH2→PH3→PH4→PH5 in order, no skip, no reorder"
+    enforcement: "G2 violation = quality-gate FAIL (FR-18)"
+  G3_log_notify_stop:
+    severity: "MUST"
+    description: "Lỗi hệ thống → Log → Notify → DỪNG NGAY."
+    must: "On system error: append to build-log.md, notify user, STOP all tasks"
+    enforcement: "All system errors are blocking; no auto-recovery"
+  G4_source_grounding:
+    severity: "MUST"
+    description: "Nội dung 100% từ design/todo/resources. Không ảo giác."
+    must: "Only create files in design.md §3 Zone Mapping"
+    enforcement: "Validator check_file_mapping enforces"
+  G5_build_log_mandatory:
+    severity: "MUST"
+    description: "Ghi quyết định, phản biện, file tạo vào build-log.md."
+    must: "Append every decision with format 'Task -> Output -> Source files'"
+    enforcement: "Builder agent checks log on every file write"
+  G6_context_coverage:
+    severity: "MUST"
+    description: "Không bỏ sót file critical; có evidence trong Resource Usage Matrix."
+    must: "All Critical files (design.md, todo.md, resources/*, data/*) have usage evidence"
+    enforcement: "Validator check_context_resource_coverage in strict-context mode"
+  G7_zone_contract_block:
+    severity: "MUST"
+    description: "CHỉ tạo file trong design.md §3. Không tự ý thêm."
+    must_not: "Create files not in §3 Zone Mapping (FR-03, FR-17)"
+    enforcement: "Block build + log error if violated"
+  G8_format_compliance:
+    severity: "MUST"
+    description: "Output phải tuân thủ format-standards.md"
+    must:
+      - "use_yaml_for_constraints"
+      - "use_xml_tags_for_boundaries"
+      - "use_trace_tags_for_all_content"
+      - "follow_token_budget"
+      - "yaml_frontmatter_line1"
+    must_not:
+      - "output_missing_trace_tags"
+      - "use_placeholder_filenames_in_zone_mapping"
+      - "skip_format_validation"
+    reject_if:
+      - "missing_trace_tags"
+      - "missing_xml_boundaries"
+      - "missing_yaml_must_must_not"
+      - "token_budget_exceeded"
+      - "yaml_frontmatter_not_line1"
+    enforcement: "hard"
+
+# === PLACEHOLDER THRESHOLD (unified C2 resolution) ===
+placeholder_threshold:
+  pass: "< 5"
+  warning: "5-9"
+  fail: ">= 10"
+  measurement: "count of [MISSING_DOMAIN_DATA] markers across all .md files"
+  rationale: "C2 unified across SKILL.md, build-checklist.yaml, policy/, SPEC.md"
+
+# === TOKEN BUDGET (per zone, NFR-03) ===
+token_budget:
+  L0_anchor:
+    location: "SKILL.md"
+    target: "150-400 tokens"
+    warning: "500-700 tokens"
+    hard_cap: 700
+    action_if_exceeded: "Extract L1 content to policy/skill-builder.yaml and keep SKILL.md L0 only"
+  L1_working_policy:
+    location: "policy/*.yaml"
+    target: "400-1200 tokens"
+    hard_cap: 1500
+  L2_domain_context:
+    location: "knowledge/*.md"
+    target: "400-2500 tokens per file"
+    hard_cap: 3000
+  L3_evidence_examples:
+    location: "examples/*.md"
+    target: "400-1500 tokens per file"
+    hard_cap: 2000
+
+# === ZONE CONTRACT SPEC (G7 strict) ===
+zone_contract:
+  enforcement: "hard"
+  rule: "Only files in design.md §3 Zone Mapping may be created"
+  violations:
+    - "Creating README.md, LICENSE, or Makefile without §3 listing"
+    - "Creating files in undocumented directories"
+    - "Renaming zone folders without design.md update"
+  detection: "validator scripts/validate_skill.py check_file_mapping"
+  parser_pattern: "^## 3\\.\\s+"  # section-number pattern (R1 fix)
+
+# === FORMAT SELECTION ===
+format_selection:
+  yaml_for:
+    - "constraints"
+    - "policies"
+    - "checklists"
+    - "output_contracts"
+    - "guardrails"
+  markdown_for:
+    - "explanation"
+    - "rationale"
+    - "overview"
+    - "domain_knowledge"
+    - "walkthrough"
+  xml_tags_for:
+    - "semantic_boundaries"
+    - "separating_context_from_instruction"
+    - "wrapping_examples"
+  trace_tags_for:
+    - "all content files in knowledge/ and policy/"
+
+# === OUTPUT CONTRACT (DRC template) ===
+output_contract:
+  output_type: "Type 1 (Monolithic Stage)"
+  target_context_variable: "target_skill"
+  destination: ".skill-context/{target_skill}/build-log.md"
+  format: "markdown"
+  required_sections:
+    - "## Resource Inventory"
+    - "## Resource Usage Matrix"
+    - "## Validation Result"
+  handoff_to: "production-code-reviewer (Stage 3.5)"
+
+# === PROGRESSIVE DISCLOSURE ROUTING ===
+progressive_disclosure:
+  tier1_mandatory:
+    - "SKILL.md"
+    - "policy/skill-builder.yaml"
+    - "data/builder-knowledge-sources.yaml"
+    - "loop/build-checklist.yaml"
+  tier2_conditional:
+    - "knowledge/architect.md (Phase 1-3 guardrail decisions)"
+    - "knowledge/builder-knowledge-boot-sequence.md (Boot step)"
+    - "knowledge/skill-builder-script-boundary-policy.md (Phase 3 §3 scripts design)"
+    - "knowledge/build-guidelines.md (Phase 3 format selection)"
+    - "knowledge/builder-token-budget.md (Phase 4 token gate)"
+    - "knowledge/anthropic-skill-standards.md (frontmatter + discovery)"
+    - "templates/build-log.md.template (Phase 5 delivery scaffold)"
+    - "examples/build-exemplars.md (Phase 3 abstract mapping reference)"
+  tier3_on_demand:
+    - "knowledge/build-visualization-guidelines.md (Mermaid diagrams)"
+    - "examples/fidelity-checks.md (Phase 4 fidelity heuristics)"
+    - "docs/MIGRATION-0.0.2-to-0.0.3.md (migration path)"
+
+# === TRACE TAG WHITELIST ===
+trace_tags:
+  standard:
+    - "[TỪ DESIGN §N]"
+    - "[TỪ AUDIT TÀI NGUYÊN]"
+    - "[GỢI Ý BỔ SUNG]"
+    - "[CẦN LÀM RÕ]"
+  forbidden_legacy:
+    - "[GỢI Ý]"
+    - "[TỪ AUDIT]"
+    - "[TỪ AUDIT CUSTOM]"
+    - "[CẦU LÀM RÕ]"
+  detection: "scripts/validate_skill.py check_trace_tags"

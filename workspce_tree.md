@@ -31,8 +31,8 @@
 | Stage 1 | `raw/ver-3/skill-architect/` | `SKILL.md` | Thiết kế kiến trúc |
 | Stage 1.5 | `raw/ver-3/production-quality-gatekeeper/` | `SKILL.md` | Thẩm định chất lượng |
 | Stage 2 | `raw/ver-3/skill-planner/` | `SKILL.md` | Lập kế hoạch |
-| Stage 3 | `raw/ver-3/skill-builder/` | `SKILL.md` | Xây dựng skill |
-| Stage 3.5 | `raw/ver-3/production-code-reviewer/` | `SKILL.md` | Review code |
+| Stage 3 | `skills/ver-0.0.2/skill-builder/` | `SKILL.md` | Xây dựng skill (ver-0.0.3: 9 zones, 21 files, 18 zone files + 3 legacy) |
+| Stage 3.5 | `raw/ver-3/skill-quality-reviewer/` | `SKILL.md` | Review chất lượng skill |
 | Stage 4 | `raw/ver-3/sandbox-validator/` | *(planned)* | Kiểm thử sandbox |
 | Stage 5 | `raw/ver-3/index-builder/` | *(planned)* | Đăng ký chỉ mục |
 
@@ -78,6 +78,7 @@
 | `.claude/knowledge/` | Claude-specific knowledge |
 | `.claude/agents/` | **Custom Claude Code subagents (project scope, priority 3)** |
 | `.claude/agents/_staging/` | Subagent staging area (writable by subagent-forge only) |
+| `.claude/agents/subagent-registry.json` | **Registry danh sách subagents** — track status, stage, tools, upstream/downstream |
 | `docs/context-to-work/` | Scope analysis documents |
 | `.codegraph/` | Codegraph index (auto-generated) |
 | `.omc/` | OMC orchestration state |
@@ -90,18 +91,18 @@
 ```yaml
 routing_rules:
   edit_skill_code:
-    - "Làm việc tại raw/ver-3/{skill-name}/"
+    - "Làm việc tại skills/ver-0.0.2/{skill-name}/"
     - "Không sửa trực tiếp .agents/skills/ hay .claude/skills/"
-    - "Sync sau khi hoàn tất: cp -r raw/ver-3/* .agents/skills/"
+    - "Sync sau khi hoàn tất: cp -r skills/ver-0.0.2/* .claude/skills/"
 
   create_new_skill:
-    - "Tạo design.md + criteria.md trước"
+    - "Tạo design.md + criteria.md trước tại .skill-context/{skill-name}/"
     - "Theo 7-Zone structure"
-    - "Đăng ký vào llms.txt sau khi verified"
+    - "Đăng ký vào skills/ver-0.0.2/skills-registry.json sau khi verified"
 
   run_validator:
     - "Chạy validate_suite_integrity.py trước mỗi sync"
-    - "python3 raw/ver-3/scripts/validate_suite_integrity.py"
+    - "python3 skills/ver-0.0.2/scripts/validate_suite_integrity.py"
 
   add_to_routing_map:
     - "Cập nhật file này khi thay đổi structure"
@@ -113,4 +114,10 @@ routing_rules:
     - "Parent session move file → .claude/agents/<name>.md sau khi user gõ 'deploy <name>'"
     - "Archive tại .skill-context/_subagent-staging/<name>/deployed/<timestamp>/"
     - "Restart Claude Code session để subagent được discover"
+
+  register_subagent:
+    - "Sau khi deploy, cập nhật .claude/agents/subagent-registry.json"
+    - "Thêm entry với đầy đủ: name, file, status, model, pipeline_stage, tools, upstream, downstream"
+    - "Cập nhật summary.total_subagents và summary.deployed"
+    - "KHÔNG đăng ký subagents vào skills-registry.json (file đó chỉ track 7-Zone Skills)"
 ```

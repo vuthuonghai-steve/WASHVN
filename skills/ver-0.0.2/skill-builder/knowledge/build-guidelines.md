@@ -1,10 +1,20 @@
+---
+layer: "L2_domain_context"
+zone: "knowledge"
+skill: "skill-builder"
+version: "0.0.3"
+trace: "[TỪ DESIGN §3, BA §1.1 S6, HANDBOOK §6.1]"
+last_updated: "2026-06-18"
+---
+
 # **BUILD GUIDELINES (Usage: Quy chuẩn viết nội dung)**
 
-> **Usage**: Hướng dẫn Kỹ sư cách viết và tổ chức nội dung cho từng Zone. Dùng trong Step BUILD.
+> **Usage**: Hướng dẫn Kỹ sư cách viết và tổ chức nội dung cho từng Zone. Dùng trong Step BUILD. Tier 2 — load khi Phase 3 §3 format selection.
+> **Ver-0.0.3 note**: L1 working policy (G1-G8 + thresholds) đã chuyển sang `policy/skill-builder.yaml`. File này chỉ giữ 4-Layer Knowledge Separation + Format Selection. Token budget chi tiết ở `knowledge/builder-token-budget.md`. Knowledge source registry ở `data/builder-knowledge-sources.yaml`.
 
 ---
 
-## 0. CHUẨN CLAUDE.MD — 4 LAYER KNOWLEDGE SEPARATION (BẮT BUỘC)
+## 0. CHUẨN CLAUDE.MD — 4 LAYER KNOWLEDGE SEPARATION (BẮT BUỘC) — ver-0.0.3 Reference
 
 ### Tại sao cần tách?
 
@@ -13,34 +23,49 @@ LLM không xử lý Markdown/YAML như compiler. Nó phản ứng với **cấu 
 - Token budget explosion → context overload
 - Chất lượng output giảm
 
-### 4 Layers từ CLAUDE.md §5:
+### 4 Layers từ CLAUDE.md §5 (ver-0.0.3 với L1 extraction):
 
 ```yaml
+# L1 working policy moved to policy/skill-builder.yaml (Tier 1, L1 layer)
+# This file documents the schema only; actual policy content at policy/skill-builder.yaml
 knowledge_layers:
   L0_anchor_rules:
     purpose: "Luật nền, mục tiêu, giới hạn tuyệt đối"
     location: "SKILL.md (root)"
     format: "YAML frontmatter + XML boundaries"
-    token_budget: "150-400 tokens"
+    token_budget: "150-400 tokens (Q3 RESOLVED strict)"
+    ref: "design.md §7 Tier 1 + §9 Q3"
 
   L1_working_policy:
     purpose: "Quy ước làm việc, constraints, output contract"
-    location: "policy/{target_skill}.yaml"
-    format: "YAML with must/must_not/constraints"
+    location: "policy/skill-builder.yaml (NEW in 0.0.3)"
+    format: "YAML with must/must_not/constraints/G1-G8"
     token_budget: "400-1200 tokens"
+    ref: "design.md §3 policy zone, BA §6 KG-5, R3 mitigation"
 
   L2_domain_context:
     purpose: "Domain knowledge, glossary, data flow"
-    location: "knowledge/*.md"
+    location: "knowledge/*.md (this zone)"
     format: "Markdown + tables"
-    load_policy: "on-demand"
+    load_policy: "on-demand via data/builder-knowledge-sources.yaml (Tier 2)"
+    ref: "knowledge/builder-knowledge-boot-sequence.md"
 
   L3_evidence_examples:
     purpose: "Spec, logs, examples, fixtures"
-    location: "examples/, specs/"
+    location: "examples/*.md, loop/*.md"
     format: "XML wrapper + Markdown/YAML"
-    load_policy: "task-specific"
+    load_policy: "task-specific via data/builder-knowledge-sources.yaml (Tier 2/3)"
+    ref: "examples/build-exemplars.md"
 ```
+
+### Format Selection (4-Layer aware) — ver-0.0.3 ver-0.0.2 parities
+
+| Content Type | Layer | Format | Example Location |
+|--------------|-------|--------|------------------|
+| Persona, mission, routing map | L0 | Markdown + XML | `SKILL.md` |
+| Guardrails (G1-G8), must/must_not, threshold, zone contract | L1 | YAML | `policy/skill-builder.yaml` |
+| 4-Layer separation, format selection, content writing rules | L2 | Markdown | `knowledge/build-guidelines.md` (this file) |
+| Concrete builds, fidelity case studies | L3 | Markdown + code | `examples/build-exemplars.md` |
 
 ### Format Selection từ CLAUDE.md §3-§4:
 
