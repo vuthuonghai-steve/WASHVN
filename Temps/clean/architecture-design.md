@@ -416,7 +416,7 @@ scs_evaluation:
 2. Thủy hóa (hydrate) thành một **context package cô đọng** dành cho Planner
 3. Trích xuất: 10+ glossary terms, NFRs, edge cases, data contracts, zone map, must_not list
 4. Loại bỏ prose thừa, chỉ giữ semantic anchors
-5. **KHÔNG chạm `thought-cache.yaml`** — Reflection Cache artifact song song chứa cognitive depth (thought blocks, empathy, reverse questions, defensive reasoning). Hydrator giữ tách biệt để bảo toàn depth cho Builder. Xem § 4.A.
+5. **Kiểm tra `thought-cache.yaml`**: Bắt buộc kiểm tra sự tồn tại và tính hợp lệ của `thought-cache.yaml` trên Context Bus. Nếu thiếu hoặc rỗng, Hydrator dừng quy trình ngay lập tức và tự động kích hoạt Fallback F18 (quay về Stage 0), tránh lãng phí tài nguyên cho Planner. Xem § 4.A.
 
 **Input:** Context Bus (toàn bộ artifacts từ L0-L2)
 
@@ -478,13 +478,14 @@ hydrated_context:
 **Output:** `plan-verification-report.md` (Pass / Drift / Fail)
 
 > [!IMPORTANT]
-> **Semantic Sampling Audit Layer (MỚI — additive overlay):** Sau khi Drift Detector PASS, pipeline có thể kích hoạt lớp audit xác suất (~20% mặc định) kiểm tra **semantic meaning** thay vì chỉ structural pattern. Drift Detector kiểm tra pattern presence (có back-link không? contract khớp form không?) — Sampling Audit kiểm tra pattern meaning (back-link có ý nghĩa nghiệp vụ đúng không?). Giải quyết lỗ hổng "PASS-form nhưng FAIL-meaning".
+> **Semantic Sampling Audit Layer (MỚI — additive overlay):** Sau khi Drift Detector PASS, pipeline kích hoạt lớp audit xác suất (~30% mặc định) kiểm tra **semantic meaning** để giải quyết lỗ hổng "PASS-form nhưng FAIL-meaning". Planner (Stage 2) bắt buộc sinh file `todo-intent.yaml` giải trình nghiệp vụ của plan để so khớp semantic.
 >
-> - **Sampling rate adaptive:** 20% default → 50% nếu escalation (2/5 gần nhất FAIL) → 10% nếu relaxation (5/5 PASS)
-> - **Audit method:** Oracle subagent (default) hoặc Human (configurable) — trả lời 3 câu hỏi AUDIT-1→3
-> - **Nếu PASS:** pipeline tiếp tục Stage 3. **Nếu FAIL:** trigger F8-EXT (MỚI) — ghi `audit-fail-report.md`, quay Stage 1 (design sai) hoặc Stage 0 (plan sai intent)
-> - **Deterrent effect:** LLM biết có 20%抽查 will tự ép deeper thinking — probabilistic deterrent, không cần catch 100%
-> - Xem chi tiết tại `protocols-and-state-spec.md § 8` (F8-EXT) và § 9 (`sampling_audit` block)
+> - **Sampling rate adaptive:** 30% default → 100% (Hard Gate) ngay khi có bất kỳ FAIL nào trong 8 lần gần nhất → 15% relaxation khi đạt 8 lần PASS liên tiếp.
+> - **Audit method:** Oracle subagent (default) hoặc Human (configurable) — trả lời 3 câu hỏi AUDIT-1→3.
+> - **Human Mode Fallback Timeout:** Nếu ở chế độ `human` mà user không phản hồi trong 5 phút, hệ thống tự động fallback sang Oracle Audit hoặc chuyển sang degraded mode chạy tiếp để tránh bottleneck nghẽn pipeline.
+> - **Nếu PASS:** pipeline tiếp tục Stage 3. **Nếu FAIL:** trigger F8-EXT (MỚI) — ghi `audit-fail-report.md`, quay Stage 1 (design sai) hoặc Stage 0 (plan sai intent).
+> - **Deterrent effect:** LLM biết có 30%抽查 sẽ tự ép deeper thinking.
+> - Xem chi tiết tại `protocols-and-state-spec.md § 8` (F8-EXT) và § 9 (`sampling_audit` block) và `supplements/sampling-audit-spec.md`.
 
 **Fallback logic (3 mức):**
 - **Drift minor** (task lệch nhưng sửa được) → quay Stage 2 (re-plan)
@@ -513,20 +514,15 @@ hydrated_context:
 | `thought-cache.yaml` | Stage 0 + Stage 1.5 | ⚡ TÙY CHỌN | ✅ **BẮT BUỘC** |
 
 **Quy tắc:**
-- Hydrator KHÔNG chạm `thought-cache.yaml` — giữ tách biệt để bảo toàn depth
+- Hydrator (Stage 1.7) BẮT BUỘC kiểm tra sự tồn tại và tính hợp lệ của `thought-cache.yaml` trên Context Bus. Nếu thiếu/rỗng, Hydrator dừng quy trình ngay lập tức và tự động kích hoạt Fallback F18 (quay về Stage 0 BA Elicitor).
 - Builder Phase 1 thực hiện **Dual Context Ingestion**: đọc cả `hydrated-context.yaml` (technical contracts) VÀ `thought-cache.yaml` (cognitive depth)
-- Nếu `thought-cache.yaml` thiếu → Fallback F18: quay Stage 0 (BA Elicitor) để Depth Recovery
 - Xem chi tiết tại `protocols-and-state-spec.md § 8` (F16-F18) và § 7 (Rule 7-8)
 
 > [!NOTE]
-> **Phase Compression mode — Stage mapping (Branch A only):** Trong Phase Compression mode, 8 stages L0-L3 được collapse thành 3 phases:
-> - **Phase D1** (Discovery): Stage 0 + Stage 0.5 + Stage 0.7
-> - **Phase D2** (Design & Contract): Stage 1 + Stage 1.5
-> - **Phase D3** (Plan & Verify): Stage 1.7 + Stage 2 + Stage 2.5
->
-> Internal retry loop (max 3) thay thế fallback F1-F9 stage-specific. Nếu retry 3 lần fail → escalate (PC-4 cho critical design sai domain). Xem `supplements/phase-compression-spec.md` và `protocols-and-state-spec.md § 8` (PC-1 → PC-4).
->
-> Branch B (Full Track OMSP) KHÔNG áp dụng Phase Compression — giữ nguyên 13-stage pipeline.
+> **Phase Compression mode — Stage mapping (Branch A only):** Trong Phase Compression mode, 8 stages L0-L3 được collapse thành 3 phases. Để giải quyết các điểm đánh đổi:
+> - **Cô lập lỗi & Granularity:** Các phase gộp (D1, D2, D3) bắt buộc phải sinh ra các **Trạm kiểm chứng trung gian (Intermediate Diagnostic Checkpoints)** trong output file. Nếu một tiểu nhiệm vụ fail, agent thực hiện *in-memory selective rollback* (sửa từng phần prompt) thay vì chạy lại toàn bộ phase.
+> - **Tối ưu hóa Token:** Thay vì dùng instruction mô tả dài dòng (làm prompt phình to 150%), prompts của combined agents được chuẩn hóa bằng **cấu trúc JSON Template**, giới hạn prompt phình tối đa ~110%, giúp hiệu quả tiết kiệm token thực tế tiệm cận ~60% (gần sát tỷ lệ LLM call giảm).
+> - Xem chi tiết tại `supplements/phase-compression-spec.md` và `protocols-and-state-spec.md § 8` (PC-1 → PC-4).
 
 ---
 
@@ -544,15 +540,16 @@ Xem chi tiết tại [Section 5.2](#52-branch-b--micro-skill-bundle--full-track-
 
 #### Stage 3.5 - Code Reviewer (chung 2 nhánh)
 
-**Trách nhiệm:** Review `review-report.md` theo:
+**Trách nhiệm:** Review và sinh `review-report.md` theo các tiêu chí:
 - BUILD-1.1: Zone Contract
 - BUILD-1.2: Fidelity Mapping
-- BUILD-2.1: Placeholder Density
+- BUILD-2.1: Placeholder Density (Soft Gate)
 - BUILD-2.2: Cognitive-Code Separation
 - BUILD-4.1: Executable Verification
 - BUILD-5.1: Security Gate Verdict
+- **REV-3.0: Refactor Trigger (MỚI)**: Nếu phát hiện cảnh báo soft gate liên quan đến `BUILD-2.1` (placeholder count >= 10) hoặc `BUILD-3.1` (token budget vượt 700) ghi nhận trong `build-log.md`, Code Reviewer sẽ tự động kích hoạt **subagent Refactor** để tiến hành dọn dẹp các mã mock/placeholder hoặc tái cấu trúc nén file `SKILL.md` (chuyển phần chi tiết sang `knowledge/`) trước khi bàn giao xuống Sandbox.
 
-**Fallback:** Review fail → quay về Stage 3 (Builder) hoặc Stage 3c (Integration Assembler cho Branch B).
+**Fallback:** Review fail → quay về Stage 3 (Builder) hoặc Stage 3c (Integration Assembler cho Branch B). Nếu lỗi liên quan đến soft gates -> tự động kích hoạt Refactor subagent sửa tại chỗ.
 
 #### Stage 4 - Sandbox Validation
 

@@ -23,6 +23,7 @@ agent_spec:
   
   responsibilities:
     - "Đọc orchestration-plan.md từ Context Bus (Stage 2 output)"
+    - "Kiểm tra `_state.yaml` status. Nếu status = `degraded`, kích hoạt chế độ phòng vệ (defensive mode)"
     - "Phân rã thành N micro-tasks độc lập với ranh giới rõ ràng"
     - "Spawn N Micro-Skill Builder subagents song song (parallel execution)"
     - "Quản lý SSP (State & Signal Protocol) giữa các micro-skill"
@@ -35,6 +36,7 @@ agent_spec:
     - "orchestration-plan.md (từ Stage 2)"
     - "hydrated-context.yaml (từ Context Bus)"
     - "design.md §3 Zone Mapping (từ Context Bus)"
+    - "_state.yaml (để check degraded status)"
   
   outputs:
     - "micro-skill-bundle/ (thư mục chứa N micro-skills)"
@@ -45,6 +47,7 @@ agent_spec:
   must:
     - "Bắt buộc sinh orchestrate.py khi SCS >= 3.0 (theo build-stage-standards.md)"
     - "Mọi micro-skill phải có SSP contract rõ ràng (input_signal, output_signal, downstream)"
+    - "Khi status hệ thống là `degraded` (do hỏng tài liệu Non-Critical), bắt buộc thắt chặt kiểm duyệt SSP contract và sinh mã phòng vệ dự phòng (defensive code)"
     - "Validate schema matching giữa micro-skill A output và micro-skill B input"
     - "Spawn builders song song khi không có phụ thuộc (DAG parallel execution)"
     - "Đính kèm trace tag [MICRO-SKILL #N] cho mọi output"

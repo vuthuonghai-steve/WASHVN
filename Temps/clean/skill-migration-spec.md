@@ -15,9 +15,9 @@
 - **Vấn đề:** Ban đầu hệ thống chỉ thiết kế để tạo mới skill từ yêu cầu thô. Khi muốn tối ưu hóa hoặc chuẩn hóa một skill cũ (cả nội bộ và bên ngoài), hệ thống sẽ phải tạo lại từ đầu, gây lãng phí tri thức cũ và tăng nguy cơ ảo giác từ LLM.
 - **Giải pháp:** Tích hợp bộ giải mã (Skill Deconstructor) vào Stage 0.5 để đọc cấu trúc nguồn. Miner (Stage 0.7) có nhiệm vụ bóc tách tri thức, ưu điểm và ý chí của skill cũ, đưa vào `domain-handbook.md`. Đối với chế độ `UPDATE`, Architect và Planner chỉ thiết kế phần Delta (chênh lệch) và Builder chỉnh sửa trực tiếp các file tại chỗ (in-place modification).
 
-### 13.7 Quyết định thiết kế #4: Chuyển Token Budget thành Soft Gate / Warning
+### 13.7 Quyết định thiết kế #4: Chuyển Token Budget thành Soft Gate / Warning kết hợp Refactor Loop (REV-3.0)
 - **Vấn đề:** Ràng buộc Token Budget của `SKILL.md` (ví dụ `<= 700` tokens) nếu bị ép cứng và tự động cắt xén bởi Builder có thể phá hủy các ngữ cảnh nghiệp vụ đặc thù, gây ảo giác lớn cho các LLM vận hành phía sau (ai-loop, ai-poor).
-- **Giải pháp:** Tiêu chí Token Budget được chuyển thành **Soft Gate (Warning)**. Builder/Reviewer sẽ không tự động cắt xén file. Nếu vượt quá budget, hệ thống chỉ cảnh báo trong `build-log.md` để người dùng chủ động tối ưu bằng tay mà vẫn bảo toàn nghiệp vụ.
+- **Giải pháp:** Tiêu chí Token Budget được chuyển thành **Soft Gate (Warning)**. Builder/Reviewer sẽ không tự động cắt xén file gây mất mát nghiệp vụ. Tuy nhiên, nếu phát hiện cảnh báo vượt budget (hoặc cảnh báo placeholder ở `BUILD-2.1`) trong `build-log.md`, Stage 3.5 Code Reviewer sẽ tự động kích hoạt **subagent Refactor** để tự động dọn dẹp các placeholder hoặc tái cấu trúc nén `SKILL.md` (tách chi tiết sang thư mục `knowledge/`) trước khi bàn giao xuống Sandbox, giải quyết triệt để rác hệ thống một cách tự động.
 
 ---
 

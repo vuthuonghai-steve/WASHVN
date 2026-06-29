@@ -101,8 +101,8 @@ graph TD
     R4["Rule 4: Version artifacts"] --> E4["Mỗi revise tạo version mới, không ghi đè"]
     R5["Rule 5: Context Bus là single source of truth"] --> E5["Ngoại trừ Context Bus, stage KHÔNG tự đọc lại upstream"]
     R6["Rule 6: Deconstruction Ingestion"] --> E6["Trong chế độ UPDATE/REBUILD, toàn bộ tri thức cũ phải được deconstruct vào Bus trước khi thiết kế"]
-    R7["Rule 7: Reflection Cache song song"] --> E7["thought-cache.yaml chạy song song với hydrated-context.yaml. Hydrator KHÔNG chạm vào thought-cache. Builder BẮT BUỘC đọc cả hai."]
-    R8["Rule 8: Optional cho Planner, Mandatory cho Builder"] --> E8["Planner đọc thought-cache nếu cần depth context (quyết định của Planner). Builder Phase 1 BẮT BUỘC đọc thought-cache."]
+    R7["Rule 7: Hydrator kiểm tra thought-cache"] --> E7["thought-cache.yaml chạy song song. Hydrator (Stage 1.7) BẮT BUỘC kiểm tra sự tồn tại và hợp lệ của thought-cache.yaml, trigger fallback F18 ngay lập tức nếu thiếu/rỗng."]
+    R8["Rule 8: Optional cho Planner, Mandatory cho Builder"] --> E8["Planner đọc thought-cache nếu cần depth context. Builder Phase 1 BẮT BUỘC đọc thought-cache để build."]
 ```
 
 ---
@@ -183,7 +183,7 @@ flowchart TD
 | **F15** | Stage 4 (Sandbox) | Plan sai (root cause) | **Stage 2** | Planner re-plan |
 | **F16** | Stage 0 (BA Elicitor) | `thought-cache.yaml` thiếu `business_thought_process` | **Stage 0** | BA Elicitor thực hiện elicitation sâu hơn, ép META-2.1 thought block |
 | **F17** | Stage 1.5 (Spec Gatekeeper) | `thought-cache.yaml` thiếu `stakeholder_empathy` hoặc `reverse_questions` | **Stage 0** | BA Elicitor bổ sung stakeholder analysis + reverse questioning (META-2.2) |
-| **F18** | Stage 3 Builder Phase 1 | `thought-cache.yaml` không tồn tại hoặc rỗng | **Stage 0** | BA Elicitor Depth Recovery — sinh thought-cache từ đầu (META-2.1 + empathy + reverse Q + defensive reasoning) |
+| **F18** | Stage 1.7 (Hydrator) | `thought-cache.yaml` không tồn tại hoặc rỗng | **Stage 0** | BA Elicitor Depth Recovery — sinh thought-cache từ đầu (META-2.1 + empathy + reverse Q + defensive reasoning) |
 | **F19** | Stage 0 (BA Elicitor) | Stage 0 thought block FAIL META-2.1 v2.0 (4 Depth Signals) | **Stage 0** | BA Elicitor bổ sung tư duy sâu — đảm bảo đủ S1 Negation + S2 Reverse Q + S3 Multi-Stakeholder + S4 Constraint Anchoring |
 
 ### Branch A Fallback Matrix — Phase Compression Mode
@@ -239,7 +239,7 @@ pipeline_state:
   # ===== CURRENT STATE =====
   current_stage: "stage_2_planner"
   previous_stage: "stage_1_7_hydrator"
-  status: "in_progress"  # in_progress | completed | blocked | failed | escalated
+  status: "in_progress"  # in_progress | completed | blocked | failed | escalated | degraded
   iteration_count: 1
   max_iterations: 3
   
@@ -317,14 +317,17 @@ pipeline_state:
   sampling_audit:
     enabled: true
     mode: "oracle"                # oracle | human
-    sampling_rate: 20             # 10 | 20 | 50 (adaptive)
-    last_5_results:
-      - "PASS"                    # plan-001
-      - "PASS"                    # plan-002
-      - "FAIL"                    # plan-003 ← adaptive escalation trigger
-      - "PASS"                    # plan-004
-      - "FAIL"                    # plan-005 ← adaptive escalation trigger
-    escalation_active: false      # true nếu 2/5 gần nhất FAIL → rate lên 50%
+    sampling_rate: 30             # 15 | 30 | 100 (khởi tạo 30%, FAIL -> 100% lập tức, 8 PASS liên tiếp -> 15%)
+    last_8_results:               # theo dõi cửa sổ trượt 8 kết quả gần nhất
+      - "PASS"
+      - "PASS"
+      - "PASS"
+      - "PASS"
+      - "PASS"
+      - "PASS"
+      - "PASS"
+      - "PASS"
+    escalation_active: false      # true nếu có bất kỳ FAIL nào trong 8 lần gần nhất -> rate lên 100%
     audit_count_total: 12
     audit_count_fail: 2
     last_audit_id: "audit_20260625_001"
@@ -434,22 +437,25 @@ yaml_repair_history:
 
 ### 11.4 Graceful Degradation (Level 3 Cross-ref)
 
-Khi Level 3 phát hiện dangling ref, pipeline **không Hard Halt**:
+Khi Level 3 (cross-reference check) phát hiện dangling ref (liên kết hỏng), hệ thống sẽ phân loại tài liệu thành hai nhóm để xử lý riêng biệt nhằm tránh rác hệ thống âm thầm:
+
+#### 11.4.1 Phân loại Reference
+- **Critical Refs (Tài liệu tối quan trọng):** `design.md` (Stage 1), `hydrated-context.yaml` (Stage 1.7), `todo.md` (Stage 2), `orchestration-plan.md` (Stage 2 - đối với luồng Branch B).
+- **Non-Critical Refs (Tài liệu bổ trợ):** `domain-handbook.md` (Stage 0.7), `quality-matrix.yaml` (Stage 1.5), `criteria.md` (Stage 1).
+
+#### 11.4.2 Xử lý hành vi tương tác
+1. **Đối với Critical Refs:** Hệ thống từ chối commit và dừng pipeline ngay lập tức (Hard Halt), kích hoạt fallback F1-F15 về stage chịu trách nhiệm tạo ra artifact đó.
+2. **Đối với Non-Critical Refs:** Pipeline không Hard Halt, cho phép ghi nhận warning vào Context Bus, cập nhật trạng thái `_state.yaml.status` thành `degraded`. Downstream agents đọc Context Bus thấy trạng thái `degraded` sẽ tự động kích hoạt **chế độ code/plan phòng vệ (defensive mode)**, tự động suy luận hoặc sử dụng cấu hình mặc định (default values) an toàn.
 
 ```yaml
-# Context Bus nhận thêm field:
+# Context Bus nhận thêm warning field:
 artifact_warnings:
   - type: "dangling_ref"
-    artifact_key: "orchestration_plan"
-    path: ".skill-context/{target_skill}/orchestration-plan.md"
+    artifact_key: "quality-matrix"
+    path: ".skill-context/{target_skill}/quality-matrix.yaml"
     severity: "warning"
-    detail: "Path không tồn tại — Branch A, orchestration-plan không được sinh ra"
+    detail: "File không tồn tại — Sử dụng các cổng chất lượng mặc định và chạy ở chế độ phòng vệ (degraded)"
 ```
-
-**Hành vi stage downstream:**
-- Stage đọc Context Bus, kiểm tra `artifact_warnings`
-- Nếu warning liên quan đến artifact stage cần → stage skip step phụ thuộc artifact đó
-- Stage **không crash** — log warning vào build-log
 
 ### 11.5 Schemas Catalog (9 artifacts)
 
@@ -501,7 +507,7 @@ integration_rules:
   rule_2: "Layer PASS → commit proceeds bình thường"
   rule_3: "Layer FAIL (Level 1 syntax) → auto-repair (max 2 attempts)"
   rule_4: "Layer FAIL (Level 2 schema) → auto-repair (max 2 attempts)"
-  rule_5: "Layer FAIL (Level 3 cross-ref) → graceful warning — commit vẫn proceeds"
+  rule_5: "Layer FAIL (Level 3 cross-ref): Nếu là Critical Ref -> Hard Halt và fallback về stage tạo artifact. Nếu là Non-Critical Ref -> Ghi graceful warning, chuyển status thành 'degraded' và commit vẫn proceed."
   rule_6: "Repair lần 2 fail → trigger fallback cho stage gốc re-generate artifact"
   rule_7: "Mọi repair event ghi vào _state.yaml.yaml_repair_history"
   rule_8: "Mọi graceful warning ghi vào _state.yaml.graceful_warnings"
