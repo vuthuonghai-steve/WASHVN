@@ -35,9 +35,7 @@ Luôn tuân thủ quy trình quản lý và đồng bộ kỹ năng (skills). B�
 1. **Khi thêm Skill mới**:
    - Khởi tạo thư mục skill theo chuẩn 7 Zones dưới phiên bản tương ứng (ví dụ: `skills/ver-0.0.1/new-skill/`).
    - Khai báo đầy đủ metadata (name, stage, type, target_variable, role, src_path, boot_file, inputs, outputs) trong `skills-registry.json`.
-   - Cập nhật [workspce_tree.md](file:///home/steve/Work-space/WASHVN/workspce_tree.md) nếu có thay đổi về routing map.
 
 2. **Khi xóa/loại bỏ Skill**:
    - Xóa thư mục skill trong phiên bản tương ứng.
    - Xóa định nghĩa của skill đó khỏi mảng `"skills"` trong `skills-registry.json`.
-   - Cập nhật [workspce_tree.md](file:///home/steve/Work-space/WASHVN/workspce_tree.md).

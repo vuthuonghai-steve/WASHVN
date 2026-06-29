@@ -2,7 +2,7 @@
 
 > **Tự động tạo bởi**: `validate_suite_integrity.py`  
 > **Phiên bản bộ suite**: `0.0.1`  
-> **Cập nhật lúc**: `2026-06-08 01:42:13 UTC`  
+> **Cập nhật lúc**: `2026-06-29 09:37:41 UTC`  
 
 Tài liệu này đăng ký và liệt kê toàn bộ các tệp đầu ra (output files) được quy hoạch trong bộ kỹ năng WASHVN, phân loại theo cấu trúc Type 1 (Monolithic Stage) và Type 2 (Hierarchical Micro-skill).
 

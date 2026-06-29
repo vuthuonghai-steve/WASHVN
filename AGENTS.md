@@ -52,7 +52,6 @@ tech_stack:
 WASHVN/                      ← Root workspace
 ├── AGENTS.md                ← [L0] Root agent guide (general rules + policy - file này)
 ├── CLAUDE.md                ← [L0] Root agent rules for Claude Code
-├── workspce_tree.md         ← Workspace map + Zone taxonomy (L0 routing)
 ├── architecture.md          ← Master Skill Suite architecture — 8 stages, CASE system, SCS Switcher
 ├── standards.md             ← LLM Knowledge Activation Standard — format rules
 ├── .gitignore               ← Configures ignored paths (.claude, .agents, raw)
@@ -76,7 +75,7 @@ WASHVN/                      ← Root workspace
         └── scripts/         ← Programmatic validation & suite integrity scripts
 ```
 
-> **Routing nhanh:** Xem `workspce_tree.md` → Routing Quick Reference table.
+> **Routing nhanh:** Xem `architecture.md` để nắm cấu trúc 5 Layer / 8 Stage.
 
 ---
 
@@ -91,10 +90,6 @@ commands:
   validate_suite:
     run: "python3 raw/ver-3/scripts/validate_suite_integrity.py"
     desc: "Chạy script kiểm tra tính toàn vẹn của Master Skill Suite"
-
-  check_workspace:
-    run: "cat workspce_tree.md"
-    desc: "Xem workspace map đầy đủ + routing guide"
 
   view_architecture:
     run: "cat architecture.md"
@@ -129,14 +124,14 @@ conventions:
 
 ```yaml
 must:
-  - Đọc workspce_tree.md trước khi làm bất kỳ task nào để xác định đúng zone
+  - Đọc CLAUDE.md và architecture.md để xác định đúng zone cần làm việc
   - Phát triển và edit skill ở raw/ver-3/ — KHÔNG sửa trực tiếp .claude/skills/
   - Chạy validate_suite_integrity.py trước khi đồng bộ hóa sang runtime
   - Viết YAML frontmatter đầy đủ cho mọi SKILL.md mới (gồm version: 0.0.1 và suite: WASHVN)
   - Xác định đầu ra động qua Dynamic Routing Contract (DRC) dưới .skill-context/ thay vì chạy script khởi tạo thủ công
   - Cập nhật danh sách đăng ký trong skills-registry.json mỗi khi bổ sung hoặc loại bỏ một skill thuộc về các phiên bản chính thức (bỏ qua các skill thử nghiệm bên ngoài)
   - Archive context artifacts trước khi xóa hoặc overwrite
-  - Update routing map (workspce_tree.md) khi thay đổi structure
+  - Đảm bảo các thay đổi cấu trúc được cập nhật chính xác trong tài liệu kiến trúc và tệp đăng ký
   - Báo cáo summary_of_changes + zones_affected sau mỗi task
 
 must_not:
@@ -265,7 +260,6 @@ quality_gates:
 
 ```yaml
 load_when_needed:
-  workspace_routing: "workspce_tree.md"
   skill_framework_architecture: "architecture.md"
   documentation_format_standard: "standards.md"
   shared_schemas_validators: "raw/ver-3/_shared/"
@@ -279,7 +273,7 @@ load_when_needed:
 ```yaml
 agent_protocol:
   before_any_task:
-    - Đọc workspce_tree.md để xác định đúng Zone cần làm việc
+    - Đọc CLAUDE.md và architecture.md để xác định đúng Zone cần làm việc
     - Xác định skill đang ở lifecycle phase nào (raw / designed / planned / built / verified / installed)
   before_editing_skill:
     - Nếu runtime (.claude/skills/): edit raw/ver-3/ → sync
