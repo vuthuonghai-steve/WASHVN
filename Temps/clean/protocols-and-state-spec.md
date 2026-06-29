@@ -59,6 +59,9 @@ context_bus:
     todo_md: ".skill-context/{target_skill}/todo.md"
     orchestration_plan: ".skill-context/{target_skill}/orchestration-plan.md"
     plan_verification: ".skill-context/{target_skill}/plan-verification-report.md"
+    thought_cache: ".skill-context/{target_skill}/thought-cache.yaml"
+    sampling_audit_config: ".skill-context/{target_skill}/sampling-audit-config.yaml"
+    audit_fail_report: ".skill-context/{target_skill}/audit-fail-report.md"  # conditional
     build_log: ".skill-context/{target_skill}/build-log.md"
     verification: ".skill-context/{target_skill}/verification.md"
   
@@ -98,6 +101,8 @@ graph TD
     R4["Rule 4: Version artifacts"] --> E4["Mỗi revise tạo version mới, không ghi đè"]
     R5["Rule 5: Context Bus là single source of truth"] --> E5["Ngoại trừ Context Bus, stage KHÔNG tự đọc lại upstream"]
     R6["Rule 6: Deconstruction Ingestion"] --> E6["Trong chế độ UPDATE/REBUILD, toàn bộ tri thức cũ phải được deconstruct vào Bus trước khi thiết kế"]
+    R7["Rule 7: Reflection Cache song song"] --> E7["thought-cache.yaml chạy song song với hydrated-context.yaml. Hydrator KHÔNG chạm vào thought-cache. Builder BẮT BUỘC đọc cả hai."]
+    R8["Rule 8: Optional cho Planner, Mandatory cho Builder"] --> E8["Planner đọc thought-cache nếu cần depth context (quyết định của Planner). Builder Phase 1 BẮT BUỘC đọc thought-cache."]
 ```
 
 ---
@@ -168,6 +173,7 @@ flowchart TD
 | **F6** | Stage 1.7 (Hydrator) | Glossary thiếu (< 10 terms) | **Stage 0.7** | Miner bổ sung domain-handbook |
 | **F7** | Stage 2.5 (Drift Detector) | Drift minor - task lệch nhưng sửa được | **Stage 2** | Planner re-plan todo.md |
 | **F8** | Stage 2.5 (Drift Detector) | Drift major - todo.md plan sai domain | **Stage 1** | Architect revise design.md |
+| **F8-EXT** | Stage 2.5 (Semantic Audit) | Drift semantic detected — plan PASS form nhưng FAIL meaning | **Stage 1 / Stage 0** | Root cause: design sai → Stage 1 revise. Plan sai intent → Stage 0 re-elicitation. Ghi `audit-fail-report.md` |
 | **F9** | Stage 2.5 (Drift Detector) | Design sai domain (root cause) | **Stage 0.5** | Re-evaluate SCS + re-anchor domain |
 | **F10** | Stage 3.5 (Reviewer) | Review fail - Branch A | **Stage 3** | Builder re-build |
 | **F11** | Stage 3.5 (Reviewer) | Review fail - Branch B | **Stage 3c** | Integration Assembler re-assemble |
@@ -175,6 +181,35 @@ flowchart TD
 | **F13** | Stage 4 (Sandbox) | Sandbox fail - Branch A | **Stage 3** | Builder re-build |
 | **F14** | Stage 4 (Sandbox) | Sandbox fail - Branch B | **Stage 3c** | Integration Assembler re-assemble |
 | **F15** | Stage 4 (Sandbox) | Plan sai (root cause) | **Stage 2** | Planner re-plan |
+| **F16** | Stage 0 (BA Elicitor) | `thought-cache.yaml` thiếu `business_thought_process` | **Stage 0** | BA Elicitor thực hiện elicitation sâu hơn, ép META-2.1 thought block |
+| **F17** | Stage 1.5 (Spec Gatekeeper) | `thought-cache.yaml` thiếu `stakeholder_empathy` hoặc `reverse_questions` | **Stage 0** | BA Elicitor bổ sung stakeholder analysis + reverse questioning (META-2.2) |
+| **F18** | Stage 3 Builder Phase 1 | `thought-cache.yaml` không tồn tại hoặc rỗng | **Stage 0** | BA Elicitor Depth Recovery — sinh thought-cache từ đầu (META-2.1 + empathy + reverse Q + defensive reasoning) |
+| **F19** | Stage 0 (BA Elicitor) | Stage 0 thought block FAIL META-2.1 v2.0 (4 Depth Signals) | **Stage 0** | BA Elicitor bổ sung tư duy sâu — đảm bảo đủ S1 Negation + S2 Reverse Q + S3 Multi-Stakeholder + S4 Constraint Anchoring |
+
+### Branch A Fallback Matrix — Phase Compression Mode
+
+Khi Phase Compression được kích hoạt cho Branch A (Fast Track), fallback F1-F9 stage-specific được collapse thành 4 paths (PC-1 → PC-4) với internal retry loop:
+
+| ID | Phase Fail | Nguyên nhân | Hành động |
+|:---|:---|:---|:---|
+| **PC-1** | Phase D1 (Discovery) | Glossary < 10 OR SCS ambiguous | Internal retry (max 3) — agent tự bổ sung elicitation |
+| **PC-2** | Phase D2 (Design & Contract) | Self-check fail (META criteria) | Internal retry (max 3) — agent tự revise design |
+| **PC-3** | Phase D3 (Plan & Verify) | Drift minor/major detected | Internal retry (max 3) — agent tự re-plan |
+| **PC-4** | Phase D3 (Plan & Verify) | Design sai domain (critical) | Escalate — không retry |
+
+**Collapsed mapping (F1-F9 → PC):**
+
+| Fallback cũ | Stage gốc | Phase mới | Collapsed thành |
+|:---|:---|:---|:---|
+| F1, F2 | S0.5 / S0.7 | D1 Discovery | **PC-1** internal retry |
+| F3, F4 | S1.5 | D2 Design & Contract | **PC-2** internal retry |
+| F5, F6 | S1.7 | D3 Plan & Verify | **PC-3** internal retry |
+| F7, F8 | S2.5 | D3 Plan & Verify | **PC-3** internal retry |
+| F9 | S2.5 | D3 Plan & Verify | **PC-4** escalate |
+| F15 | Stage 4 (Sandbox) | → Phase D3 | **PC-3** re-plan |
+
+> [!IMPORTANT]
+> **Branch B giữ nguyên F1-F15.** Phase Compression chỉ áp dụng cho Branch A (Fast Track, SCS < 3.0).
 
 ### Quy tắc Fallback
 
@@ -227,6 +262,7 @@ pipeline_state:
     criteria: {path: ".skill-context/{target_skill}/criteria.md", status: "completed", version: 1}
     hydrated_context: {path: ".skill-context/{target_skill}/hydrated-context.yaml", status: "completed", version: 1}
     todo_md: {path: ".skill-context/{target_skill}/todo.md", status: "in_progress", version: 1}
+    thought_cache: {path: ".skill-context/{target_skill}/thought-cache.yaml", status: "completed", version: 1}
     orchestration_plan: {path: null, status: "pending"}
   
   # ===== FALLBACK HISTORY (append-only) =====
@@ -276,4 +312,198 @@ pipeline_state:
     triggered: false
     reason: null
     escalated_to: null  # oracle | user
+
+  # ===== SAMPLING AUDIT TRACKING (MỚI) =====
+  sampling_audit:
+    enabled: true
+    mode: "oracle"                # oracle | human
+    sampling_rate: 20             # 10 | 20 | 50 (adaptive)
+    last_5_results:
+      - "PASS"                    # plan-001
+      - "PASS"                    # plan-002
+      - "FAIL"                    # plan-003 ← adaptive escalation trigger
+      - "PASS"                    # plan-004
+      - "FAIL"                    # plan-005 ← adaptive escalation trigger
+    escalation_active: false      # true nếu 2/5 gần nhất FAIL → rate lên 50%
+    audit_count_total: 12
+    audit_count_fail: 2
+    last_audit_id: "audit_20260625_001"
+    last_audit_result: "FAIL"
+    audit_fail_report: ".skill-context/{target_skill}/audit-fail-report.md"
+
+  # ===== PHASE COMPRESSION (Branch A only) =====
+  phase_compression:
+    branch_a_enabled: true
+    branch_b_full_pipeline: true
+    current_phase: "D2_design_contract"        # D1_discovery | D2_design_contract | D3_plan_verify | completed
+    current_phase_iteration: 2
+    max_retry_per_phase: 3
+    phase_retry_history:
+      - event_id: "pr_001"
+        timestamp: "2026-06-25T10:10:00Z"
+        phase: "D1_discovery"
+        iteration: 1
+        reason: "Glossary chỉ có 5 terms (< 10)"
+        resolved: true
+        resolution: "Bổ sung elicitation — glossary đạt 12 terms"
+      - event_id: "pr_002"
+        timestamp: "2026-06-25T10:20:00Z"
+        phase: "D2_design_contract"
+        iteration: 1
+        reason: "META-3.1: Mechanical verification command missing"
+        resolved: false
+        resolution: null
+    stage_status_mode: "phase"        # "stage" (Branch B) | "phase" (Branch A)
+
+---
+
+## 11. YAML Resilience Layer (MỚI)
+
+> [!IMPORTANT]
+> **Middleware cross-cutting** giữa stage output và Context Bus commit. Không phải stage riêng — là interceptor tự động cho mọi thao tác ghi YAML artifact. Giải quyết Hard Halt scenario: một indentation lỗi trong Context Bus YAML có thể chặn toàn bộ downstream stage.
+
+### 11.1 Placement
+
+```
+Stage N output
+      │
+      ▼
+┌─────────────────────────────────┐
+│   YAML Resilience Layer         │  ← interceptor, không phải stage
+│   (pre-check → auto-repair →    │
+│    graceful degradation)        │
+└──────────┬──────────────────────┘
+           │
+           ▼
+    Context Bus commit
+```
+
+- **Triển khai**: Hook trong `context_bus.commit(artifact)` — mọi stage gọi `commit()` đều đi qua layer này.
+- **Không thay thế Context Bus** — là wrapper xung quanh commit hiện tại.
+- **Không phải gate mới** — không chặn pipeline, chỉ sửa hoặc cảnh báo trước khi commit.
+
+### 11.2 Pre-check Pipeline (3 Levels)
+
+#### Level 1: Syntax Lint
+- **Cơ chế**: Python `yaml.safe_load()` — helper script duy nhất.
+- **Fail**: `yaml.safe_load()` raise exception → chuyển sang Auto-repair protocol (§11.3).
+
+#### Level 2: Schema Validation
+- **Cơ chế**: Duyệt parsed dict — kiểm tra required keys tồn tại, key types đúng, value constraints (vd: `score` 1.0-5.0).
+- **Fail**: Key missing hoặc type/constraint sai → Auto-repair protocol.
+
+#### Level 3: Cross-reference Check
+- **Cơ chế**: Duyệt `context_bus.artifacts.*` và `_state.yaml.artifacts.*` — kiểm tra path tồn tại, file non-empty.
+- **Fail**: Không phải hard error → **Graceful degradation** (§11.4).
+
+### 11.3 Auto-repair Protocol
+
+**Max 2 repair attempts per artifact.** Sau 2 lần fail → trigger fallback cho stage gốc re-generate artifact.
+
+**Repair Subagent Contract:**
+```yaml
+repair_subagent:
+  input:
+    malformed_yaml: "string — nội dung YAML gốc (raw text)"
+    artifact_type: "string — tên artifact (vd: hydrated-context.yaml)"
+    expected_schema: "dict — schema kỳ vọng (từ Schemas Catalog §11.5)"
+  output:
+    repaired_yaml: "string — YAML đã sửa"
+    repair_log:
+      issue: "indentation error at line 23"
+      fix: "adjusted nesting of `input_schema` from 3 to 4 spaces"
+      confidence: 0.95
+  constraints:
+    - "Không thay đổi nội dung ngữ nghĩa — chỉ sửa indent và cấu trúc"
+    - "Output phải parse được bằng yaml.safe_load()"
+    - "Max tokens: 2000"
+```
+
+Mỗi lần repair được ghi vào `_state.yaml.yaml_repair_history`:
+```yaml
+yaml_repair_history:
+  - event_id: "yr_001"
+    timestamp: "2026-06-25T10:23:00Z"
+    artifact: "hydrated-context.yaml"
+    stage: "stage_1_7_hydrator"
+    attempt: 1
+    level: "syntax"
+    issue: "Line 42: bad indentation"
+    status: "repaired"
+```
+
+### 11.4 Graceful Degradation (Level 3 Cross-ref)
+
+Khi Level 3 phát hiện dangling ref, pipeline **không Hard Halt**:
+
+```yaml
+# Context Bus nhận thêm field:
+artifact_warnings:
+  - type: "dangling_ref"
+    artifact_key: "orchestration_plan"
+    path: ".skill-context/{target_skill}/orchestration-plan.md"
+    severity: "warning"
+    detail: "Path không tồn tại — Branch A, orchestration-plan không được sinh ra"
+```
+
+**Hành vi stage downstream:**
+- Stage đọc Context Bus, kiểm tra `artifact_warnings`
+- Nếu warning liên quan đến artifact stage cần → stage skip step phụ thuộc artifact đó
+- Stage **không crash** — log warning vào build-log
+
+### 11.5 Schemas Catalog (9 artifacts)
+
+Đặc tả YAML structure expectation cho các artifact chính:
+
+| Artifact | Stage sinh | Required keys chính |
+|:---|:---|:---|
+| `scs-rating.yaml` | Stage 0.5 | `scs_evaluation.score`, `.mode`, `.rationale`, `.routing_decision`, `.context_bus_id` |
+| `hydrated-context.yaml` | Stage 1.7 | `hydrated_context.domain`, `.glossary` (≥10), `.nfr_metrics`, `.data_contracts`, `.zone_map`, `.must_not`, `.edge_cases` |
+| `quality-matrix.yaml` | Stage 1.5 | `scs_score`, `mode`, `phases` (≥3), `acceptance_criteria` (≥5) |
+| `context-bus.yaml` | Cross-cutting | `context_bus.bus_id`, `.pipeline_run_id`, `.current_stage`, `.execution_mode`, `.artifacts` |
+| `_state.yaml` | Cross-cutting | `pipeline_state.version`, `.run_id`, `.current_stage`, `.status`, `.stage_status` |
+| `todo.md` | Stage 2 | `tasks[].id`, `.zone`, `.status` (YAML frontmatter) |
+| `ssp-contract.yaml` | Stage 2/3a | `ssp_contract.*.output_signal`, `.output_schema`, `.downstream` |
+| `orchestration-plan.md` | Stage 2 | `micro_skills` (≥2), `.dependencies`, `ssp_map` |
+| `plan-verification-report.md` | Stage 2.5 | `verdict` (Pass/Drift/Fail), `drift_items` |
+
+### 11.6 `_state.yaml` Extension Block
+
+Bổ sung vào `_state.yaml`:
+
+```yaml
+# ===== YAML RESILIENCE =====
+yaml_resilience:
+  enabled: true
+  pre_check_level: 3                        # 1=syntax, 2=schema, 3=cross-ref
+  repair_attempts_this_run: 0
+  repair_history:                           # append-only
+    - event_id: "yr_001"
+      timestamp: "2026-06-25T10:23:00Z"
+      artifact: "hydrated-context.yaml"
+      stage: "stage_1_7_hydrator"
+      attempt: 1
+      level: "syntax"
+      issue: "Line 42: bad indentation"
+      status: "repaired"
+  graceful_warnings:
+    - type: "dangling_ref"
+      artifact_key: "orchestration_plan"
+      path: ".skill-context/{target_skill}/orchestration-plan.md"
+      severity: "warning"
+```
+
+### 11.7 Integration Rules
+
+```yaml
+integration_rules:
+  rule_1: "Mọi thao tác ghi YAML artifact đều gọi yaml_resilience.pre_check(artifact, schema)"
+  rule_2: "Layer PASS → commit proceeds bình thường"
+  rule_3: "Layer FAIL (Level 1 syntax) → auto-repair (max 2 attempts)"
+  rule_4: "Layer FAIL (Level 2 schema) → auto-repair (max 2 attempts)"
+  rule_5: "Layer FAIL (Level 3 cross-ref) → graceful warning — commit vẫn proceeds"
+  rule_6: "Repair lần 2 fail → trigger fallback cho stage gốc re-generate artifact"
+  rule_7: "Mọi repair event ghi vào _state.yaml.yaml_repair_history"
+  rule_8: "Mọi graceful warning ghi vào _state.yaml.graceful_warnings"
+```
 ```

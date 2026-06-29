@@ -1,7 +1,7 @@
 # 🏗️ Tài liệu Thiết kế Kiến trúc Hệ thống Build-Workflow (v2.0)
 
 > [!IMPORTANT]
-> Tài liệu này thiết kế lại toàn bộ kiến trúc pipeline build-workflow nhằm giải quyết **3 lỗi cấu trúc cốt lõi** đã được phát hiện: (1) Context Leak do không có Context Bus chung, (2) Planner bị overload do gộp hydration + planning, (3) không có SCS Router khiến task đơn giản đi qua pipeline nặng. Bổ sung **4 thành phần mới** (Context Bus, SCS Router, Context Hydrator, Drift Detector), **cơ chế rollback chuẩn** qua `_state.yaml` protocol, và **tách nhánh 2 luồng** Single Skill vs Micro-Skill Bundle với subagent Orchestrator chuyên biệt.
+> Tài liệu này thiết kế lại toàn bộ kiến trúc pipeline build-workflow nhằm giải quyết **3 lỗi cấu trúc cốt lõi** đã được phát hiện: (1) Context Leak do không có Context Bus chung, (2) Planner bị overload do gộp hydration + planning, (3) không có SCS Router khiến task đơn giản đi qua pipeline nặng. Bổ sung **5 thành phần mới** (Context Bus, SCS Router, Context Hydrator, Drift Detector, YAML Resilience Layer), **cơ chế rollback chuẩn** qua `_state.yaml` protocol, và **tách nhánh 2 luồng** Single Skill vs Micro-Skill Bundle với subagent Orchestrator chuyên biệt.
 
 ---
 
@@ -37,6 +37,16 @@ Hệ thống được tái cấu trúc từ 8 stage tuyến tính thành **5 Lay
 
 > [!NOTE]
 > **Hỗ trợ Dual-Mode (CREATE / UPDATE / REBUILD):** Hệ thống hỗ trợ song song 3 chế độ vận hành: (1) **CREATE**: Tạo skill mới từ đầu; (2) **UPDATE**: Cập nhật trực tiếp lên skill sẵn có (in-place modification); (3) **REBUILD**: Tái xây dựng lại một skill (nội bộ hoặc bên ngoài) theo chuẩn mới nhưng giữ nguyên ý chí thiết kế cũ.
+
+> [!NOTE]
+> **Phase Compression Mode (Branch A — Fast Track):** Trong Branch A (SCS < 3.0), 8 stages tuyến tính L0-L3 được gộp thành **3 phases** — mỗi phase là một agent combined role chạy trong một LLM call duy nhất:
+> - **Phase D1 (Discovery):** BA cum Miner — gộp S0 (BA) + S0.5 (SCS) + S0.7 (Miner) → `discovery-package.yaml`
+> - **Phase D2 (Design & Contract):** Architect cum Gatekeeper — gộp S1 (Architect) + S1.5 (Gatekeeper) → `design.md` + `quality-matrix.yaml` + `criteria.md`
+> - **Phase D3 (Plan & Verify):** Hydrator+Planner cum DriftDetector — gộp S1.7 (Hydrator) + S2 (Planner) + S2.5 (Drift Detector) → `hydrated-context.yaml` + `todo.md` + `plan-verification-report.md`
+>
+> **Giảm LLM calls pre-Builder từ 8 → 3 (↓62.5%).** Số artifact GIỮ NGUYÊN (9 files). META-criteria chuyển từ external gate → self-applied checklist trong phase. Branch B giữ nguyên 13-stage pipeline. Xem `supplements/phase-compression-spec.md`.
+>
+> **KHÔNG áp dụng cho Branch B (Full Track OMSP).**
 
 ### Nguyên tắc thiết kế cốt lõi
 
@@ -150,6 +160,14 @@ flowchart TB
     style S25 fill:#fff3cd,stroke:#ffc107,stroke-width:2px
     style S3B0 fill:#f8d7da,stroke:#dc3545,stroke-width:2px
 ```
+
+> [!NOTE]
+> **Phase Compression Mode cho Branch A:** Trong Fast Track (SCS < 3.0), 8 stages L0-L3 được gộp thành 3 phases giải quyết over-engineering pipeline cho task đơn giản. Thay vì 8 LLM calls tuần tự (S0→S05→S07→S1→S15→S17→S2→S25), Branch A đi qua **3 Phase**:
+> - **Phase D1** (Discovery) = S0 + S0.5 + S0.7 — 1 call
+> - **Phase D2** (Design & Contract) = S1 + S1.5 — 1 call
+> - **Phase D3** (Plan & Verify) = S1.7 + S2 + S2.5 — 1 call
+>
+> Mỗi phase có internal retry loop (max 3 iterations). Nếu 3 lần fail → escalate. Số artifact pipeline GIỮ NGUYÊN. META-criteria chuyển từ external gate → self-applied checklist. Branch B giữ nguyên 13-stage pipeline. Xem `supplements/phase-compression-spec.md`.
 
 ---
 
@@ -371,7 +389,7 @@ scs_evaluation:
 **Meta-criteria (từ `meta-criteria.md`):**
 - META-1.1: Domain Anchoring Enforcement
 - META-1.2: Phase deconstruction (3-5 phases min)
-- META-2.1: Forced Thought Block (>200 từ)
+- META-2.1: **Semantic Depth Gate v2.0** — 4 Depth Signals (S1 Negation Density, S2 Reverse Question, S3 Multi-Stakeholder, S4 Constraint Anchoring) **AND** — xem `supplements/depth-gate-criteria.md`
 - META-2.2: Reverse Questioning Framework
 - META-3.1: Mechanical Pass/Fail Verification
 - META-3.2: Negative Space & Guardrails
@@ -380,6 +398,9 @@ scs_evaluation:
 **Output:** `criteria.md` + `quality-matrix.yaml` finalized (ghi vào Context Bus)
 
 **Fallback:** Nếu criteria không đạt meta-criteria → quay về Stage 1 để revise design. Nếu SCS score thay đổi → re-route Branch.
+
+> [!NOTE]
+> **Re-validation rule:** Spec Gatekeeper (Stage 1.5) có nhiệm vụ RE-VALIDATE thought blocks từ Stage 0 (BA Elicitor) bằng META-2.1 v2.0. Nếu phát hiện Stage 0 thought block FAIL → ghi vào fallback_history và trigger fallback F2 (quay về Stage 0 để re-elicitation sâu hơn). Đây là lớp bảo vệ thứ hai chống slop: BA Elicitor có incentive "nhanh", Gatekeeper có incentive "chính xác".
 
 ---
 
@@ -395,6 +416,7 @@ scs_evaluation:
 2. Thủy hóa (hydrate) thành một **context package cô đọng** dành cho Planner
 3. Trích xuất: 10+ glossary terms, NFRs, edge cases, data contracts, zone map, must_not list
 4. Loại bỏ prose thừa, chỉ giữ semantic anchors
+5. **KHÔNG chạm `thought-cache.yaml`** — Reflection Cache artifact song song chứa cognitive depth (thought blocks, empathy, reverse questions, defensive reasoning). Hydrator giữ tách biệt để bảo toàn depth cho Builder. Xem § 4.A.
 
 **Input:** Context Bus (toàn bộ artifacts từ L0-L2)
 
@@ -455,10 +477,56 @@ hydrated_context:
 
 **Output:** `plan-verification-report.md` (Pass / Drift / Fail)
 
+> [!IMPORTANT]
+> **Semantic Sampling Audit Layer (MỚI — additive overlay):** Sau khi Drift Detector PASS, pipeline có thể kích hoạt lớp audit xác suất (~20% mặc định) kiểm tra **semantic meaning** thay vì chỉ structural pattern. Drift Detector kiểm tra pattern presence (có back-link không? contract khớp form không?) — Sampling Audit kiểm tra pattern meaning (back-link có ý nghĩa nghiệp vụ đúng không?). Giải quyết lỗ hổng "PASS-form nhưng FAIL-meaning".
+>
+> - **Sampling rate adaptive:** 20% default → 50% nếu escalation (2/5 gần nhất FAIL) → 10% nếu relaxation (5/5 PASS)
+> - **Audit method:** Oracle subagent (default) hoặc Human (configurable) — trả lời 3 câu hỏi AUDIT-1→3
+> - **Nếu PASS:** pipeline tiếp tục Stage 3. **Nếu FAIL:** trigger F8-EXT (MỚI) — ghi `audit-fail-report.md`, quay Stage 1 (design sai) hoặc Stage 0 (plan sai intent)
+> - **Deterrent effect:** LLM biết có 20%抽查 will tự ép deeper thinking — probabilistic deterrent, không cần catch 100%
+> - Xem chi tiết tại `protocols-and-state-spec.md § 8` (F8-EXT) và § 9 (`sampling_audit` block)
+
 **Fallback logic (3 mức):**
 - **Drift minor** (task lệch nhưng sửa được) → quay Stage 2 (re-plan)
 - **Drift major** (todo.md plan sai domain so với design) → quay Stage 1 (revise design) HOẶC Stage 0.5 (re-evaluate SCS)
 - **Plan Quality Gate fail** (thiếu contracts, thiếu must_not) → quay Stage 2
+
+> [!NOTE]
+> **YAML Resilience Layer (cross-cutting):** Mọi stage commit YAML artifact qua Context Bus đều đi qua YAML Resilience Layer — middleware tự động kiểm tra 3 cấp (syntax lint, schema validation, cross-reference check) trước khi commit. Nếu parse fail (Level 1) hoặc schema sai (Level 2) → auto-repair subagent (max 2 attempts). Nếu không sửa được → trigger fallback về stage gốc. Dangling ref (Level 3) → graceful warning, không Hard Halt. Mọi sự kiện ghi vào `_state.yaml.yaml_repair_history`. Xem chi tiết tại `protocols-and-state-spec.md § 11`.
+
+### 4.A Reflection Cache (MỚI) — Cognitive Depth Artifact
+
+> [!IMPORTANT]
+> **Artifact bổ sung, song song với `hydrated-context.yaml`.** Reflection Cache lưu trữ toàn bộ cognitive depth artifacts từ Stage 0 (BA Elicitor) và Stage 1.5 (Spec Gatekeeper) dưới dạng file `thought-cache.yaml`. Giải quyết vấn đề: Hydrator hiện tại lược bỏ prose thừa, nhưng cùng với đó là mất toàn bộ depth context (thought blocks, stakeholder empathy, reverse questioning, defensive reasoning) — Builder code trong "khoảng trống ngữ nghĩa".
+
+**Schema `thought-cache.yaml`:**
+- `reflection_cache.business_thought_process[]` — thought blocks >200 từ (META-2.1), mỏ neo vector ngôn ngữ cho Domain Anchoring
+- `reflection_cache.stakeholder_empathy[]` — role goals + pain points + empathy notes
+- `reflection_cache.reverse_questions[]` — 4 khía cạnh probing từ Stage 0 (META-2.2)
+- `reflection_cache.defensive_reasoning[]` — edge case + mitigation + rationale
+- `reflection_cache.semantic_anchors` — domain anchor table, edge case repository, state machine export
+
+**Lifecycle:**
+| Artifact | Sinh bởi | Planner đọc | Builder đọc |
+|:---|:---|:---|:---|
+| `hydrated-context.yaml` | Stage 1.7 Hydrator | ✅ BẮT BUỘC | ✅ BẮT BUỘC |
+| `thought-cache.yaml` | Stage 0 + Stage 1.5 | ⚡ TÙY CHỌN | ✅ **BẮT BUỘC** |
+
+**Quy tắc:**
+- Hydrator KHÔNG chạm `thought-cache.yaml` — giữ tách biệt để bảo toàn depth
+- Builder Phase 1 thực hiện **Dual Context Ingestion**: đọc cả `hydrated-context.yaml` (technical contracts) VÀ `thought-cache.yaml` (cognitive depth)
+- Nếu `thought-cache.yaml` thiếu → Fallback F18: quay Stage 0 (BA Elicitor) để Depth Recovery
+- Xem chi tiết tại `protocols-and-state-spec.md § 8` (F16-F18) và § 7 (Rule 7-8)
+
+> [!NOTE]
+> **Phase Compression mode — Stage mapping (Branch A only):** Trong Phase Compression mode, 8 stages L0-L3 được collapse thành 3 phases:
+> - **Phase D1** (Discovery): Stage 0 + Stage 0.5 + Stage 0.7
+> - **Phase D2** (Design & Contract): Stage 1 + Stage 1.5
+> - **Phase D3** (Plan & Verify): Stage 1.7 + Stage 2 + Stage 2.5
+>
+> Internal retry loop (max 3) thay thế fallback F1-F9 stage-specific. Nếu retry 3 lần fail → escalate (PC-4 cho critical design sai domain). Xem `supplements/phase-compression-spec.md` và `protocols-and-state-spec.md § 8` (PC-1 → PC-4).
+>
+> Branch B (Full Track OMSP) KHÔNG áp dụng Phase Compression — giữ nguyên 13-stage pipeline.
 
 ---
 
@@ -537,16 +605,29 @@ flowchart LR
 **Stage 3 (Builder) - 5 Phase (từ `build-stage-standards.md`):**
 ```mermaid
 flowchart LR
-    P0["Phase 0<br/>Intake Verification"] --> P1["Phase 1<br/>Context Hydration<br/>(từ Context Bus)"]
+    P0["Phase 0<br/>Intake Verification"] --> P1["Phase 1<br/>Context Hydration<br/>(Dual Context Ingestion)"]
     P1 --> P2["Phase 2<br/>Clarification Gate"]
     P2 --> P3["Phase 3<br/>Contract Implementation"]
     P3 --> P4["Phase 4<br/>Verification & Security"]
     P4 --> P5["Phase 5<br/>Physical Delivery"]
 ```
 
+> [!IMPORTANT]
+> **Phase 1 cập nhật — Dual Context Ingestion:** Builder Phase 1 đọc **cả hai** artifact:
+> 1. `hydrated-context.yaml` (BẮT BUỘC) — technical contracts, glossary, NFR, data contracts, zone map
+> 2. `thought-cache.yaml` (BẮT BUỘC — MỚI) — cognitive depth: thought blocks, stakeholder empathy, reverse questions, defensive reasoning
+>
+> Hai nguồn được merge thành single context package: technical scaffolding biết "phải code gì", cognitive depth biết "vì sao code như vậy" và "code cho ai". Domain Anchoring (Nguyên tắc #1) được khôi phục.
+>
+> Nếu `thought-cache.yaml` không tồn tại hoặc rỗng → Fallback F18: quay Stage 0 (BA Elicitor) Depth Recovery. Xem `protocols-and-state-spec.md § 8` và `§ 4.A`.
+
+> [!IMPORTANT]
+> **Phase Compression áp dụng cho Branch A:** Để giải quyết over-engineering pipeline cho task đơn giản, Branch A sử dụng **Phase Compression Mode** — 8 stages L0-L3 được gộp thành 3 phases (D1 Discovery, D2 Design & Contract, D3 Plan & Verify). Giảm LLM calls pre-Builder từ 8 → 3 (↓62.5%). META-criteria self-applied trong phase, không cần stage external gate. Chi tiết tại `supplements/phase-compression-spec.md`.
+
 **Lợi ích Fast Track:**
 - Bỏ qua Stage 3a (Orchestrator), 3b (Parallel Builders), 3c (Integration Assembler)
-- Giảm token cost ~60%
+- Phase Compression gộp 8 pre-Builder stages → 3 phases (↓62.5% LLM calls)
+- Giảm token cost ~50-60%
 - Giảm thời gian pipeline ~50%
 - Tránh overengineering cho task đơn giản
 
@@ -634,7 +715,9 @@ ssp_contract:
 ```mermaid
 stateDiagram-v2
     [*] --> Stage0_BA
+    [*] --> PhaseD1_Discovery : Branch A Phase Compression
     
+    %% ===== BRANCH B — Full Pipeline (giữ nguyên) =====
     Stage0_BA --> Stage0_5_SCS : elicitation completed
     Stage0_5_SCS --> Stage0_BA : F1 - thiếu thông tin SCS
     Stage0_5_SCS --> Stage0_7_Miner : SCS rated
@@ -656,9 +739,29 @@ stateDiagram-v2
     Stage2_5_Drift --> Stage1_Architect : F8 - drift major
     Stage2_5_Drift --> Stage0_5_SCS : F9 - design sai domain
     
-    Stage2_5_Drift --> BranchA_Builder : Pass + SCS < 3.0
+    Stage2_5_Drift --> BranchA_Builder : Pass + SCS < 3.0 (non-compress)
     Stage2_5_Drift --> BranchB_Orchestrator : Pass + SCS >= 3.0
     
+    %% ===== BRANCH A — Phase Compression Path =====
+    PhaseD1_Discovery --> PhaseD1_Retry : PC-1 - glossary/SCS fail
+    PhaseD1_Retry --> PhaseD1_Discovery : retry (max 3)
+    PhaseD1_Retry --> Escalated : 3 fails
+    PhaseD1_Discovery --> PhaseD2_Design : discovery-package ready
+    
+    PhaseD2_Design --> PhaseD2_Retry : PC-2 - self-check fail
+    PhaseD2_Retry --> PhaseD2_Design : retry (max 3)
+    PhaseD2_Retry --> Escalated : 3 fails
+    PhaseD2_Design --> PhaseD3_Plan : design + criteria pass
+    
+    PhaseD3_Plan --> PhaseD3_Retry : PC-3 - drift detected
+    PhaseD3_Retry --> PhaseD3_Plan : retry (max 3)
+    PhaseD3_Retry --> Escalated : 3 fails
+    PhaseD3_Plan --> PhaseD3_Retry_Critical : PC-4 - design sai domain
+    PhaseD3_Retry_Critical --> Escalated : escalate immediately
+    
+    PhaseD3_Plan --> BranchA_Builder : plan verified
+    
+    %% ===== COMMON DELIVERY PIPELINE =====
     BranchA_Builder --> Stage3_5_Reviewer : build completed
     BranchB_Orchestrator --> BranchB_Builders : spawn parallel
     BranchB_Builders --> BranchB_Assembler : all builders done
@@ -672,7 +775,8 @@ stateDiagram-v2
     
     Stage4_Sandbox --> BranchA_Builder : F13 - sandbox fail (A)
     Stage4_Sandbox --> BranchB_Assembler : F14 - sandbox fail (B)
-    Stage4_Sandbox --> Stage2_Planner : F15 - plan sai
+    Stage4_Sandbox --> PhaseD3_Plan : F15 - plan sai (Branch A)
+    Stage4_Sandbox --> Stage2_Planner : F15 - plan sai (Branch B)
     Stage4_Sandbox --> Stage5_Delivery : sandbox pass
     
     Stage5_Delivery --> [*] : build-completed
@@ -690,52 +794,40 @@ stateDiagram-v2
 
 ### 11.1 Branch A - Single Skill (Fast Track)
 
+> [!NOTE]
+> **Phase Compression Mode:** Diagram dưới thể hiện pipeline **sau Phase Compression** — 3 phases gộp (D1, D2, D3) thay cho 8 stages. Nếu không dùng Phase Compression, sequence giống Branch A cũ (8 stages riêng lẻ). Xem `supplements/phase-compression-spec.md`.
+
 ```mermaid
 sequenceDiagram
     participant U as User
     participant CB as Context Bus
-    participant BA as BA Elicitor
-    participant SC as SCS Router
-    participant MI as Miner
-    participant AR as Architect
-    participant GK as Spec Gatekeeper
-    participant HY as Hydrator
-    participant PL as Planner
-    participant DD as Drift Detector
+    participant D1 as Phase D1: Discovery<br/>BA cum Miner
+    participant D2 as Phase D2: Design & Contract<br/>Architect cum Gatekeeper
+    participant D3 as Phase D3: Plan & Verify<br/>Hydrator+Planner cum DriftDetector
     participant BU as Builder
     participant RV as Reviewer
     participant SB as Sandbox
 
-    U->>BA: user_skill_request
-    BA->>CB: Ghi business-analysis.md
-    BA->>SC: Trigger Stage 0.5
-    SC->>CB: Đọc business-analysis
-    SC->>SC: Đánh giá SCS = 2.0 (< 3.0)
-    SC->>CB: Ghi scs-rating.yaml (Fast Track)
-    SC->>MI: Trigger Stage 0.7
-    MI->>CB: Ghi domain-handbook.md
-    MI->>AR: Trigger Stage 1
-    AR->>CB: Đọc context
-    AR->>AR: Thiết kế design.md
-    AR->>CB: Ghi design.md + quality-matrix.yaml
-    AR->>GK: Trigger Stage 1.5
-    GK->>CB: Đọc design.md
-    GK->>GK: Sinh criteria (meta-criteria check)
-    GK->>CB: Ghi criteria.md
-    GK->>HY: Trigger Stage 1.7
-    HY->>CB: Đọc tất cả artifacts
-    HY->>HY: Thủy hóa context (glossary+NFR+contracts)
-    HY->>CB: Ghi hydrated-context.yaml
-    HY->>PL: Trigger Stage 2
-    PL->>CB: Đọc hydrated-context (KHÔNG đọc domain-handbook)
-    PL->>PL: Sinh todo.md (state machine + contracts)
-    PL->>CB: Ghi todo.md
-    PL->>DD: Trigger Stage 2.5
-    DD->>CB: Đọc todo.md + design.md
-    DD->>DD: Drift detection + Plan Quality Gate
-    DD->>CB: Ghi plan-verification-report.md (Pass)
-    DD->>BU: Trigger Stage 3 (Branch A)
-    BU->>CB: Đọc hydrated-context + todo.md
+    U->>D1: user_skill_request
+    D1->>D1: Elicit + SCS rating + Mining (1 call)
+    D1->>CB: Ghi discovery-package.yaml<br/>(business-analysis + scs-rating + domain-handbook)
+    Note over D1: Internal retry (max 3) nếu glossary < 10 hoặc SCS ambiguous
+
+    D1->>D2: Trigger Phase D2
+    D2->>CB: Đọc discovery-package.yaml
+    D2->>D2: Thiết kế design.md + quality-matrix.yaml + criteria.md (1 call)
+    D2->>D2: Self-validate META-criteria checklist
+    D2->>CB: Ghi design.md + quality-matrix.yaml + criteria.md
+    Note over D2: Internal retry (max 3) nếu self-check fail. Escalate nếu 3 fails.
+
+    D2->>D3: Trigger Phase D3
+    D3->>CB: Đọc discovery-package + design + criteria
+    D3->>D3: Hydrate context → Plan todo.md → Self-check drift (1 call)
+    D3->>CB: Ghi hydrated-context.yaml + todo.md + plan-verification-report.md
+    Note over D3: Minor drift → retry. Major → re-read design. Critical → escalate.
+
+    D3->>BU: Trigger Stage 3
+    BU->>CB: Đọc hydrated-context + thought-cache.yaml + todo.md
     BU->>BU: 5 Phase Implementation
     BU->>CB: Ghi skill-package + build-log.md
     BU->>RV: Trigger Stage 3.5
