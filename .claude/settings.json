@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Read",
+      "Glob",
+      "Grep",
+      "Bash(validate_suite_integrity.py)"
+    ],
+    "deny": [
+      "Bash(rm -rf *)"
+    ]
+  }
+}
