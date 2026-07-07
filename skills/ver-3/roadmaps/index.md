@@ -115,7 +115,7 @@ Mỗi phase phải document trong header chỉ rõ những architectural defects
 | Phase | Acceptance gate | Status column |
 |:---:|:---|:---:|
 | 0 | `python3 .claude/scripts/validate_suite_integrity.py` trả về exit 0; 11 skill dirs exist; 7 knowledge stubs exist; AC-8 Docker check PASS hoặc PASS_WITH_WARNING (eval v1 đề xuất 3) | `done` |
-| 1 | 7 knowledge docs ≥ 100 dòng, path resolution pass, frontmatter hợp lệ, không placeholder | `pending` |
+| 1 | 7 knowledge docs ≥ 100 dòng (2,603 total), path resolution pass, frontmatter canonical, zero placeholder | `done` |
 | 2 | 6 hook files exist + executable; exit codes 0/2 tested cho mỗi hook | `pending` |
 | 3 | 4 agents deploy; mỗi agent pass subagent-forge 4-evaluator ≥ APPROVED_FOR_REVIEW | `pending` |
 | 4 | `schema_validator.py --all` pass; 14 schemas parse; DRC resolver pass; artifact-registry valid | `pending` |
@@ -140,8 +140,8 @@ Mỗi phase phải document trong header chỉ rõ những architectural defects
 
 ## Trạng thái roadmap này (this document)
 
-> **State:** initial draft — sống trước khi Phase 0 bắt đầu.
-> Để tuân theo cách giữ roadmap fresh, mỗi phase hoàn tất sẽ update "Status" trong dashboard từ `pending` → `in_progress` → `done` friday với timestamp.
+> **State:** active — Phase 0 ✅ done, Phase 1 ✅ done.
+> Mỗi phase hoàn tất sẽ update "Status" trong dashboard từ `pending` → `done` với timestamp.
 
 Init by: Sisyphus (independent architecture critic planner)
 Date: 2026-07-04
