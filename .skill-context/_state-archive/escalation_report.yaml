@@ -1,0 +1,11 @@
+action_required: Fix errors above and re-run validate_suite_integrity.py
+errors:
+- detail: Missing frontmatter start marker '---'
+  skill: skill-explorer
+  type: schema
+escalation_depth: 1
+failure_summary: 1 error(s), 2 warning(s)
+pipeline_phase: phase-0-validate-suite-integrity
+recommended_recovery: manual inspection
+registry_path: /home/stveve/Documents/workspace/build-workflow/WASHVN/skills-registry.json
+triggered_at: '2026-07-07T10:21:33.574050'

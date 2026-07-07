@@ -88,7 +88,7 @@ commands:
     desc: "Sync các skills từ raw/ver-3 vào runtime .claude/skills/"
 
   validate_suite:
-    run: "python3 raw/ver-3/scripts/validate_suite_integrity.py"
+    run: "python3 .claude/scripts/validate_suite_integrity.py"
     desc: "Chạy script kiểm tra tính toàn vẹn của Master Skill Suite"
 
   view_architecture:

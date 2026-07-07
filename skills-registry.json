@@ -3,7 +3,7 @@
   "version": "0.0.2",
   "description": "Ecosystem Registry for WASHVN Master Skill Suite containing orchestrated pipeline stages and business analysis skills.",
   "workspace_paths": {
-    "source_dir": "raw/ver-0.0.2",
+    "source_dir": "raw/ver-3",
     "runtime_claude": ".claude/skills",
     "runtime_agents": ".agents/skills",
     "context_dir": ".skill-context"
