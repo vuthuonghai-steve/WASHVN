@@ -12,9 +12,9 @@ Phase 2 xây dụng hệ thống **standalone hook framework** tại `.claude/ho
 Hooks là **thành phần bị nhìn nhận là third pillar** của workflow tích hợp Skills + Agents + Hooks:
 - Skills = nội dung / tri thức
 - Agents = trình thực thi
-- Hooks = **chốt chặn cơ học** đảm bảo agent tôn trọng luật (không phụ thuộc vào "self-discipline" của LLM)
-
 Phase 2 address architectural defect Γ-1 (LLM self-audit không thể đảm bảo chất lượng) bằng cách thêm máy dịch chuyển ra LLM — shell exits với `exit 2` để block.
+
+> ⚠️ **Quyết định Thiết kế (Hook Format Gap)**: Mặc dù tài liệu `hooks_and_events.md` (Phase 1) mô tả cả hai định dạng block (Format A: stdout JSON `permissionDecision` và Format B: exit code 2), Phase 2 sẽ **thống nhất sử dụng Format B (exit code 2)** cho toàn bộ 6 hooks đầu tiên để đảm bảo tính đơn giản và tối giản (YAGNI). Việc đối khớp và migrate sang cấu trúc JSON stdout (Format A) để phục vụ cho việc chain hooks sẽ được thực hiện tại Phase 8.
 
 ---
 
@@ -35,12 +35,12 @@ prerequisites:
 
 ```yaml
 hook_design_principles:
-  - "Hooks là cơ học, không semantic — Hook không 'hiểu' agent output, chỉ verify cấu trúc/exit code"
-  - "Hooks phải < 50 dòng, < 100ms execution time"
-  - "Hooks không bao giờ spawn sub-task (trigger agent); chỉ verify deny/allow decision"
-  - "Hooks phải fail-safe: nếu input malformed, default = allow phase (loose enforcement) → post-tool verify catch-up"
-  - "Hooks không write file (trừ audit logs); chỉ read state"
-  - "Standalone preferred over inline — cho reuse cross-agent"
+  - "Phân lớp Gating: Kết hợp song song Layer Cơ học (Command-based) và Layer Ngữ nghĩa (Prompt/Agent-based)"
+  - "Command hooks: cơ học, phi ngữ nghĩa, tối giản (độ dài < 50 dòng, execution < 100ms), dùng exit 2 để block"
+  - "Prompt/Agent hooks: thông minh, có khả năng suy luận ngữ nghĩa nâng cao, chấp nhận thời gian phản hồi lâu hơn (timeout 30s-120s), chỉ chạy ở các mốc thưa thớt như Session Start/Stop, Task Completed"
+  - "Cơ chế Tự sửa lỗi (Self-Healing): Sử dụng 'continueOnBlock: true' trên Stop hook để bắt Agent tự động fix lỗi tài liệu/YAML hỏng trước khi tắt máy"
+  - "Không lạm dụng: Prompt/Agent hooks chỉ dùng tại chốt chặn quan trọng để tránh suy giảm trải nghiệm gõ lệnh hàng ngày"
+  - "Fail-safe: Khi gặp lỗi cấu trúc cấu hình hoặc lỗi mạng API, tự động hạ cấp (degrade) an toàn để không treo tiến trình"
 ```
 
 ---
@@ -429,6 +429,9 @@ echo "AC-7 PASS"
 9. **Run full AC-1 to AC-7** — fix any failures.
    → commit `phase-2: acceptance criteria pass`
 
+10. **Nghiên cứu & Thử nghiệm Advanced Hooks** (D2-9 & D2-10) — Thiết lập cấu hình thử nghiệm Prompt-based Hook tại sự kiện `Stop` trong `.claude/settings.local.json` để kiểm tra khả năng tự sửa lỗi (Self-healing).
+   → commit `phase-2: advanced hooks research and local trials`
+
 ---
 
 ## Definition of done (Phase 2)
@@ -445,6 +448,7 @@ dod:
     + Bash normal command: allowed
     + Stop với _state.yaml corrupt: backup created (Γ-7 fix verified at hook level)
   - Audit log directory tồn tại với at least 1 entry sau test run
+  - Đã chạy thử nghiệm Prompt-based hook với cơ chế self-healing tại sự kiện Stop thành công trên local
 ```
 
 ---

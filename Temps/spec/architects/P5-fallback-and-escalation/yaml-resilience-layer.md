@@ -44,6 +44,7 @@ integration_rules:
   rule_6: "Repair 2nd fail → trigger fallback to source stage"
   rule_7: "All repair events → `_state.yaml.yaml_repair_history`"
   rule_8: "All grace warnings → `_state.yaml.graceful_warnings`"
+  rule_9: "HOOK-HEAL-1.0 acts as a last-mile verification gate on Stop/SubagentStop events to catch any uncommitted or corrupted YAML state (_state.yaml) or formatting defects, feeding back errors to the agent context for self-healing before session exit."
 ```
 
-> See `shared/quality-gates-reference.md` for YAML-RES-1.0
+> See `shared/quality-gates-reference.md` for YAML-RES-1.0 and HOOK-HEAL-1.0

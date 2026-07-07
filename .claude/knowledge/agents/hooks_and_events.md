@@ -90,8 +90,13 @@ handler_schema:
   type: object
   required:
     - event
-    - script
   optional:
+    - type
+    - script
+    - prompt
+    - model
+    - timeout
+    - continueOnBlock
     - if
     - description
     - matcher
@@ -99,12 +104,28 @@ handler_schema:
     event:
       type: string
       description: "Event type this handler subscribes to (see Section 4)"
+    type:
+      type: string
+      enum: [command, prompt, agent]
+      description: "Type of hook handler. Defaults to 'command' if 'script' is provided."
     script:
       type: string
-      description: "Path to the handler script, absolute or relative to project root"
+      description: "Path to the handler script (absolute or relative to project root). Required if type is 'command'."
+    prompt:
+      type: string
+      description: "Prompt query/instructions to send to the LLM/Agent. Required if type is 'prompt' or 'agent'. Supports $ARGUMENTS placeholder."
+    model:
+      type: string
+      description: "Specific LLM model to execute the prompt-based checks (e.g., 'claude-3-5-haiku', 'claude-3-5-sonnet'). Only applicable to type 'prompt'."
+    timeout:
+      type: integer
+      description: "Execution timeout in seconds. Defaults to 30s for prompt/command, 60s for agent."
+    continueOnBlock:
+      type: boolean
+      description: "If true, when prompt/agent hook blocks (returns ok: false), the runtime feeds the block reason back to the agent to auto-repair and continue the session. Only applicable to type 'prompt' or 'agent'."
     if:
       type: string
-      description: "Condition expression that gates handler execution (see Section 7)"
+      description: "Condition expression that gates handler execution (see Section 8)"
     description:
       type: string
       description: "Human-readable purpose of this hook handler"
@@ -385,23 +406,68 @@ mcp_hook_example:
 
 ### 7.4 Prompt and Agent Hooks
 
-Intercept prompt submission and subagent lifecycle events.
+Unlike command hooks that run local shell scripts, **Prompt-based** and **Agent-based** hooks execute directly within the Claude Code LLM framework. They enable advanced semantic evaluation and self-healing validation without depending on the host OS.
 
-```yaml
-prompt_hook_example:
-  matcher: "$"
-  event: "UserPromptSubmit"
-  handler: "scripts/hooks/prompt-audit.sh"
-  purpose: "Sanitize and log every user prompt"
-```
+#### 7.4.1 Native Prompt-Based Hooks (`type: "prompt"`)
+Prompt-based hooks send a instruction directly to an LLM (typically a lightweight model like Haiku, or optionally Sonnet) to evaluate event parameters in a single-turn request.
 
-```yaml
-agent_hook_example:
-  matcher: ""
-  event: "SubagentStart"
-  handler: "scripts/hooks/subagent-tracer.sh"
-  purpose: "Record subagent spawn events with timestamps"
-```
+* **Settings Configuration Example:**
+  ```json
+  {
+    "hooks": {
+      "Stop": [
+        {
+          "handlers": [
+            {
+              "type": "prompt",
+              "prompt": "Evaluate if the workspace documentation is structurally complete. Event context: $ARGUMENTS. Return JSON in schema: {\"ok\": boolean, \"reason\": string}",
+              "model": "claude-3-5-haiku",
+              "timeout": 45,
+              "continueOnBlock": true,
+              "description": "Verify MD layout and YAML frontmatter prior to session end"
+            }
+          ]
+        }
+      ]
+    }
+  }
+  ```
+
+* **Required LLM Output JSON Schema:**
+  ```json
+  {
+    "ok": true,
+    "reason": "Clear explanation of the decision (mandatory if ok is false)"
+  }
+  ```
+
+* **Auto-Repair / Self-Healing Loop (`continueOnBlock: true`):**
+  When registered on session termination events (`Stop` or `SubagentStop`), if the prompt hook decides to block (`"ok": false`), the runtime does not crash. If `continueOnBlock` is set to `true`, the `reason` is fed back into the agent's context as a new turn. The agent must correct the issues described in the `reason` (e.g., repairing malformed markdown syntax or missing YAML tags) and attempt to complete the session again.
+
+#### 7.4.2 Native Agent-Based Hooks (`type: "agent"`)
+Agent-based hooks spin up a background subagent (allowing up to 50 turns of autonomous execution). This subagent is equipped with filesystems tools (`Read`, `Grep`, `Glob`) to query the workspace and compile findings before deciding to allow or block.
+
+* **Settings Configuration Example:**
+  ```json
+  {
+    "hooks": {
+      "PreToolUse": [
+        {
+          "matcher": "Write",
+          "handlers": [
+            {
+              "type": "agent",
+              "prompt": "Check if the proposed file write violates workspace architectural guidelines. Inspect the codebase first to verify pattern consistency. Event context: $ARGUMENTS",
+              "timeout": 120,
+              "description": "Multi-turn semantic audit of code writing"
+            }
+          ]
+        }
+      ]
+    }
+  }
+  ```
+* **Required Output format:** Just like prompt hooks, the subagent must output a structured JSON containing `{ "ok": boolean, "reason": "..." }` at the end of its investigation. Agent-based hooks are experimental and should be restricted to non-blocking or low-frequency hooks due to high latency.
 
 ---
 

@@ -12,9 +12,9 @@ Phase 2 xây dụng hệ thống **standalone hook framework** tại `.claude/ho
 Hooks là **thành phần bị nhìn nhận là third pillar** của workflow tích hợp Skills + Agents + Hooks:
 - Skills = nội dung / tri thức
 - Agents = trình thực thi
-- Hooks = **chốt chặn cơ học** đảm bảo agent tôn trọng luật (không phụ thuộc vào "self-discipline" của LLM)
-
 Phase 2 address architectural defect Γ-1 (LLM self-audit không thể đảm bảo chất lượng) bằng cách thêm máy dịch chuyển ra LLM — shell exits với `exit 2` để block.
+
+> ⚠️ **Quyết định Thiết kế (Hook Format Gap)**: Mặc dù tài liệu `hooks_and_events.md` (Phase 1) mô tả cả hai định dạng block (Format A: stdout JSON `permissionDecision` và Format B: exit code 2), Phase 2 sẽ **thống nhất sử dụng Format B (exit code 2)** cho toàn bộ 6 hooks đầu tiên để đảm bảo tính đơn giản và tối giản (YAGNI). Việc đối khớp và migrate sang cấu trúc JSON stdout (Format A) để phục vụ cho việc chain hooks sẽ được thực hiện tại Phase 8.
 
 ---
 

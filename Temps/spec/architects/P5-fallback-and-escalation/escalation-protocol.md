@@ -26,6 +26,9 @@ escalation:
   triggered: true
   reason: "Stage 2.5 Drift Detector failed 3 iterations — design still drifting"
   escalated_to: "oracle"
+  depth: 2
+  last_triggered_at: "2026-07-07T14:40:00Z"
+  last_failure_summary: "Drift detected on target file"
 ```
 
 ## Escalation sources

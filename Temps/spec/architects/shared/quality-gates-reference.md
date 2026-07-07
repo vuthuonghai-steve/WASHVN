@@ -42,6 +42,8 @@ graph TD
 ## Cross-cutting
 
 - **YAML-RES-1.0**: YAML Resilience pre-check on every artifact commit
+- **HOOK-HEAL-1.0 (Advanced Prompt Gate)**: Native Prompt-based Hook with `continueOnBlock: true` on `Stop` / `SubagentStop` events. Automatically audits markdown format and YAML syntax structure, prompting the active agent to self-heal and repair formatting errors before closing the session.
+- **HOOK-AUDIT-2.0 (Agent-based Verification)**: Native Agent-based Hook on `Stop` or `TaskCompleted` events to execute test suites and inspect audit logs dynamically inside a sandbox, enforcing strict build quality gates before task/session wrap-up.
 - **Phase Self-Apply** (Branch A only): Stage gates become self-applied checklists in D1-D3 phases
 
 > Source: `quality-gates-matrix.md` (clean/)

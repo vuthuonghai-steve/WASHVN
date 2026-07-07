@@ -30,7 +30,7 @@ pipeline_state:
   fallback_history: []             # Append-only
   stage_status: {}                 # Per-stage tracking
   micro_skill_tracking: {}         # Branch B only
-  escalation: {triggered, reason, escalated_to}
+  escalation: {triggered, reason, escalated_to, depth, last_triggered_at, last_failure_summary}
 ```
 
 ## State transitions
