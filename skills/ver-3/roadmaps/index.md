@@ -114,7 +114,7 @@ Mỗi phase phải document trong header chỉ rõ những architectural defects
 
 | Phase | Acceptance gate | Status column |
 |:---:|:---|:---:|
-| 0 | `python3 .claude/scripts/validate_suite_integrity.py` trả về exit 0; 11 skill dirs exist; 7 knowledge stubs exist; AC-8 Docker check PASS hoặc PASS_WITH_WARNING (eval v1 đề xuất 3) | `pending` |
+| 0 | `python3 .claude/scripts/validate_suite_integrity.py` trả về exit 0; 11 skill dirs exist; 7 knowledge stubs exist; AC-8 Docker check PASS hoặc PASS_WITH_WARNING (eval v1 đề xuất 3) | `done` |
 | 1 | 7 knowledge docs ≥ 100 dòng, path resolution pass, frontmatter hợp lệ, không placeholder | `pending` |
 | 2 | 6 hook files exist + executable; exit codes 0/2 tested cho mỗi hook | `pending` |
 | 3 | 4 agents deploy; mỗi agent pass subagent-forge 4-evaluator ≥ APPROVED_FOR_REVIEW | `pending` |
