@@ -1,6 +1,422 @@
-# xml_tags_standards.yaml — Stub for XML tags standard (Phase 1 will fill)
-phase_to_author: 1
-status: stub
-last_updated: 2026-07-04
-tags:
-  # Phase 1 sẽ populate với whitelist gồm 9 XML tags
+---
+name: xml-tags-standards
+version: 0.0.1
+last_updated: 2026-07-07
+status: canonical
+target_consumer: subagent-forge
+suite: WASHVN
+description: "9-tag XML whitelist for semantic prompt boundaries — instructions, context, examples, input, output_contract, retrieved_docs, task, constraints, acceptance_criteria with usage rules and anti-patterns"
+tags: [subagent, xml, tags, prompt, semantic-boundaries]
+---
+canonical_xml_tags:
+  instructions:
+    description: >
+      Controls agent behavior with hard rules and non-negotiable directives.
+      Every instructions block defines behavioral constraints the agent must
+      follow without deviation. This is the highest-priority semantic zone
+      in any prompt — supersedes context, examples, and input when conflicts
+      arise.
+    placement: opening_of_prompt
+    allowed_locations:
+      - root_guide
+      - skill_header
+      - task_preamble
+    required_attribute:
+      name: priority
+      values:
+        - normal
+        - critical
+      purpose: "critical elevates the block above all other content in precedence resolution"
+    allow_nested: false
+    nesting_restriction: "Must not contain other XML tags. Use inside for pure instruction prose only."
+    content_format: plain_text_or_yaml
+    typical_content:
+      - behavioral_imperatives
+      - security_constraints
+      - priority_ordering
+      - anti_goals
+    sub_tags: []
+
+  context:
+    description: >
+      Wraps static reference data that informs the agent without commanding
+      it. Context blocks supply background information, architecture notes,
+      domain definitions, and system state. The agent must treat context as
+      consultative — never as hard rules or instructions.
+    placement: after_instructions_before_task
+    allowed_locations:
+      - task_preface
+      - skill_body
+      - reference_block
+    required_attribute: null
+    allow_nested: false
+    nesting_restriction: "Must not contain other XML tags. May contain Markdown or YAML blocks inside."
+    content_format: markdown_or_yaml
+    typical_content:
+      - architecture_overview
+      - domain_glossary
+      - system_state_description
+      - reference_data
+    sub_tags: []
+
+  examples:
+    description: >
+      Provides concrete real-world patterns demonstrating correct usage.
+      Examples show the agent what correct output looks like, covering
+      typical cases and edge cases. Each example should be self-contained
+      and include both input and expected output where applicable.
+    placement: after_constraints_before_acceptance_criteria
+    allowed_locations:
+      - task_body
+      - skill_zone
+      - policy_appendix
+    required_attribute: null
+    allow_nested: true
+    nesting_restriction: "May contain code blocks and inline Markdown. Do not nest other XML tags inside."
+    content_format: markdown_with_code_blocks
+    typical_content:
+      - request_response_pairs
+      - correct_pattern_demonstrations
+      - edge_case_illustrations
+      - before_after_transformations
+    sub_tags: []
+
+  input:
+    description: >
+      Wraps user-supplied information or source documents entering the
+      agent's processing pipeline. Input blocks clearly demarcate external
+      data from the agent's own instructions and context, preventing the
+      model from misinterpreting user data as behavioral commands.
+    placement: variable_based_on_workflow
+    allowed_locations:
+      - task_spec
+      - user_request
+      - document_ingestion
+    required_attribute: null
+    allow_nested: false
+    nesting_restriction: "Must not contain other XML tags. Raw user content only."
+    content_format: plain_text_or_markdown
+    typical_content:
+      - user_requirements
+      - source_documents
+      - raw_specifications
+      - ticket_descriptions
+    sub_tags: []
+
+  output_contract:
+    description: >
+      Specifies the exact format, structure, and fields the agent must use
+      when producing its response. This tag enforces a machine-parseable
+      contract on the output, making it predictable for downstream consumers
+      and verification scripts. The agent must validate its response against
+      this contract before delivery.
+    placement: near_end_of_prompt_before_task_execution
+    allowed_locations:
+      - skill_footer
+      - task_preamble
+      - prompt_base
+    required_attribute: null
+    allow_nested: false
+    nesting_restriction: "Must not contain other XML tags. Use YAML schema inside the tag body."
+    content_format: yaml
+    typical_content:
+      - required_fields
+      - field_types
+      - optional_fields
+      - response_shape
+      - validation_rules
+    sub_tags: []
+
+  retrieved_docs:
+    description: >
+      References knowledge files for the agent to load when executing the
+      task. This tag acts as a loading directive — telling the agent which
+      documents from the knowledge base are relevant to the current workflow.
+      Paths must use project-root-relative or `$CLAUDE_PROJECT_DIR` prefixed
+      paths to remain portable across environments.
+    placement: after_context_before_task
+    allowed_locations:
+      - skill_loading_map
+      - task_references
+      - retrieval_section
+    required_attribute: null
+    allow_nested: false
+    nesting_restriction: "Must not contain other XML tags. List paths in YAML list format."
+    content_format: yaml_list
+    typical_content:
+      - absolute_or_placeholder_paths
+      - document_descriptions
+      - loading_priorities
+    sub_tags: []
+
+  task:
+    description: >
+      Describes a specific unit of work for the agent to execute. Task tags
+      define the scope, goal, and deliverables of a single atomic operation.
+      Every task tag should be self-contained — readable without relying on
+      surrounding context for understanding what to do.
+    placement: after_context_after_input
+    allowed_locations:
+      - prompt_core
+      - skill_invocation
+      - workflow_step
+    required_attribute: null
+    allow_nested: false
+    nesting_restriction: "Must not contain other XML tags. May contain inline references to constraints or criteria by name."
+    content_format: plain_text_or_markdown
+    typical_content:
+      - goal_statement
+      - scope_definition
+      - deliverables
+      - verification_checks
+    sub_tags: []
+
+  constraints:
+    description: >
+      Enumerates hard boundaries the agent must operate within. Constraints
+      are non-negotiable limits that restrict solution space — what the
+      agent must do and must not do. This tag uses YAML structure with
+      must and must_not sub-keys for clarity.
+    placement: after_task_before_acceptance_criteria
+    allowed_locations:
+      - task_spec
+      - skill_policy
+      - workflow_gate
+    required_attribute: null
+    allow_nested: true
+    nesting_restriction: "Only YAML sub-keys allowed: must, must_not. No prose blocks."
+    content_format: yaml
+    typical_content:
+      - mandatory_requirements
+      - prohibited_patterns
+      - boundary_conditions
+      - scope_limits
+    sub_tags:
+      must:
+        description: "Actions the agent is required to perform. Each entry is a hard rule."
+        type: yaml_list
+        example:
+          - preserve existing API contracts
+          - write tests for all new business logic
+          - validate output against schema before delivery
+      must_not:
+        description: "Actions the agent is forbidden from performing. Violations constitute failure."
+        type: yaml_list
+        example:
+          - edit generated files directly
+          - introduce new dependencies without justification
+          - modify public API signatures without explicit approval
+
+  acceptance_criteria:
+    description: >
+      Defines the measurable conditions that determine whether the agent's
+      output is acceptable. Each criterion is a verifiable statement that
+      can be checked automatically or manually. The agent must not consider
+      the task complete until all criteria are satisfied.
+    placement: end_of_prompt_or_skill
+    allowed_locations:
+      - skill_footer
+      - task_conclusion
+      - quality_gate
+    required_attribute: null
+    allow_nested: false
+    nesting_restriction: "Must not contain other XML tags. Use YAML list format for criteria entries."
+    content_format: yaml
+    typical_content:
+      - functional_correctness_checks
+      - quality_metrics
+      - validation_gates
+      - definition_of_done_items
+    sub_tags: []
+
+usage_rules:
+  semantic_bounding:
+    description: >
+      XML tags create strong semantic boundaries that help the model
+      distinguish between different types of content. Use outer block tags
+      for large sections and avoid microscopic tagging of individual
+      sentences.
+    correct_pattern: >
+      <instructions priority="critical">All changes must preserve
+      backward compatibility.</instructions>
+    incorrect_pattern: >
+      <rule>All</rule> <rule>changes</rule> <rule>must</rule>
+      <rule>preserve</rule> backward compatibility.
+    principle: "Tags delimit intent zones, not individual tokens."
+
+  nesting_restrictions:
+    description: >
+      Most canonical tags forbid nesting other XML tags inside them.
+      Only the constraints tag permits structured sub-content via its
+      must and must_not YAML keys. Examples tag permits nested code
+      blocks as content. Deeply nested XML tag trees confuse the model
+      and should be avoided entirely.
+    allowed_nesting:
+      - "constraints -> must, must_not (YAML sub-keys only)"
+      - "examples -> code blocks (Markdown fenced blocks)"
+    forbidden_nesting:
+      - "instructions inside any other tag"
+      - "task inside output_contract"
+      - "acceptance_criteria inside context"
+    max_nesting_depth: 1
+
+  anti_patterns:
+    - name: excessive_micro_tagging
+      description: Wrapping every sentence or phrase in individual XML tags.
+      example: "<must>Do X</must><must>Do Y</must><must>Do Z</must>"
+      correction: >
+        Wrap the entire rule block in a single <constraints> tag with
+        YAML list entries for individual rules.
+      severity: high
+    - name: deep_prompt_trees
+      description: Nesting XML tags more than one level deep.
+      example: "<task><instructions><constraints><must>Do X</must>...</task>"
+      correction: >
+        Flatten to sibling tags at the same level. Use tag ordering
+        (placement guidance) to express relationships instead of nesting.
+      severity: high
+    - name: xml_replacing_markdown
+      description: Using XML tags for every structural element when Markdown suffices.
+      example: "<p>Introduction text</p><p>More text</p><list><item>A</item></list>"
+      correction: >
+        Use Markdown for prose and document structure. Reserve XML tags
+        for semantic zone boundaries only.
+      severity: medium
+    - name: ambiguous_tag_names
+      description: Using non-standard or ambiguous tag names that reduce semantic signal.
+      example: "<stuff>content</stuff><things>data</things>"
+      correction: >
+        Use only the 9 canonical tag names defined in this specification.
+        Each name has a precise semantic role.
+      severity: high
+    - name: empty_tag_content
+      description: Tags with no content or stub text that signal incomplete work.
+      example: "<task></task><constraints>add constraints later</constraints>"
+      correction: >
+        Every tag instance must contain meaningful content. Do not emit
+        a tag until its content is fully specified.
+      severity: critical
+    - name: missing_required_attributes
+      description: Omitting required attributes on tags that mandate them.
+      example: "<instructions>Do X</instructions>"
+      correction: >
+        The instructions tag requires the priority attribute. Always
+        specify priority="normal" or priority="critical".
+      severity: high
+
+examples:
+  - tag: instructions
+    usage: >
+      <instructions priority="critical">
+      Never expose internal IP addresses, credentials, or stack traces
+      in error responses. Always log at ERROR level for production.
+      </instructions>
+  - tag: instructions
+    usage: >
+      <instructions priority="normal">
+      Prefer functional components over class components when extending
+      the React codebase.
+      </instructions>
+  - tag: context
+    usage: >
+      <context>
+      The payment service runs on a three-node Kubernetes cluster with
+      automatic retry on transient failures. Each payment goes through
+      authorization, capture, and settlement phases.
+      </context>
+  - tag: context
+    usage: >
+      <context>
+      ```yaml
+      current_state:
+        database: postgresql 14
+        cache: redis 7
+        message_queue: rabbitmq 3.12
+      ```
+      </context>
+  - tag: examples
+    usage: >
+      <examples>
+      Correct retry implementation:
+      ```python
+      def retry_with_backoff(operation, max_attempts=3):
+          for attempt in range(max_attempts):
+              try:
+                  return operation()
+              except TransientError:
+                  if attempt == max_attempts - 1:
+                      raise
+                  time.sleep(2 ** attempt)
+      ```
+      </examples>
+  - tag: input
+    usage: >
+      <input>
+      User Story: As a customer, I want to cancel my order within 30
+      minutes of placing it so that I can correct mistakes.
+      Acceptance: The cancellation must not process if the order has
+      already shipped.
+      </input>
+  - tag: input
+    usage: >
+      <input>
+      Error log from production:
+      2026-07-07T10:23:15Z ERROR payment.service - timeout after
+      30s waiting for gateway response (request_id: req_abc123)
+      </input>
+  - tag: output_contract
+    usage: >
+      <output_contract>
+      ```yaml
+      response:
+        type: object
+        required:
+          - status
+          - data
+        fields:
+          status: string (one_of: success, error)
+          data: object (nullable)
+          error: object (required when status=error)
+      ```
+      </output_contract>
+  - tag: retrieved_docs
+    usage: >
+      <retrieved_docs>
+      - file:///$CLAUDE_PROJECT_DIR/architecture.md
+      - file:///$CLAUDE_PROJECT_DIR/standards.md
+      - file:///$CLAUDE_PROJECT_DIR/.claude/knowledge/agents/xml_tags_standards.yaml
+      </retrieved_docs>
+  - tag: task
+    usage: >
+      <task>
+      Refactor the payment retry flow to use exponential backoff with
+      jitter. The public API must remain unchanged. All existing tests
+      must continue to pass.
+      </task>
+  - tag: constraints
+    usage: >
+      <constraints>
+      ```yaml
+      must:
+        - preserve existing API contracts
+        - make retry count configurable via environment variable
+        - ensure idempotency for duplicate payment attempts
+      must_not:
+        - change the database schema
+        - introduce new runtime dependencies
+        - modify the payment gateway integration interface
+      ```
+      </constraints>
+  - tag: acceptance_criteria
+    usage: >
+      <acceptance_criteria>
+      ```yaml
+      criteria:
+        - all existing unit tests pass
+        - new tests cover backoff calculation, jitter range, and max
+          retry boundary
+        - no duplicate payment charge possible under concurrent retries
+        - failure path returns documented error shape with request_id
+        - retry behavior is observable via structured logs
+      ```
+      </acceptance_criteria>
