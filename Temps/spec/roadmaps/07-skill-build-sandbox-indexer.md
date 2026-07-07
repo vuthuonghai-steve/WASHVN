@@ -488,5 +488,5 @@ dod:
 - [Roadmap Index](index.md)
 - [Phase 6 trước](06-skill-build-main-pipeline.md)
 - [Phase 8 kế tiếp](08-integration-tests-hardening.md)
-- [Architecture §5 CASE System](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/architecture.md)
-- [Spec P5 fallback matrix](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/Temps/spec/architects/P5-fallback-and-escalation/fallback-matrix-full.md)
+- [Architecture §5 CASE System](../../../architecture.md)
+- [Spec P5 fallback matrix](../architects/P5-fallback-and-escalation/fallback-matrix-full.md)

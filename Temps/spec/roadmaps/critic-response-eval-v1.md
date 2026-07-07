@@ -2,7 +2,7 @@
 
 > **Date:** 2026-07-04
 > **Position:** Architectural critic-of-critic (đánh giá độc lập về evaluation)
-> **Subject:** Phân biện các đề xuất trong `/home/stveve/Documents/workspace/build-workflow/roadmap_evaluation.md`
+> **Subject:** Phân biện các đề xuất trong `../../../../roadmap_evaluation.md`
 
 ---
 
@@ -131,8 +131,8 @@ Roadmap strengthened:
 
 ## Liên kết
 
-- [Roadmap evaluation v1](file:///home/stveve/Documents/workspace/build-workflow/roadmap_evaluation.md)
-- [Roadmap v1.1 (updated index)](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/Temps/spec/roadmaps/index.md)
-- [Phase 0 updated](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/Temps/spec/roadmaps/00-foundation-bootstrap.md)
-- [Phase 6 updated](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/Temps/spec/roadmaps/06-skill-build-main-pipeline.md)
-- [Phase 8 updated](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/Temps/spec/roadmaps/08-integration-tests-hardening.md)
+- [Roadmap evaluation v1](../../../../roadmap_evaluation.md)
+- [Roadmap v1.1 (updated index)](index.md)
+- [Phase 0 updated](00-foundation-bootstrap.md)
+- [Phase 6 updated](06-skill-build-main-pipeline.md)
+- [Phase 8 updated](08-integration-tests-hardening.md)

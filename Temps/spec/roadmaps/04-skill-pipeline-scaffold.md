@@ -497,5 +497,5 @@ dod:
 - [Roadmap Index](index.md)
 - [Phase 3 trước](03-agent-foundation.md)
 - [Phase 5 tiếp](05-skill-build-ba-pipeline.md)
-- [Spec architects P0: artifact-registry](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/Temps/spec/architects/P0-context-bus-and-state/artifact-registry.md)
-- [Standards (4-layer model §5)](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/standards.md)
+- [Spec architects P0: artifact-registry](../architects/P0-context-bus-and-state/artifact-registry.md)
+- [Standards (4-layer model §5)](../../../standards.md)

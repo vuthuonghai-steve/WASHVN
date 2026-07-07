@@ -64,7 +64,9 @@ FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
 [ -z "$FILE_PATH" ] && exit 0
 
 # Canonical allowlist (canonical paths, never modify without commit review)
-ALLOWLIST_REGEX="^/home/stveve/Documents/workspace/build-workflow/WASHVN/(\.claude/|raw/ver-3/|\.skill-context/|docs/context-to-work/|Temps/spec/)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+WORKSPACE_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
+ALLOWLIST_REGEX="^${WORKSPACE_ROOT}/(\.claude/|raw/ver-3/|\.skill-context/|docs/context-to-work/|Temps/spec/)"
 
 if [[ ! "$FILE_PATH" =~ $ALLOWLIST_REGEX ]]; then
   echo "BLOCKED: write target outside WASHVN workspace: $FILE_PATH" >&2
@@ -344,7 +346,8 @@ echo "AC-3 PASS"
 ### AC-4 — Hook self-test (reverse direction)
 ```bash
 # Test allow case:
-JSON_INSIDE='{"tool_name":"Write","tool_input":{"file_path":"/home/stveve/Documents/workspace/build-workflow/WASHVN/raw/ver-3/test/SKILL.md"}}'
+WORKSPACE_ROOT="$(pwd)"
+JSON_INSIDE="{\"tool_name\":\"Write\",\"tool_input\":{\"file_path\":\"\${WORKSPACE_ROOT}/raw/ver-3/test/SKILL.md\"}}"
 EXIT=$(echo "$JSON_INSIDE" | bash .claude/hooks/events/pre-tool-use_write_gate.sh 2>&1; echo $?)
 [ "$EXIT" = "0" ] || exit 1
 
@@ -451,5 +454,5 @@ dod:
 - [Roadmap Index](index.md)
 - [Phase 1 trước](01-knowledge-base-authoring.md)
 - [Phase 3 kế tiếp](03-agent-foundation.md)
-- [Hooks_and_events.md spec](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/.claude/knowledge/agents/hooks_and_events.md)
-- [Reference: subagent-forge.md hooks block](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/.claude/agents/subagent-forge.md#L9-L30)
+- [Hooks_and_events.md spec](../../../.claude/knowledge/agents/hooks_and_events.md)
+- [Reference: subagent-forge.md hooks block](../../../.claude/agents/subagent-forge.md#L9-L30)

@@ -307,5 +307,5 @@ dod:
 - [Roadmap Index](index.md)
 - [Phase 0 trước](00-foundation-bootstrap.md)
 - [Phase 2 tiếp theo](02-hook-framework.md)
-- [Reference: subagent-forge.md `retrieved_docs` section](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/.claude/agents/subagent-forge.md#L73-L82)
-- [Standards](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/standards.md)
+- [Reference: subagent-forge.md `retrieved_docs` section](../../../.claude/agents/subagent-forge.md#L73-L82)
+- [Standards](../../../standards.md)

@@ -463,5 +463,5 @@ Master Skill Suite đạt trạng thái **publication-ready ≥90%** per archite
 
 - [Roadmap Index](index.md)
 - [Phase 7 trước](07-skill-build-sandbox-indexer.md)
-- [Architectural critic report reference](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/Temps/spec/architects/README.md)
-- [Spec P5 fallback matrix](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/Temps/spec/architects/P5-fallback-and-escalation/fallback-matrix-full.md)
+- [Architectural critic report reference](../../../Temps/spec/architects/README.md)
+- [Spec P5 fallback matrix](../../../Temps/spec/architects/P5-fallback-and-escalation/fallback-matrix-full.md)

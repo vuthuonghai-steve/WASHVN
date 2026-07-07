@@ -638,5 +638,5 @@ dod:
 - [Roadmap Index](index.md)
 - [Phase 4 trước](04-skill-pipeline-scaffold.md)
 - [Phase 6 kế tiếp](06-skill-build-main-pipeline.md)
-- [Spec P2 dual-context-ingestion](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/Temps/spec/architects/P2-context-hydrator/dual-context-ingestion.md)
-- [Spec P1 re-validation-rule F16-F19](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/Temps/spec/architects/P1-scs-router-and-gatekeeper/re-validation-rule.md)
+- [Spec P2 dual-context-ingestion](../../../Temps/spec/architects/P2-context-hydrator/dual-context-ingestion.md)
+- [Spec P1 re-validation-rule F16-F19](../../../Temps/spec/architects/P1-scs-router-and-gatekeeper/re-validation-rule.md)

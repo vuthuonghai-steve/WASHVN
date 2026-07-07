@@ -379,5 +379,5 @@ dod:
 - [Roadmap Index](index.md)
 - [Phase 2 trước](02-hook-framework.md)
 - [Phase 4 kế tiếp](04-skill-pipeline-scaffold.md)
-- [Subagent-forge reference](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/.claude/agents/subagent-forge.md)
-- [Examples reference doc](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/.claude/knowledge/agents/examples.md)
+- [Subagent-forge reference](../../../.claude/agents/subagent-forge.md)
+- [Examples reference doc](../../../.claude/knowledge/agents/examples.md)

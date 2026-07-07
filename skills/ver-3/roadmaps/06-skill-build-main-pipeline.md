@@ -675,4 +675,4 @@ dod:
 - [Roadmap Index](index.md)
 - [Phase 5 trước](05-skill-build-ba-pipeline.md)
 - [Phase 7 kế tiếp](07-skill-build-sandbox-indexer.md)
-- [Architectural defects addressed](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/Temps/spec/architects/README.md)
+- [Architectural defects addressed](../../../Temps/spec/architects/README.md)
