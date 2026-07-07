@@ -114,7 +114,7 @@ Rename the fork file to replace the parent agent. The promote workflow:
 5. Remove the `parent` frontmatter field -- the promoted fork is now the
    authoritative agent definition.
 
-The archive directory is at ([archive/](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/.claude/agents/archive/)).
+The archive directory is at ([archive/](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/.claude/agents/_archive/)).
 
 ### Stage 4: Archive
 
@@ -281,9 +281,9 @@ The fork's frontmatter MUST document the domain constraint.
 ## Cross-References
 
 - [Agent configuration patterns](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/.claude/knowledge/agents/configuration.md)
-- [Subagent forge contract](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/.claude/knowledge/subagent-forge.md)
+- [Subagent forge contract](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/.claude/agents/subagent-forge.md)
 - [Workflow pattern registry](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/.claude/knowledge/agents/workflow_patterns.md)
 - [Capability controls](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/.claude/knowledge/agents/capability_controls.md)
 - [XML tags standards](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/.claude/knowledge/agents/xml_tags_standards.yaml)
-- [Fork archive directory](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/.claude/agents/archive/)
+- [Fork archive directory](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/.claude/agents/_archive/)
 - [WASHVN master skill suite architecture](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/architecture.md)
