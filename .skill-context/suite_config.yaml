@@ -1,0 +1,22 @@
+# suite_config.yaml — Dynamic Configuration Overlay (per §6 architecture.md)
+suite: WASHVN
+version: 3.0.0
+runtime_target:
+  claude_code: .claude/skills/
+  antigravity: .agents/skills/
+  hermes: .hermes/skills/
+
+state_archive:
+  path: .skill-context/_state-archive/
+  retention_policy: keep_last_3_per_run_id
+  pre_reinit_backup: required    # CRITICAL: fix architectural defect Γ-7
+
+yaml_resilience:
+  max_repair_attempts_per_artifact: 2
+  translation_history: append_only
+  max_history_entries: 20          # fix architectural defect: unbounded state ledger
+
+feature_flags:
+  enable_docker_sandbox: true
+  enable_branch_b_orchestration: true
+  hysteresis_zone_scs: [2.7, 3.3]  # architectural defect Γ-3 fix placeholder
