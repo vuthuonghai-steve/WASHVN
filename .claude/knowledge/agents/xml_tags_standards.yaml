@@ -1,0 +1,6 @@
+# xml_tags_standards.yaml — Stub for XML tags standard (Phase 1 will fill)
+phase_to_author: 1
+status: stub
+last_updated: 2026-07-04
+tags:
+  # Phase 1 sẽ populate với whitelist gồm 9 XML tags
