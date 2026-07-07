@@ -1,0 +1,13 @@
+# Hook Registry — Phase 2 sẽ fill với danh sách đầy đủ
+# Cấu trúc mỗi entry:
+#   event_type: PreToolUse | PostToolUse | Stop | SessionStart
+#   matcher: regex string cho tool_name hoặc event pattern
+#   script: path tới shell script trong .claude/hooks/events/
+#   exit_allow: exit code = allow (default 0)
+#   exit_block: exit code = block (default 2)
+
+hooks:
+  # Phase 2 sẽ populate
+version: 0.0.1
+suite: WASHVN
+last_updated: 2026-07-04
