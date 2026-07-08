@@ -7,11 +7,14 @@
 
 ## Mục địch
 
-Phase 3 xây dụng **4 production agents** tại `.claude/agents/` bằng cách dụng subagent-forge làm reference pattern. Đây là infrastructure layer cho Phase 5-7 — khi skills build, các agents này sẽ act là:
-- **Orchestrator** cho skill build pipeline
-- **Aggregate quality gatekeeper** (như spec Phase P1 yêu cầu)
-- **BA-pipeline runner** tự kích 3 BA skills nối tiếp nhau
-- **Production code reviewer agent** (external ground-truth cho Γ-1)
+Phase 3 xây dụng **8 specialized agents** (từ thiết kế concentrated 4-agent gốc) tại `.claude/agents/` bằng cách dụng subagent-forge làm reference pattern, theo nguyên tắc **1-role-per-agent** để tránh LLM overload (Λ-1 Role Confation). Đây là infrastructure layer cho Phase 5-7 — khi skills build, các agents này sẽ act là:
+- **Orchestrator** (pipeline) cho skill build pipeline — giữ orchestration only
+- **Design validator** + **Quality scorer** (tách từ aggregate gatekeeper) — schema check + META scoring riêng
+- **BA-pipeline runner** — tự kích 3 BA skills nối tiếp nhau
+- **External code reviewer** — external ground-truth cho Γ-1
+- **User-knowledge-ingestor** (MỚI) — nhận + parse tài liệu từ user suốt build
+- **Drift detector** — Stage 2.5 plan-design alignment, bị bỏ sót trong thiết kế gốc
+- **Branch orchestrator** (TÙY CHỌN) — Branch B parallel coordination
 
 Phase 3 là tới vị trí bắt buộc đã có Phase 1 (knowledge docs) để subagent-forge reference đầy đủ.
 
@@ -33,40 +36,45 @@ prerequisites:
 
 ```yaml
 agent_design_principles:
+  - "1-role-per-agent (architecture doc §1 role_invariant): mỗi agent có ĐÚNG 1 primary_responsibility, không dồn nhiều role → tránh Λ-1 Role Overload"
   - "Mỗi agent phải tuân chặt subagent-forge 4-evaluator pipeline ≥ APPROVED_FOR_REVIEW"
   - "Mỗi agent phải reference tất cả 7 knowledge docs via retrieved_docs tag"
   - "Mỗi agent phải có ≥ 3 inline hooks (PreToolUse + PostToolUse) trừ trường hợp justify standalone"
   - "Mỗi agent chỉ có phụ thuộc skills-phase-5-7-không-built-yet được declare trong frontmatter `skills:` field nhưng phải NOT CIRCULAR-DEPENDENCY skillPhase (e.g., agent ba-pipeline-runner dependent trên skill ba-elicitor — cần phase 5 build skill trước)"
   - "Output contract của mỗi agent phải khai báo artifact paths trong .skill-context/"
+  - "Model tier justify theo task complexity (architecture doc §5 Λ-10 fix): opus=deep reasoning, sonnet=operational, haiku=classification-only"
+  - "Agent có state_ledger_validation_hook=true bắt buộc PostToolUse hook validate YAML schema (architecture doc §3-bis)"
 ```
 
 ---
 
-## Deliverables (4 agents)
+## Deliverables (8 agents)
 
-### D3-1: `.claude/agents/_staging/skill-pipeline-orchestrator.md`
+### D3-1: `.claude/agents/_staging/pipeline-orchestrator.md`
 
-Agent orchestration cho skill build pipeline — nhận user request, chạy 8-stage pipeline.
+Agent orchestration cho skill build pipeline — nhận user request, chạy 8-stage pipeline. **Điều phối (orchestration) only — không thực thi nội dung nghiệp vụ.** [revised per Λ-10 fix: model opus→sonnet vì orchestration là mechanical task]
 
 **Frontmatter keys**:
 ```yaml
-name: skill-pipeline-orchestrator
-description: "Use PROACTIVELY khi user yêu cầu build, rebuild, hoặc maintain một skill. Trigger phrases: 'build skill <name>', 'rebuild skill <name>', 'maintain skill'. Orchestrate 11 skills theo 8-Stage pipeline (Phase P0-P7 từ spec)."
-model: opus
-tools: [Read, Write, Glob, Grep, Task, TodoWrite]
+name: pipeline-orchestrator
+description: "Use PROACTIVELY khi user yêu cầu build, rebuild, hoặc maintain một skill. Trigger phrases: 'build skill <name>', 'rebuild skill <name>', 'maintain skill'. Orchestrate 8-stage pipeline — dispatch stage executors via handoff manifest. NOT responsible for quality scoring, design validation, or BA elicitation."
+model: sonnet  # [v0.0.2] orchestration là mechanical dispatch — opus gây Λ-10 lãng phí deep-reasoning cho mechanical task
+justification: "Orchestration = đọc state ledger + dispatch agent next + kiểm handoff manifest. Sonnet pattern matching đủ xử lý, opus lãng phí latency + token budget."
+tools: [Read, Task, TodoWrite]
 permissionMode: default
-skills: []   # Phase 5-7 sẽ thêm skills)
+skills: []   # Phase 5-7 sẽ thêm skills
 mcpServers: []
+state_ledger_validation_hook: true  # §3-bis architecture doc
 hooks:
   PreToolUse:
     - matcher: "Write|Edit"
       hook: |
-        # Block writes outside _staging/ + .skill-context/
+        # Block writes outside designated zones
         INPUT=$(cat)
         FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
         [ -z "$FILE_PATH" ] && exit 0
-        if [[ ! "$FILE_PATH" =~ \.claude/agents/_staging/|\.skill-context/|Temps/spec/roadmaps/|docs/context-to-work/ ]] && [[ "$FILE_PATH" =~ \.claude/ ]]; then
-          echo "BLOCKED: orchestrator chỉ được phép viết vào _staging/, .skill-context/, roadmaps/, docs/" >&2
+        if [[ "$FILE_PATH" =~ \.claude/agents/ ]] && [[ ! "$FILE_PATH" =~ \.claude/agents/_staging/ ]] && [[ ! "$FILE_PATH" =~ \.skill-context/.*_state_ledger ]]; then
+          echo "BLOCKED: orchestrator chỉ write _staging/ + _state_ledger.yaml" >&2
           exit 2
         fi
     - matcher: "Task"
@@ -74,19 +82,22 @@ hooks:
         # Block recursive orchestrator spawn (max depth = 1)
         INPUT=$(cat)
         SUB_TYPE=$(echo "$INPUT" | jq -r '.tool_input.subagent_type // empty')
-        if [ "$SUB_TYPE" = "skill-pipeline-orchestrator" ]; then
+        if [ "$SUB_TYPE" = "pipeline-orchestrator" ]; then
           echo "BLOCKED: recursive orchestrator spawn forbidden (max depth = 1)" >&2
           exit 2
         fi
+  PostToolUse:
+    - matcher: "Write|Edit"
+      hook: ".claude/hooks/validate-state-ledger.sh"  # validate schema + YAML parse
 ```
 
 **System prompt structure (8 sections per subagent-forge output contract)**:
 
-1. `<instructions>` — identity statement (~80 words): "You are skill-pipeline-orchestrator, agent cho Skill Lab WASHVN. Bạn read user request, parse features, invoke appropriate 8-stage skills theo 8-stage pipeline (from spec architecture.md), aggregate outputs từ .skill-context/. Bạn không write skill content — chỉ orchestrate skills."
+1. `<instructions>` — identity statement (~80 words): "You are pipeline-orchestrator, agent cho Skill Lab WASHVN. Bạn read user request, parse features, invoke appropriate stage executors via handoff manifest theo 8-stage pipeline (from source architecture.md), aggregate outputs từ .skill-context/. Bạn không write skill content — chỉ orchestrate skills via Task dispatch."
 2. `<safety_contract>` — non-negotiable:
    - Chỉ invoke skills via `Task` calls — không trực tiếp write skill content
    - Tuân thủ_CAT protocol Phase 0-7 sequence
-   - Block recursion (block on `subagent_type: skill-pipeline-orchestrator`)
+   - Block recursion (block on `subagent_type: pipeline-orchestrator`)
 3. `<workflow_phases>` — 8 phases correspond tới 8 stages:
    - Stage 0 → invoke `skill-explorer`
    - Stage 0.5 → invoke `skill-knowledge-miner`
@@ -103,53 +114,83 @@ hooks:
 7. `<examples>` — trivial skill "hello-world" đi qua pipeline (mock example)
 8. `<failure_modes>` — fallback paths F1-F9 với brief description
 
-### D3-2: `.claude/agents/_staging/aggregate-quality-gatekeeper.md`
+### D3-2: `.claude/agents/_staging/design-validator.md`
 
-Agent quality aggregator — nhận design.md + criteria.md từ Skill Pipeline, chấm điểm theo META-1→3 criteria, sinh quality-matrix.yaml.
-
-特质 khác biệt với skill `production-quality-gatekeeper` (Phase 6 build):
-- Skill = pure verification algorithm (đọc design.md, compare với criteria, chấm)
-- Agent = external validator (gọi tới skills+cyan+, không phụ thuộc standard flow)
+Agent schema/contract validation — kiểm tra design.md có đủ 7-Zone, data contracts, semantic anchors. **Mechanical validation only — không chấm META quality.**
 
 ```yaml
-name: aggregate-quality-gatekeeper
-description: "Use khi user yêu cầu hoặc skill-pipeline-orchestrator invokes để quality check a skill design. Trigger: 'evaluate design for <skill>', aggregate META-1 to 3 criteria. Architectural defect Γ-1 fix: external LLM validator thay vì self-audit."
-model: sonnet   # Opus thiết quá nhiều tokens cho quality check
-tools: [Read, Glob, Grep, Task]
+name: design-validator
+description: "Use PROACTIVELY bởi pipeline-orchestrator hoặc user request. Validate design.md schema completeness: 7-Zone, data contracts, semantic anchors. NOT META scoring (chuyển quality-scorer)."
+model: sonnet
+justification: "Schema validation = pattern matching + checklist. Sonnet đủ tốc độ, không cần opus."
+tools: [Read, Glob, Grep]
 permissionMode: default
-skills: [production-quality-gatekeeper]  # Phase 6 sẽ build
+skills: []
 hooks:
   PreToolUse:
     - matcher: "Write"
       hook: |
-        # Chỉ Write vào .skill-context/
         INPUT=$(cat)
         FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
         [ -z "$FILE_PATH" ] && exit 0
-        if [[ ! "$FILE_PATH" =~ \.skill-context/ ]]; then
-          echo "BLOCKED: gatekeeper chỉ write vào .skill-context/" >&2
+        if [[ ! "$FILE_PATH" =~ \.skill-context/{skill}/design-valid ]]; then
+          echo "BLOCKED: design-validator chỉ write .skill-context/{skill}/design-valid*" >&2
           exit 2
         fi
 ```
 
 **System prompt sections**:
-
-1. Identity: external quality validator
-2. Safety contract: chỉ verify, không modify design
-3. Workflow:
-   - Phase A: read design.md + criteria.md
-   - Phase B: run 4 META-2.1 signal checks (S1 must_not ≥ 5, S2 reverse Q ≥ 4-aspect, S3 multi-stakeholder, S4 constraint anchoring)
-   - Phase C: run META-1.1 domain anchor + META-1.2 phase deconstruct checks
-   - Phase D: aggregate score → emit quality-matrix.yaml + evaluation-report.md
+1. Identity: schema/contract validator — NOT quality scorer
+2. Safety contract: chỉ mechanical check, không opine về design quality
+3. Workflow: Read design.md → validate 7-Zone completeness → check data contracts → emit design-validation-report.yaml
 4. Retrieved_docs: 7 knowledge docs
-5. Input contract: design.md + criteria.md paths
-6. Output contract: `.skill-context/{skill}/quality-matrix.yaml`, `.skill-context/{skill}/evaluation-report.md`, `.skill-context/{skill}/feedback.yaml`
-7. Examples: PASS example + FAIL example each ~20 dòng
-8. Failure modes: criteria files missing → exit with error, don't fabricate
+5. Input contract: `design.md`, `criteria.md`
+6. Output contract: `.skill-context/{skill}/design-validation-report.yaml` (PASS/FAIL schema checklist)
+7. Failure modes: criteria.md missing → PASS with warning
 
-### D3-3: `.claude/agents/_staging/ba-pipeline-runner.md`
+### D3-3: `.claude/agents/_staging/quality-scorer.md`
 
-Agent chuyên nghiệp cho BA pipeline (Stage -1 → -0.5 → -0.2): ba-elicitor → ba-analyst → ba-synthesizer.
+Agent META-1→3 scoring — semantic depth, reverse Q, multi-stakeholder, mechanical verify. **Deep reasoning task — dùng opus.** [split từ aggregate-gatekeeper gốc với Λ-10 fix: upgrade sonnet→opus cho META scoring]
+
+```yaml
+name: quality-scorer
+description: "Use PROACTIVELY bởi pipeline-orchestrator sau khi design-validator PASS. Score design quality theo META-1→3 criteria: META-1.1 domain anchor, META-2.1 semantic depth, META-3.1 mechanical. Output quality-matrix.yaml."
+model: opus
+justification: "META scoring cần deep reasoning (reverse Q, multi-stakeholder, negation density) — sonnet gây shallow validation (Λ-10). Opus bắt buộc."
+tools: [Read, Glob, Grep]
+permissionMode: default
+skills: [production-quality-gatekeeper]  # Phase 6 build — skill reference
+hooks:
+  PreToolUse:
+    - matcher: "Write"
+      hook: |
+        INPUT=$(cat)
+        FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
+        [ -z "$FILE_PATH" ] && exit 0
+        if [[ ! "$FILE_PATH" =~ \.skill-context/{skill}/quality- ]]; then
+          echo "BLOCKED: quality-scorer chỉ write .skill-context/{skill}/quality-*" >&2
+          exit 2
+        fi
+```
+
+**System prompt sections**:
+1. Identity: META quality scorer — external validator (Γ-1 fix)
+2. Safety contract: CHỈ đánh giá quality, không sửa design
+3. Workflow:
+   - Phase A: read design.md, criteria.md, design-validation-report.yaml (đã PASS)
+   - Phase B: META-2.1 signal checks (S1 must_not ≥ 5, S2 reverse Q ≥ 4-aspect, S3 multi-stakeholder, S4 constraint anchoring)
+   - Phase C: META-1.1 domain anchor + META-1.2 phase deconstruct
+   - Phase D: aggregate score → quality-matrix.yaml + evaluation-report.md
+4. Retrieved_docs: 7 knowledge docs
+5. Input contract: `design.md`, `criteria.md`, `design-validation-report.yaml`
+6. Output contract: `.skill-context/{skill}/quality-matrix.yaml`, `.skill-context/{skill}/evaluation-report.md`
+7. Failure modes: criteria files missing → exit with error, don't fabricate
+
+### D3-4: `.claude/agents/_staging/ba-pipeline-runner.md`
+
+Agent chuyên nghiệp cho BA pipeline (elicitor → analyst → synthesizer): điều phối BA sub-pipeline, không main pipeline orchestration.
+
+> [revised per 1-role-per-agent: giữ nguyên role, clean contract — không dồn orchestration chính vào agent này]
 
 ```yaml
 name: ba-pipeline-runner
@@ -187,7 +228,7 @@ hooks:
 3. Invoke `skill ba-synthesizer` → hợp latest analysis, output `business-analysis.md`
 4. Update `.skill-context/{feature}/_ba_pipeline_state.yaml` với lifecycle status
 
-### D3-4: `.claude/agents/_staging/external-code-reviewer.md`
+### D3-5: `.claude/agents/_staging/external-code-reviewer.md`
 
 **Đây là external ground-truth validator** address defect Γ-1 — LLM self-audit mặc cả.
 
@@ -235,15 +276,95 @@ Workflow:
 
 **Anti-pattern / contract**: Agent này phải NOT biết design.md (architect's reasoning). Filter forward refs to validate WITHOUT context bias.
 
+### D3-6: `.claude/agents/_staging/user-knowledge-ingestor.md`
+
+Agent tiếp nhận, parse, ingest tài liệu/knowledge từ user cung cấp trong suốt build. **MỚI — không có trong thiết kế 4-agent gốc.** Đảm nhiệm khâu khai thác tài nguyên từ user.
+
+```yaml
+name: user-knowledge-ingestor
+description: "Use PROACTIVELY khi user cung cấp tài liệu domain (PDF, MD, code, mockup) trong quá trình build. Elicit + parse + ingest knowledge. Output: phần bổ sung cho context bus."
+model: opus  # elicitation deep reasoning, multi-modal context
+justification: "Elicitation từ user resource cần deep reasoning để extract implicit domain knowledge. Model conversation multi-turn."
+tools: [Read, Glob, Grep]
+permissionMode: default
+skills: []
+hooks:
+  PreToolUse:
+    - matcher: "Write"
+      hook: |
+        INPUT=$(cat)
+        FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
+        [ -z "$FILE_PATH" ] && exit 0
+        if [[ ! "$FILE_PATH" =~ \.skill-context/{skill}/user-contrib ]]; then
+          echo "BLOCKED: ingestor chỉ write .skill-context/{skill}/user-contrib*" >&2
+          exit 2
+        fi
+```
+
+### D3-7: `.claude/agents/_staging/drift-detector.md`
+
+Agent Stage 2.5 — phát hiện sai lệch design↔plan trước khi Builder nhận handoff. **MỚI — Stage 2.5 bị bỏ sót trong 4-agent gốc.**
+
+```yaml
+name: drift-detector
+description: "Use PROACTIVELY bởi pipeline-orchestrator sau Planner. Check back-link fidelity, contract alignment, zone alignment before Builder handoff."
+model: sonnet
+justification: "Drift detection = mechanical comparison (todo.md vs design.md). Pattern match, không cần deep reasoning."
+tools: [Read, Glob, Grep]
+permissionMode: default
+skills: []
+hooks:
+  PreToolUse:
+    - matcher: "Write"
+      hook: |
+        INPUT=$(cat)
+        FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
+        [ -z "$FILE_PATH" ] && exit 0
+        if [[ ! "$FILE_PATH" =~ \.skill-context/{skill}/drift|audit ]]; then
+          echo "BLOCKED: drift-detector chỉ write .skill-context/{skill}/drift* | audit-*" >&2
+          exit 2
+        fi
+```
+
+### D3-8: `.claude/agents/_staging/branch-orchestrator.md` (TÙY CHỌN)
+
+Agent Branch B parallel coordination — spawn parallel builders + SSP contract validate. **Chỉ build nếu Phase 3 scope còn dư. Có thể defer sang Phase 8.**
+
+```yaml
+name: branch-orchestrator
+description: "Orchestrate Branch B micro-skill bundle — parallel builders + SSP contract validation. Trigger: pipeline-orchestrator khi SCS >= 3.0."
+model: opus
+justification: "Branch B coordination cần state management qua nhiều parallel session — opus cho orchestration planning."
+tools: [Read, Task, Write]
+permissionMode: default
+skills: []
+state_ledger_validation_hook: true
+hooks:
+  PreToolUse:
+    - matcher: "Task"
+      hook: |
+        # Block recursive spawn
+        INPUT=$(cat)
+        SUB_TYPE=$(echo "$INPUT" | jq -r '.tool_input.subagent_type // empty')
+        if [ "$SUB_TYPE" = "branch-orchestrator" ]; then
+          echo "BLOCKED: recursive branch-orchestrator forbidden" >&2
+          exit 2
+        fi
+  PostToolUse:
+    - matcher: "Write|Edit"
+      hook: ".claude/hooks/validate-state-ledger.sh"
+```
+
 ---
 
 ## Verification checklist (cơ học)
 
-### AC-1 — 4 agent files created at staging area
+### AC-1 — 8 agent files created at staging area
 ```bash
-for agent in skill-pipeline-orchestrator aggregate-quality-gatekeeper ba-pipeline-runner external-code-reviewer; do
+for agent in pipeline-orchestrator design-validator quality-scorer ba-pipeline-runner external-code-reviewer user-knowledge-ingestor drift-detector; do
   test -f .claude/agents/_staging/$agent.md || exit 1
 done
+test -f .claude/agents/_staging/branch-orchestrator.md || echo "WARNING: branch-orchestrator optional, not required for AC-1 PASS"
 echo "AC-1 PASS"
 ```
 
@@ -251,7 +372,7 @@ echo "AC-1 PASS"
 ```bash
 python3 << 'EOF'
 import yaml
-agents = ['skill-pipeline-orchestrator', 'aggregate-quality-gatekeeper', 'ba-pipeline-runner', 'external-code-reviewer']
+agents = ['pipeline-orchestrator', 'design-validator', 'quality-scorer', 'ba-pipeline-runner', 'external-code-reviewer', 'user-knowledge-ingestor', 'drift-detector']
 for a in agents:
     with open(f'.claude/agents/_staging/{a}.md') as f:
         c = f.read()
@@ -266,17 +387,19 @@ EOF
 
 ### AC-3 — Reference of 7 knowledge docs exists in each agent
 ```bash
-for agent in skill-pipeline-orchestrator aggregate-quality-gatekeeper ba-pipeline-runner external-code-reviewer; do
+ALLAGENTS="pipeline-orchestrator design-validator quality-scorer ba-pipeline-runner external-code-reviewer user-knowledge-ingestor drift-detector"
+for agent in $ALLAGENTS; do
   count=$(grep -c "claude/knowledge/agents/" .claude/agents/_staging/$agent.md)
   test "$count" -ge 7 || exit 1
 done
 echo "AC-3 PASS"
 ```
+Note: branch-orchestrator (optional) independent check khi nó được build.
 
 ### AC-4 — Inline hooks block recursive + gate paths
 ```bash
-# Verify each agent has at least 1 blocker hook referencing exit 2:
-for agent in skill-pipeline-orchestrator aggregate-quality-gatekeeper ba-pipeline-runner external-code-reviewer; do
+ALLAGENTS="pipeline-orchestrator design-validator quality-scorer ba-pipeline-runner external-code-reviewer user-knowledge-ingestor drift-detector"
+for agent in $ALLAGENTS; do
   grep -q "exit 2" .claude/agents/_staging/$agent.md || exit 1
 done
 echo "AC-4 PASS"
@@ -286,16 +409,18 @@ echo "AC-4 PASS"
 ```bash
 # Invoke subagent-forge to evaluate each agent → archive eval-report
 # (Thực tế invoke — sẽ chạy 4 parallel Task calls per agent)
-# Manual tại Phase 3:
-# invoke: task subagent_type=general-purpose prompt="evaluate .claude/agents/_staging/skill-pipeline-orchestrator.md per subagent-forge §Multi-Eval Pipeline"
-# ... check JSON output aggregate verdict
-# Currently manual tại phase 3; Phase 8 sẽ automate
+ALLAGENTS="pipeline-orchestrator design-validator quality-scorer ba-pipeline-runner external-code-reviewer user-knowledge-ingestor drift-detector"
+for agent in $ALLAGENTS; do
+  echo "Manual step: invoke subagent-forge evaluate .claude/agents/_staging/$agent.md"
+  # invoke: task subagent_type=general-purpose prompt="evaluate .claude/agents/_staging/$agent.md per subagent-forge §Multi-Eval Pipeline"
+done
 echo "AC-5 NEEDED_MANUAL — invoke subagent-forge on each agent & verify APPROVED_FOR_REVIEW aggregate verdict"
 ```
 
 ### AC-6 — Output contract section exists in each agent
 ```bash
-for agent in skill-pipeline-orchestrator aggregate-quality-gatekeeper ba-pipeline-runner external-code-reviewer; do
+ALLAGENTS="pipeline-orchestrator design-validator quality-scorer ba-pipeline-runner external-code-reviewer user-knowledge-ingestor drift-detector"
+for agent in $ALLAGENTS; do
   grep -q "<output_contract>" .claude/agents/_staging/$agent.md || exit 1
 done
 echo "AC-6 PASS"
@@ -305,7 +430,7 @@ echo "AC-6 PASS"
 ```bash
 python3 << 'EOF'
 import yaml, os
-agents = ['skill-pipeline-orchestrator', 'aggregate-quality-gatekeeper', 'ba-pipeline-runner', 'external-code-reviewer']
+agents = ['pipeline-orchestrator', 'design-validator', 'quality-scorer', 'ba-pipeline-runner', 'external-code-reviewer', 'user-knowledge-ingestor', 'drift-detector']
 for a in agents:
     with open(f'.claude/agents/_staging/{a}.md') as f:
         c = f.read()
@@ -332,29 +457,38 @@ grep -q "permissionMode: bypassPermissions" .claude/agents/_staging/*.md && exit
 
 ## Step-by-step task list
 
-1. **Invoke subagent-forge to design skill-pipeline-orchestrator** — pass rich requirements: 8-stage pipeline orchestration, block recursion. subagent-forge will produce staging file + 4-evaluator report. → commit `phase-3: skill-pipeline-orchestrator agent staged`
+### Priority 1 — Backbone (must build first)
+1. **Invoke subagent-forge to design pipeline-orchestrator** — model: sonnet, justification: mechanical dispatch, state_ledger_validation_hook: true. 8-stage orchestration only, block recursion. → commit `phase-3: pipeline-orchestrator agent staged`
+2. **Review + deploy pipeline-orchestrator** — user types `deploy pipeline-orchestrator` → move staging to runtime.
 
-2. **Review subagent-forge output** — verify APPROVED_FOR_REVIEW aggregate verdict. Fix any NEEDS_FIX items. Iterate until verdict ≥ APPROVED_FOR_REVIEW.
+### Priority 2 — Quality gate (Γ-1 fix critical)
+3. **Invoke subagent-forge for design-validator** — model: sonnet, schema/contract validation, write zone `.skill-context/{skill}/design-valid*`. → commit `phase-3: design-validator agent staged`
+4. **Review + deploy design-validator** — verify ≥ APPROVED_FOR_REVIEW.
+5. **Invoke subagent-forge for quality-scorer** — model: opus, META-1→3 scoring, write zone `.skill-context/{skill}/quality-*`. → commit `phase-3: quality-scorer agent staged`
+6. **Review + deploy quality-scorer**.
 
-3. **Deploy orchestrator agent** — user types `deploy skill-pipeline-orchestrator` → move staging to runtime. → commit `phase-3: orchestrator agent deployed`
+### Priority 3 — External validation (Γ-1 independent path)
+7. **Invoke subagent-forge for external-code-reviewer** — model: sonnet, static analysis only, NOT biết design.md context, block code execution. → commit `phase-3: external-code-reviewer agent staged`
+8. **Review + deploy external-code-reviewer**.
 
-4. **Invoke subagent-forge for aggregate-quality-gatekeeper** — pass requirements: external validator per Γ-1 fix, sonnet model (cheaper), only writes to .skill-context/, references META-1→3 criteria. → commit `phase-3: aggregate-quality-gatekeeper agent staged`
+### Priority 4 — BA + Drift
+9. **Invoke subagent-forge for ba-pipeline-runner** — model: opus, orchestrates 3 BA skills, write zone `.skill-context/{feature}/ba-*`. → commit `phase-3: ba-pipeline-runner agent staged`
+10. **Review + deploy ba-pipeline-runner**.
+11. **Invoke subagent-forge for drift-detector** — model: sonnet, Stage 2.5 plan-design alignment, write zone `.skill-context/{skill}/drift*`. → commit `phase-3: drift-detector agent staged`
+12. **Review + deploy drift-detector**.
 
-5. **Review + deploy aggregate-quality-gatekeeper** — verify ≥ APPROVED_FOR_REVIEW, deploy via `deploy aggregate-quality-gatekeeper`. → commit `phase-3: gatekeeper agent deployed`
+### Priority 5 — User resource ingestion (NEW)
+13. **Invoke subagent-forge for user-knowledge-ingestor** — model: opus, elicitation+ingest từ user tài liệu, write zone `.skill-context/{skill}/user-contrib*`. → commit `phase-3: user-knowledge-ingestor agent staged`
+14. **Review + deploy user-knowledge-ingestor**.
 
-6. **Invoke subagent-forge for ba-pipeline-runner** — requirements: orchestrate 3 BA skills, only writes ba-* dirs, block recursion. → commit `phase-3: ba-pipeline-runner agent staged`
+### Finalization
+15. **Run full AC-1 to AC-8** — fix any failures, re-deploy if needed.
+16. **Update workspce_tree.md** — append 8 new entries (7 mandatory + 1 optional) to file routing map.
+17. **Author Phase 3 summary doc** — documenting all deployed agents, costs, notes.
 
-7. **Review + deploy ba-pipeline-runner** — deploy via `deploy ba-pipeline-runner`. → commit `phase-3: ba-pipeline runner agent deployed`
-
-8. **Invoke subagent-forge for external-code-reviewer** — requirements: Γ-1 fix agent, sonnet model, block direct edits to source code, block code execution (static analysis only). → commit `phase-3: external-code-reviewer agent staged`
-
-9. **Review + deploy external-code-reviewer** — deploy via `deploy external-code-reviewer`. → commit `phase-3: external reviewer agent deployed`
-
-10. **Run full AC-1 to AC-8** — fix any failures, re-deploy if needed.
-
-11. **Update subagent-forge workspce_tree.md** — append 4 new entries to file routing map.
-
-12. **Author Phase 3 summary doc** — `docs/context-to-work/foundation-bootstrap/phase-3-summary.2026-07-04.md` documenting all deployed agents, costs, notes.
+### Optional (defer Phase 8 nếu scope quá rộng)
+18. **Invoke subagent-forge for branch-orchestrator** — model: opus, Branch B parallel coordination, SSP contract validate. → commit `phase-3: branch-orchestrator agent staged`
+19. **Review + deploy branch-orchestrator**.
 
 ---
 
@@ -362,13 +496,15 @@ grep -q "permissionMode: bypassPermissions" .claude/agents/_staging/*.md && exit
 
 ```yaml
 dod:
-  - 4 agents deployed tại .claude/agents/ runtime
-  - All 4 agents PASS subagent-forge 4-evaluator aggregate verdict ≥ APPROVED_FOR_REVIEW
-  - workspce_tree.md updated với 4 new agent entries
+  - 7 mandatory agents deployed tại .claude/agents/ runtime (8 nếu include branch-orchestrator)
+  - All agents PASS subagent-forge 4-evaluator aggregate verdict ≥ APPROVED_FOR_REVIEW
+  - workspce_tree.md updated với agent entries
   - Each agent có ≥3 cross-references tới 7 knowledge docs
   - Each agent có ≥1 blocking hook (exit 2)
+  - Each agent có state_ledger_validation_hook nếu §3-bis yêu cầu
   - No `permissionMode: bypassPermissions` anywhere
   - Each agent có <output_contract> section with concrete artifact paths
+  - Model-tier justification match task complexity per Λ-10 fix
   - Phase 3 summary doc archived per `context-before-fix` pattern
 ```
 
