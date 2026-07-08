@@ -1,0 +1,5 @@
+2026-07-07T19:57:37Z	STOP	stop_hook_active=true
+2026-07-07T19:57:37Z	STOP	stop_hook_active=true
+STATE CORRUPT: backed up to .skill-context/_state-archive/_state-2026-07-07T19:57:37Z-corrupt.yaml before any re-init
+2026-07-07T19:58:31Z	STOP	stop_hook_active=false
+STATE CORRUPT: backed up to .skill-context/_state-archive/_state-2026-07-07T19:58:31Z-corrupt.yaml before any re-init

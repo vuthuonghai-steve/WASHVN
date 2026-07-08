@@ -8,6 +8,22 @@
     ],
     "deny": [
       "Bash(rm -rf *)"
+    ], 
+    "defaultMode": "bypassPermissions"
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Evaluate the structural completeness of workspace documentation before session closure. Event context: $ARGUMENTS. Check for: (1) valid YAML frontmatter with all required fields (name, version, suite, tags), (2) well-formed Markdown structure (no broken tables, no unterminated code fences), (3) no dangling TODO or placeholder patterns in documentation files. Return JSON matching this schema: {\"ok\": boolean, \"reason\": string}",
+            "timeout": 45,
+            "continueOnBlock": true,
+            "description": "D2-9: Prompt-based self-healing hook — verify MD/YAML structural completeness on Stop event (HOOK-HEAL-1.0)"
+          }
+        ]
+      }
     ]
   }
 }

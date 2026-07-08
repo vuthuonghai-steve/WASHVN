@@ -1,13 +1,50 @@
-# Hook Registry — Phase 2 sẽ fill với danh sách đầy đủ
-# Cấu trúc mỗi entry:
-#   event_type: PreToolUse | PostToolUse | Stop | SessionStart
-#   matcher: regex string cho tool_name hoặc event pattern
-#   script: path tới shell script trong .claude/hooks/events/
-#   exit_allow: exit code = allow (default 0)
-#   exit_block: exit code = block (default 2)
-
 hooks:
-  # Phase 2 sẽ populate
-version: 0.0.1
+  - name: pre-write-workspace-gate
+    event_type: PreToolUse
+    matcher: "Write|Edit"
+    script: .claude/hooks/events/pre-tool-use_write_gate.sh
+    description: "Block writes outside WASHVN workspace allowlist"
+    exit_allow: 0
+    exit_block: 2
+
+  - name: pre-skill-staging-gate
+    event_type: PreToolUse
+    matcher: "Write|Edit"
+    script: .claude/hooks/events/pre-tool-use_skill_staging_gate.sh
+    description: "Block writes to runtime .claude/skills/ unless deploy phase active"
+    exit_allow: 0
+    exit_block: 2
+
+  - name: pre-bash-validate-command
+    event_type: PreToolUse
+    matcher: "Bash"
+    script: .claude/hooks/events/pre-tool-use_bash_validate_command.sh
+    description: "Block destructive bash patterns (rm -rf, sudo, truncate, dd of=)"
+    exit_allow: 0
+    exit_block: 2
+
+  - name: post-write-audit-log
+    event_type: PostToolUse
+    matcher: "Write|Edit"
+    script: .claude/hooks/events/post-tool-use_log_artifact.sh
+    description: "Audit-log every artifact write to daily log file"
+    exit_allow: 0
+
+  - name: stop-session-state-archive
+    event_type: Stop
+    matcher: ".*"
+    script: .claude/hooks/events/stop_session_log_state.sh
+    description: "Log session stop + backup corrupt _state.yaml (Γ-7 fix)"
+    exit_allow: 0
+
+  - name: session-start-record
+    event_type: SessionStart
+    matcher: ".*"
+    script: .claude/hooks/events/session-start_record_metadata.sh
+    description: "Record session metadata on boot"
+    exit_allow: 0
+
+version: 1.0.0
 suite: WASHVN
-last_updated: 2026-07-04
+last_updated: 2026-07-08
+maintainer: steve
