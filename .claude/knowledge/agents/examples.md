@@ -226,11 +226,12 @@ tools:
   - Read
   - Bash
 hooks:
-  - matcher: "bash"
-    handlers:
-      - event: PreToolUse
-        script: "validate-readonly-query.sh"
-        description: "Block write SQL commands before execution"
+  PreToolUse:
+    - matcher: "Bash"
+      hooks:
+        - type: command
+          command: "validate-readonly-query.sh"
+          description: "Block write SQL commands before execution"
 
 ```
 

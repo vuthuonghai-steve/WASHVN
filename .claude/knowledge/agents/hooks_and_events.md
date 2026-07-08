@@ -119,7 +119,7 @@ handler_schema:
       description: "Specific LLM model to execute the prompt-based checks (e.g., 'claude-3-5-haiku', 'claude-3-5-sonnet'). Only applicable to type 'prompt'."
     timeout:
       type: integer
-      description: "Execution timeout in seconds. Defaults to 30s for prompt/command, 60s for agent."
+      description: "Execution timeout in seconds. Defaults to 30s for prompt/command, 60s for agent. (Note: hook configs specify timeout in seconds; the SDK/Task API expects milliseconds)."
     continueOnBlock:
       type: boolean
       description: "If true, when prompt/agent hook blocks (returns ok: false), the runtime feeds the block reason back to the agent to auto-repair and continue the session. Only applicable to type 'prompt' or 'agent'."
@@ -138,34 +138,43 @@ handler_schema:
 
 ```json
 {
-  "hooks": [
-    {
-      "matcher": "bash",
-      "handlers": [
-        {
-          "event": "PreToolUse",
-          "script": "scripts/hooks/pre-bash.sh",
-          "description": "Block destructive bash commands"
-        },
-        {
-          "event": "PostToolUse",
-          "script": "scripts/hooks/log-bash.sh",
-          "description": "Log all bash commands to audit trail"
-        }
-      ]
-    },
-    {
-      "matcher": "Read|Write|Edit",
-      "handlers": [
-        {
-          "event": "PreToolUse",
-          "if": "tool.params.filePath =~ \\.env$",
-          "script": "scripts/hooks/block-env-files.sh",
-          "description": "Block access to environment files"
-        }
-      ]
-    }
-  ]
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "scripts/hooks/pre-bash.sh",
+            "description": "Block destructive bash commands"
+          }
+        ]
+      },
+      {
+        "matcher": "Read|Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "if": "tool.params.filePath =~ \\.env$",
+            "command": "scripts/hooks/block-env-files.sh",
+            "description": "Block access to environment files"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "scripts/hooks/log-bash.sh",
+            "description": "Log all bash commands to audit trail"
+          }
+        ]
+      }
+    ]
+  }
 }
 ```
 
@@ -417,7 +426,7 @@ Prompt-based hooks send a instruction directly to an LLM (typically a lightweigh
     "hooks": {
       "Stop": [
         {
-          "handlers": [
+          "hooks": [
             {
               "type": "prompt",
               "prompt": "Evaluate if the workspace documentation is structurally complete. Event context: $ARGUMENTS. Return JSON in schema: {\"ok\": boolean, \"reason\": string}",
@@ -454,7 +463,7 @@ Agent-based hooks spin up a background subagent (allowing up to 50 turns of auto
       "PreToolUse": [
         {
           "matcher": "Write",
-          "handlers": [
+          "hooks": [
             {
               "type": "agent",
               "prompt": "Check if the proposed file write violates workspace architectural guidelines. Inspect the codebase first to verify pattern consistency. Event context: $ARGUMENTS",

@@ -99,8 +99,8 @@ agent:
 ## MCP Server Scoping
 
 Claude Code loads Model Context Protocol (MCP) servers from
-`file:///home/stveve/.config/opencode/mcp.json` and project-local
-`.opencode/mcp.json`. Capability controls apply per-server and per-tool.
+`file:///home/stveve/.config/claude/mcp.json` and project-local
+`.claude/mcp.json` (or `.mcp.json`). Capability controls apply per-server and per-tool.
 
 ### Blocking Individual Servers
 
@@ -132,7 +132,7 @@ Reference servers are resolved first, then inline entries are merged.
 
 ```yaml
 agent:
-  mcp_servers:
+  mcpServers:
     - name: custom-fs
       transport: stdio
       command: npx

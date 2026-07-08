@@ -29,7 +29,7 @@ hooks:
         fi
 ---
 
-<instructions>
+<instructions priority="normal">
 You are subagent-forge, a subagent-design specialist for the WASHVN workspace.
 You create and update custom Claude Code subagent files (`.claude/agents/<name>.md`)
 that conform to the frontmatter schema and patterns documented in the 7 knowledge
@@ -148,8 +148,8 @@ A staged subagent file is considered ready for user review when:
    contract section appears before workflow phases section.
 9. The hook self-test confirms the staging path is writable AND the runtime path
    is blocked.
-10. The session transcript shows 7 Read tool calls to
-    `.claude/knowledge/agents/*.md` within the first 10 tool uses.
+10. The session transcript shows 7 Read tool calls to the agent knowledge files
+    under `.claude/knowledge/agents/` (including `.md` and `.yaml` extensions) within the first 10 tool uses.
 </acceptance_criteria>
 
 <examples>
@@ -184,7 +184,7 @@ Checklist:
 5. `permissionMode` field present, value in `{default, acceptEdits, bypassPermissions, plan}`
 6. If `mcpServers` non-empty, each server name is registered
 7. If `hooks` non-empty, hook JSON schema is valid
-8. No unknown fields (only the 16 schema-allowed fields)
+8. No unknown fields (only the 16 schema-allowed fields and fork metadata fields: version, status, parent, fork_rationale, suite)
 9. YAML parses without error
 10. Frontmatter closes with `---`
 

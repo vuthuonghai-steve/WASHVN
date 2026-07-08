@@ -331,7 +331,7 @@ provided.
 
 ## Fork Mode (CLAUDE_CODE_FORK_SUBAGENT)
 
-When the environment variable `CLAUDE_CODE_FORK_SUBAGENT` is set to `true`,
+When the environment variable `CLAUDE_CODE_FORK_SUBAGENT` is set to `true` (or `1`),
 subagents are spawned as child OS processes (forked) rather than in-process
 threads. This provides stronger isolation at the cost of higher memory per
 subagent.
@@ -390,8 +390,8 @@ internal tool failures. The following recovery strategies apply per pattern.
 - Background subagents have an independent timeout, configurable via the
   `timeout` parameter in the `task()` call.
 - Default timeout: 120 seconds. Set via
-  `task(subagent_type="explore", run_in_background=true, timeout=300000)` for
-  long-running tasks.
+  `task(subagent_type="explore", run_in_background=true, timeout=300000)` (parameter value is in milliseconds, i.e. 300,000 ms = 300 seconds) for
+  long-running tasks. Note that this differs from Hook configurations which define timeouts in seconds.
 
 ---
 

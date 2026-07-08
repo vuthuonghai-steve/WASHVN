@@ -30,20 +30,25 @@ The table below lists all 16 supported frontmatter fields, along with their data
 | :- | :--- | :--- | :--- | :--- | :--- | :--- |
 | 1 | `name` | `string` | Yes | — | Kebab-case identifier, unique within `.claude/agents/`. Max 64 characters. Only `[a-z0-9-]` allowed. | Unique identifier of the subagent. Example: `code-reviewer`, `db-reader--strict`. |
 | 2 | `description` | `string` | Yes | — | Max 500 characters. Must contain trigger phrases to activate proactive use. Description in English, imperative. | Short description of the purpose and when to use the subagent. |
-| 3 | `tools` | `list[string]` | No | `[Read]` | Max 8 tools. Each tool must be in the Claude Code tool registry: `Read, Write, Edit, Bash, Glob, Grep, Task, WebFetch, NotebookEdit, TodoWrite`. Tools restricted per WASHVN policy. | List of tools the subagent is allowed to call. |
+| 3 | `tools` | `list[string]` | No | `[Read]` | Max 8 tools. Each tool must be in the Claude Code tool registry: `Read, Write, Edit, Bash, Glob, Grep, Task, Agent, WebFetch, NotebookEdit, TodoWrite`. Parameterized versions `Agent(type)` and `Task(type)` are supported for subagent spawning control. | List of tools the subagent is allowed to call. |
 | 4 | `disallowedTools` | `list[string]` | No | `[]` | List of prohibited tools (deny before allow). Takes precedence over `tools`. Default is empty. Used to limit tools in the system scope. | List of prohibited tools, overriding the allowlist. |
 | 5 | `model` | `string` | Yes | `inherit` | Valid values: `sonnet, opus, haiku, fable, inherit`, or full model ID (e.g., `anthropic/claude-3.5-sonnet-20241022`). | Model used by the subagent. See Model Resolution Order section. |
 | 6 | `permissionMode` | `string` | Yes | `default` | Valid values: `default, acceptEdits, auto, dontAsk, bypassPermissions, plan`. See Permission Modes. | Authorization mechanism for the subagent. |
 | 7 | `maxTurns` | `integer` | No | — | Positive integer. Limits the number of interaction turns before the subagent automatically terminates. No limit if not specified. | Maximum number of interaction turns for the subagent. |
 | 8 | `skills` | `list[string]` | No | `[]` | Max 3 skills. Each skill must exist in `skills-registry.json` or be defined inline. Skill name in kebab-case. | List of skills preloaded when the subagent starts. |
 | 9 | `mcpServers` | `list[object]` | No | `[]` | Each entry can be an inline definition or a reference to a registered server in the config. Server name must be pre-registered. | List of MCP servers the subagent is allowed to access. |
-| 10 | `hooks` | `object` | No | `{}` | Keys: `PreToolUse, PostToolUse, Stop, SessionStart`. Each key contains an array of hook scripts with `matcher` and `hook` fields. Hook scripts read stdin JSON, exit 0 = allow, exit 2 = block. | Hook scripts listening to tool/session lifecycle events. |
+| 10 | `hooks` | `object` | No | `{}` | Keys are event names (e.g., `PreToolUse`, `Stop`). Each key maps to an array of matcher groups, which contain a `matcher` and a `hooks` array. Inside `hooks` is a list of hook handlers defining type, command, etc. | Hook scripts listening to tool/session lifecycle events. |
 | 11 | `memory` | `list[string]` | No | `[]` | Valid values: `user, project, local`. Activates corresponding memory mechanisms. Memory is not standalone; managed via the state ledger. | Activates session memory for the subagent. |
 | 12 | `background` | `boolean` | No | `true` | `true`: subagent runs in the background after spawn. `false`: subagent runs in the foreground, blocking the parent session. | Determines if the subagent runs in the background or as a foreground process. |
 | 13 | `effort` | `string` | No | — | Valid values: `low, medium, high, xhigh, max`. Affects computing resources and processing time. | Computational effort level for the subagent. |
 | 14 | `isolation` | `string` | No | — | Valid value: `worktree`. When set, the subagent runs in a separate worktree, completely isolated from the parent session. | Isolates the working environment of the subagent. |
 | 15 | `color` | `string` | No | — | Valid values: `red, blue, green, yellow, purple, orange, pink, cyan`. Sets the display color for the subagent in Claude Code UI (tags, badges, terminal). | Display color to distinguish the subagent in the interface. |
 | 16 | `initialPrompt` | `string` | No | — | Markdown text automatically sent to the tool call when starting the subagent with `--agent <name>`. Replaces or complements the default system prompt. | Initial prompt message sent automatically when the subagent is invoked. |
+| 17 | `version` | `string` | No | — | SemVer format version string (e.g., `0.0.1`). | Version of the subagent configuration. |
+| 18 | `status` | `string` | No | — | E.g., `canonical`, `experiment`, `archived`. | Lifecycle status of the subagent. |
+| 19 | `parent` | `string` | No | — | Absolute file path URL. | Link back to the parent agent from which this fork was created. |
+| 20 | `fork_rationale` | `string` | No | — | Max 500 characters. | Rationale explaining why this subagent was forked. |
+| 21 | `suite` | `string` | No | — | E.g., `WASHVN`. | Workspace or project suite identifier. |
 
 ---
 
@@ -177,7 +182,7 @@ The WASHVN workspace applies the following restrictions beyond the 16-field sche
 
 List of valid tools in the Claude Code tool registry:
 
-[Read, Write, Edit, Bash, Glob, Grep, Task, WebFetch, NotebookEdit, TodoWrite]
+[Read, Write, Edit, Bash, Glob, Grep, Task, Agent, WebFetch, NotebookEdit, TodoWrite]
 
 ### 6.2 Model aliases
 
@@ -259,7 +264,7 @@ python3 -c "import yaml; yaml.safe_load(open(sys.argv[1]))" \
 - [ ] `tools` field (if present) contains at most 8 tools, each tool is valid
 - [ ] `permissionMode` field (if present) has a valid value, not `bypassPermissions`
 - [ ] `skills` field (if present) contains at most 3 skills
-- [ ] No invalid fields (only the 16 allowed fields)
+- [ ] No invalid fields (only the 16 allowed fields and fork lifecycle metadata: version, status, parent, fork_rationale, suite)
 
 ---
 

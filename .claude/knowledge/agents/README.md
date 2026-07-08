@@ -20,13 +20,13 @@ tags: [subagent, knowledge, navigation, index]
 
 | # | Tài Liệu | Mô Tả | Dung Lượng |
 | :---: | :--- | :--- | :--- |
-| 1 | [configuration.md](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/.claude/knowledge/agents/configuration.md) | Frontmatter schema 16 trường — cấu hình agent | 273 dòng |
-| 2 | [capability_controls.md](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/.claude/knowledge/agents/capability_controls.md) | Phân vùng năng lực — Tool/MCP/Skills scoping | 356 dòng |
-| 3 | [examples.md](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/.claude/knowledge/agents/examples.md) | 4 mẫu agent tham chiếu — code-reviewer, debugger, data-scientist, db-reader | 302 dòng |
-| 4 | [forks.md](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/.claude/knowledge/agents/forks.md) | Fork semantics — nhánh thử nghiệm agent | 296 dòng |
-| 5 | [hooks_and_events.md](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/.claude/knowledge/agents/hooks_and_events.md) | Hook protocol spec — Dual-Format blocking (Stdout JSON + Exit Code 2) | 547 dòng |
-| 6 | [workflow_patterns.md](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/.claude/knowledge/agents/workflow_patterns.md) | 6 runtime workflows — foreground, background, resume, compaction, cascading, cross-runtime | 408 dòng |
-| 7 | [xml_tags_standards.yaml](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/.claude/knowledge/agents/xml_tags_standards.yaml) | 9-tag XML whitelist — semantic boundaries cho prompt | 420 dòng |
+| 1 | [configuration.md](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/.claude/knowledge/agents/configuration.md) | Frontmatter schema 16 trường — cấu hình agent | 280 dòng |
+| 2 | [capability_controls.md](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/.claude/knowledge/agents/capability_controls.md) | Phân vùng năng lực — Tool/MCP/Skills scoping | 352 dòng |
+| 3 | [examples.md](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/.claude/knowledge/agents/examples.md) | 4 mẫu agent tham chiếu — code-reviewer, debugger, data-scientist, db-reader | 308 dòng |
+| 4 | [forks.md](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/.claude/knowledge/agents/forks.md) | Fork semantics — nhánh thử nghiệm agent | 289 dòng |
+| 5 | [hooks_and_events.md](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/.claude/knowledge/agents/hooks_and_events.md) | Hook protocol spec — Dual-Format blocking (Stdout JSON + Exit Code 2) | 626 dòng |
+| 6 | [workflow_patterns.md](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/.claude/knowledge/agents/workflow_patterns.md) | 6 runtime workflows — foreground, background, resume, compaction, cascading, cross-runtime | 407 dòng |
+| 7 | [xml_tags_standards.yaml](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/.claude/knowledge/agents/xml_tags_standards.yaml) | 9-tag XML whitelist — semantic boundaries cho prompt | 422 dòng |
 
 ---
 
