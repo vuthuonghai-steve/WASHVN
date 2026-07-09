@@ -5,21 +5,22 @@ suite: WASHVN
 tags: [quality, meta-scoring, design-review]
 description: "Use PROACTIVELY bởi pipeline-orchestrator sau khi design-validator PASS. Score design quality theo META-1→3 criteria: META-1.1 domain anchor, META-2.1 semantic depth, META-3.1 mechanical. Output quality-matrix.yaml."
 model: opus
-justification: "META scoring cần deep reasoning (reverse Q, multi-stakeholder, negation density) — sonnet gây shallow validation (Λ-10). Opus bắt buộc."
 tools: [Read, Glob, Grep]
 permissionMode: default
 skills: [production-quality-gatekeeper]
 hooks:
   PreToolUse:
     - matcher: "Write"
-      hook: |
-        INPUT=$(cat)
-        FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
-        [ -z "$FILE_PATH" ] && exit 0
-        if [[ ! "$FILE_PATH" =~ \.skill-context/{skill}/quality- ]]; then
-          echo "BLOCKED: quality-scorer chỉ write .skill-context/{skill}/quality-*" >&2
-          exit 2
-        fi
+      hooks:
+        - type: command
+          command: |
+            INPUT=$(cat)
+            FILE_PATH=$(echo "$INPUT" | jq -r '.params.filePath // empty')
+            [ -z "$FILE_PATH" ] && exit 0
+            if [[ ! "$FILE_PATH" =~ \.skill-context/{skill}/quality- ]]; then
+              echo "BLOCKED: quality-scorer chỉ write .skill-context/{skill}/quality-*" >&2
+              exit 2
+            fi
 ---
 
 <instructions priority="critical">
@@ -83,7 +84,7 @@ Load the following 7 canonical knowledge documents at the start of every invocat
 - `file:///$CLAUDE_PROJECT_DIR/.claude/knowledge/agents/xml_tags_standards.yaml` — 9-tag XML whitelist (instructions, context, examples, input, output_contract, retrieved_docs, task, constraints, acceptance_criteria), semantic bounding rules, anti-patterns
 </retrieved_docs>
 
-<input_contract>
+<input>
 ```yaml
 required_inputs:
   - artifact: design.md
@@ -103,7 +104,7 @@ required_inputs:
     required: true
     fallback: NONE — missing validation report is a fatal error
 ```
-</input_contract>
+</input>
 
 <output_contract>
 ```yaml

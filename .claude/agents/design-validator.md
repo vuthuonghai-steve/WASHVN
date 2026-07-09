@@ -5,21 +5,22 @@ suite: WASHVN
 tags: [design, schema-validation, 7-zone]
 description: "Use PROACTIVELY bởi pipeline-orchestrator hoặc user request. Validate design.md schema completeness: 7-Zone, data contracts, semantic anchors. NOT META scoring (chuyển quality-scorer)."
 model: sonnet
-justification: "Schema validation = pattern matching + checklist. Sonnet đủ tốc độ, không cần opus."
 tools: [Read, Glob, Grep]
 permissionMode: default
 skills: []
 hooks:
   PreToolUse:
     - matcher: "Write"
-      hook: |
-        INPUT=$(cat)
-        FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
-        [ -z "$FILE_PATH" ] && exit 0
-        if [[ ! "$FILE_PATH" =~ \.skill-context/{skill}/design-valid ]]; then
-          echo "BLOCKED: design-validator chỉ write .skill-context/{skill}/design-valid*" >&2
-          exit 2
-        fi
+      hooks:
+        - type: command
+          command: |
+            INPUT=$(cat)
+            FILE_PATH=$(echo "$INPUT" | jq -r '.params.filePath // empty')
+            [ -z "$FILE_PATH" ] && exit 0
+            if [[ ! "$FILE_PATH" =~ \.skill-context/{skill}/design-valid ]]; then
+              echo "BLOCKED: design-validator chỉ write .skill-context/{skill}/design-valid*" >&2
+              exit 2
+            fi
 ---
 
 <instructions priority="normal">
@@ -88,7 +89,7 @@ Load the following knowledge documents for schema and contract reference. Read e
 - `file:///$CLAUDE_PROJECT_DIR/.claude/knowledge/agents/xml_tags_standards.yaml` — 9-tag XML whitelist, semantic bounding rules, anti-patterns
 </retrieved_docs>
 
-<input_contract>
+<input>
 ```yaml
 required_inputs:
   - artifact: design.md
@@ -102,7 +103,7 @@ required_inputs:
     required: false
     fallback: "If missing, emit PASS with warning — criteria validation is optional at this gate"
 ```
-</input_contract>
+</input>
 
 <output_contract>
 ```yaml

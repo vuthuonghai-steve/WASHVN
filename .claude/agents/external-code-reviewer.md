@@ -5,29 +5,32 @@ suite: WASHVN
 tags: [code-review, static-analysis, semantic-audit]
 description: "Use POST build để catch 'valid-looking but semantically wrong' code (PASS-form FAIL-meaning). Independent reviewer không same-context như Builder, address LLM self-referential blindness."
 model: sonnet
-justification: "Static analysis with fresh eyes — pattern matching, không cần deep reasoning for code review structure."
 tools: [Read, Bash, Grep, Glob]
 permissionMode: default
 skills: [production-code-reviewer]
 hooks:
   PreToolUse:
     - matcher: "Write|Edit"
-      hook: |
-        INPUT=$(cat)
-        FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
-        [ -z "$FILE_PATH" ] && exit 0
-        if [[ "$FILE_PATH" =~ \.claude/skills/|raw/ver-3/ ]] && [[ ! "$FILE_PATH" =~ review-report.md|audit-metrics.yaml ]]; then
-          echo "BLOCKED: external reviewer chỉ write review reports, không modify source" >&2
-          exit 2
-        fi
+      hooks:
+        - type: command
+          command: |
+            INPUT=$(cat)
+            FILE_PATH=$(echo "$INPUT" | jq -r '.params.filePath // empty')
+            [ -z "$FILE_PATH" ] && exit 0
+            if [[ "$FILE_PATH" =~ \.claude/skills/|raw/ver-3/ ]] && [[ ! "$FILE_PATH" =~ review-report.md|audit-metrics.yaml ]]; then
+              echo "BLOCKED: external reviewer chỉ write review reports, không modify source" >&2
+              exit 2
+            fi
     - matcher: "Bash"
-      hook: |
-        INPUT=$(cat)
-        CMD=$(echo "$INPUT" | jq -r '.tool_input.command // empty')
-        if echo "$CMD" | grep -qE "(run|execute|python|node|cargo)"; then
-          echo "BLOCKED: external reviewer không execute code — chỉ static analysis" >&2
-          exit 2
-        fi
+      hooks:
+        - type: command
+          command: |
+            INPUT=$(cat)
+            CMD=$(echo "$INPUT" | jq -r '.params.command // empty')
+            if echo "$CMD" | grep -qE "(run|execute|python|node|cargo)"; then
+              echo "BLOCKED: external reviewer không execute code — chỉ static analysis" >&2
+              exit 2
+            fi
 ---
 
 <instructions priority="critical">
@@ -97,7 +100,7 @@ Generate two output artifacts in `.skill-context/{skill}/`:
 
 </context>
 
-<input_contract>
+<input>
 
 ## 5. Input Contract
 
@@ -118,7 +121,7 @@ Your input domain consists of:
 - `todo.md` — builder task plan (would bias review)
 - `build-log.md` — builder execution trace
 
-</input_contract>
+</input>
 
 <output_contract>
 
@@ -272,6 +275,7 @@ acceptance_criteria:
   - no_source_modified: "PreToolUse hook blocked all source writes (exit 2 enforced)"
   - no_code_executed: "Bash hook blocked all execution commands (exit 2 enforced)"
   - design_bias_absent: "Report does NOT reference design.md content"
+  - bash_justified: "Bash allowed only for static analysis tools (pyflakes, ruff, shellcheck, radon) — execution commands blocked by PreToolUse hook. No runtime code execution."
 ```
 
 </acceptance_criteria>
