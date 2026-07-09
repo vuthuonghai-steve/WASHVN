@@ -1,1 +1,55 @@
-# schema stub — Phase 4 fill
+$schema: "http://json-schema.org/draft-07/schema#"
+$id: "washvn://schemas/verification"
+title: "Verification Schema"
+description: "Validation schema for verification.md (Stage 4 — Sandbox Tester output)"
+type: "object"
+required:
+  - skill_name
+  - sandbox_status
+  - exit_code
+  - test_results
+additionalProperties: false
+properties:
+  skill_name:
+    type: "string"
+    pattern: "^[a-z][a-z0-9-]*$"
+    description: "The unique name of the skill in kebab-case"
+  sandbox_status:
+    type: "string"
+    enum:
+      - PASS
+      - FAIL
+      - PASS_WITH_WARNING
+  exit_code:
+    type: "integer"
+  test_results:
+    type: "array"
+    items:
+      type: "object"
+      required:
+        - test_name
+        - status
+        - expected
+        - actual
+      additionalProperties: false
+      properties:
+        test_name:
+          type: "string"
+        status:
+          type: "string"
+          enum: [pass, fail]
+        expected:
+          type: "string"
+        actual:
+          type: "string"
+  docker_available:
+    type: "boolean"
+  sandbox_duration_ms:
+    type: "integer"
+    minimum: 0
+  rollback_triggered:
+    type: "boolean"
+  verification_log:
+    type: "array"
+    items:
+      type: "string"

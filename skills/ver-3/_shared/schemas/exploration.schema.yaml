@@ -1,1 +1,92 @@
-# schema stub — Phase 4 fill
+$schema: "http://json-schema.org/draft-07/schema#"
+$id: "washvn://schemas/exploration"
+title: "Exploration Schema"
+description: "Validation schema for exploration.md (Stage 0 — skill-explorer output)"
+type: "object"
+required:
+  - skill_name
+  - scs_score
+  - exploration_summary
+  - identified_zones
+  - routing_decision
+additionalProperties: false
+properties:
+  skill_name:
+    type: "string"
+    pattern: "^[a-z][a-z0-9-]*$"
+    description: "The unique name of the skill in kebab-case"
+  scs_score:
+    type: "number"
+    minimum: 1.0
+    maximum: 5.0
+    description: "SCS complexity score"
+  exploration_summary:
+    type: "string"
+    minLength: 100
+    description: "Detailed summary of the exploration findings"
+  identified_zones:
+    type: "array"
+    minItems: 4
+    items:
+      type: "string"
+      enum:
+        - core
+        - knowledge
+        - scripts
+        - templates
+        - data
+        - loop
+        - assets
+    description: "The identified 7-zone structures for the skill"
+  routing_decision:
+    type: "object"
+    required:
+      - branch
+      - scs_at_routing
+      - hysteresis_triggered
+    additionalProperties: false
+    properties:
+      branch:
+        type: "string"
+        enum: ["A", "B"]
+        description: "Decision branch A or B"
+      scs_at_routing:
+        type: "number"
+        minimum: 1.0
+        maximum: 5.0
+        description: "The SCS score at routing"
+      hysteresis_triggered:
+        type: "boolean"
+        description: "Flag indicating if SCS hysteresis zone was triggered"
+  domain_anchors:
+    type: "array"
+    items:
+      type: "string"
+    description: "Domain terms from the handbook"
+  stakeholder_list:
+    type: "array"
+    items:
+      type: "object"
+      required:
+        - role
+        - goals
+        - pain_points
+      additionalProperties: false
+      properties:
+        role:
+          type: "string"
+        goals:
+          type: "array"
+          items:
+            type: "string"
+        pain_points:
+          type: "array"
+          items:
+            type: "string"
+  risk_flags:
+    type: "array"
+    items:
+      type: "string"
+  thought_cache_ref:
+    type: "string"
+    description: "Path to thought-cache.yaml"

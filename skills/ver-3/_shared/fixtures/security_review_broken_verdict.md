@@ -1,0 +1,11 @@
+---
+skill_name: "test-skill-one"
+owasp_coverage: []
+vulnerabilities: []
+secret_scan:
+  enabled: true
+  findings_count: 0
+overall_verdict: "NONE"
+---
+# Security Review
+This is the markdown body.

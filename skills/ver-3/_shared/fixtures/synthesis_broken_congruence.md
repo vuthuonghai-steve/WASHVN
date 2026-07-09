@@ -1,0 +1,10 @@
+---
+skill_name: "test-skill-one"
+synthesized_requirements: []
+congruence_check:
+  conflicts_found: false
+  conflicts_resolved: true
+pipeline_ready: true
+---
+# Synthesis Report
+This is the markdown body.

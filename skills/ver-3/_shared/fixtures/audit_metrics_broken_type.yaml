@@ -1,0 +1,7 @@
+run_id: "run-2026-07-10-01"
+audit_type: "manual"
+metrics:
+  total_artifacts: 14
+  artifacts_sampled: 5
+  pass_rate: 100.0
+  fail_rate: 0.0

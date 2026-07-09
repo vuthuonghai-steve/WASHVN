@@ -1,1 +1,59 @@
-# schema stub — Phase 4 fill
+$schema: "http://json-schema.org/draft-07/schema#"
+$id: "washvn://schemas/build-log"
+title: "Build Log Schema"
+description: "Validation schema for build-log.md (Stage 3 — skill-builder output)"
+type: "object"
+required:
+  - skill_name
+  - build_status
+  - build_phases
+  - warnings
+additionalProperties: false
+properties:
+  skill_name:
+    type: "string"
+    pattern: "^[a-z][a-z0-9-]*$"
+    description: "The unique name of the skill in kebab-case"
+  build_status:
+    type: "string"
+    enum:
+      - in_progress
+      - completed
+      - failed
+  build_phases:
+    type: "array"
+    items:
+      type: "object"
+      required:
+        - phase
+        - start_time
+        - end_time
+        - status
+        - artifacts
+      additionalProperties: false
+      properties:
+        phase:
+          type: "string"
+        start_time:
+          type: "string"
+        end_time:
+          type: "string"
+        status:
+          type: "string"
+          enum: [in_progress, completed, failed]
+        artifacts:
+          type: "array"
+          items:
+            type: "string"
+  warnings:
+    type: "array"
+    items:
+      type: "string"
+  soft_gates:
+    type: "object"
+    additionalProperties: true
+  token_budget:
+    type: "object"
+    additionalProperties: true
+  refactor_triggered:
+    type: "boolean"
