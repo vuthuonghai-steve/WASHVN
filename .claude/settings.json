@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "permissions": {
     "allow": [
       "Read",
@@ -8,19 +9,84 @@
     ],
     "deny": [
       "Bash(rm -rf *)"
-    ], 
+    ],
     "defaultMode": "bypassPermissions"
   },
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/events/pre-tool-use_write_gate.sh",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/events/pre-tool-use_skill_staging_gate.sh",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/events/pre-tool-use_bash_validate_command.sh",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/events/post-tool-use_log_artifact.sh",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/validate-state-ledger.sh",
+            "timeout": 10
+          },
+          {
+            "type": "prompt",
+            "prompt": "You are a quality reviewer for the WASHVN skill/agent lab. A file was just written or edited. Input JSON: $ARGUMENTS. Review the written file for: (1) YAML frontmatter completeness — for .md agent/skill files require name, version, suite, tags; (2) dangling placeholders (TODO/FIXME/mock/pass #) that are real (ignore prose mentioning them); (3) if SKILL.md, token count <=700; (4) well-formed Markdown (no broken tables, no unterminated code fences). Return JSON {\"ok\": true, \"reason\": \"...\"} if clean, or {\"ok\": false, \"reason\": \"<concise list of issues>\"}. This is advisory — do NOT block; surface findings as guidance.",
+            "timeout": 30,
+            "continueOnBlock": true
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/events/session-start_record_metadata.sh",
+            "timeout": 15
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "hooks": [
           {
+            "type": "command",
+            "command": "bash .claude/hooks/events/stop_session_log_state.sh",
+            "timeout": 30
+          },
+          {
             "type": "prompt",
             "prompt": "Evaluate the structural completeness of workspace documentation before session closure. Event context: $ARGUMENTS. Check for: (1) valid YAML frontmatter with all required fields (name, version, suite, tags), (2) well-formed Markdown structure (no broken tables, no unterminated code fences), (3) no dangling TODO or placeholder patterns in documentation files. Return JSON matching this schema: {\"ok\": boolean, \"reason\": string}",
             "timeout": 45,
-            "continueOnBlock": true,
-            "description": "D2-9: Prompt-based self-healing hook — verify MD/YAML structural completeness on Stop event (HOOK-HEAL-1.0)"
+            "continueOnBlock": true
           }
         ]
       }

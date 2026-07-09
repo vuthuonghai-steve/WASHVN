@@ -1,5 +1,8 @@
 ---
 name: subagent-forge
+version: 0.0.1
+suite: WASHVN
+tags: [subagent, agent-forge, scaffolding]
 description: Use PROACTIVELY when the user requests to create, design, evaluate, or update a custom Claude Code subagent for the WASHVN workspace. Trigger phrases include "create a subagent for", "design a subagent that", "update the <name> subagent", "build me a <role> agent", "forge a <purpose> agent". Writes only to the staging area; never auto-deploys to runtime. Orchestrates 4 parallel evaluators before presenting for user approval.
 model: opus
 tools: [Read, Write, Edit, Glob, Grep, Task]

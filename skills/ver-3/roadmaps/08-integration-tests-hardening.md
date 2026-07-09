@@ -36,7 +36,7 @@ prerequisites:
 
 ### A1 — Defect Γ-1: Self-Referential Blindness (CRITICAL)
 
-**Status Post-Phase 6**: Đã address bằng cách invoke `aggregate-quality-gatekeeper` (Phase 3 agent) + `external-code-reviewer` (Phase 3 agent) + `sandbox-tester` (Phase 7 mechanical validator).
+**Status Post-Phase 6**: Đã address bằng cách invoke `quality-scorer` (decomposed from aggregate-quality-gatekeeper per phase-3/agent-architecture.md) + `external-code-reviewer` (Phase 3 agent) + `sandbox-tester` (Phase 7 mechanical validator).
 
 **Phase 8留下了 work**:
 - Verify audit logs show external-co-validator được invoked at META gate + code review gate + sandbox gate
@@ -46,7 +46,7 @@ prerequisites:
 - Author `.claude/hooks/events/post-tool-use_external_validator_required.sh`
   - Matcher: `Write`
   - Triggers when `design.md`, `audit-metrics.yaml`, or `verification.md` is written
-  - Checks: was aggregate-quality-gatekeeper OR external-code-reviewer invoked since last write to design.md?
+  - Checks: was quality-scorer OR design-validator OR external-code-reviewer invoked since last write to design.md?
   - If not: log WARNING to audit, don't block (allow pipeline continue but flag for review)
 - Update `.claude/hooks/registry.yaml` with new entry
 
@@ -82,12 +82,12 @@ prerequisites:
 
 ### A3 — Defect Γ-4: Hydrator Information Loss
 
-**Replaced strategy**: Phase 6 đã include `aggregate-quality-gatekeeper` access to original `design.md` (not just condensed `hydrated-context.yaml` from Phase 2 spec). Verify this override:
+**Replaced strategy**: Phase 6 đã include `design-validator` (decomposed from aggregate-quality-gatekeeper) access to original `design.md` (not just condensed `hydrated-context.yaml` from Phase 2 spec). Verify this override:
 
 **Action items**:
-- Verify `.claude/skills/aggregate-quality-gatekeeper/SKILL.md` (Phase 3 agent output)
+- Verify `.claude/agents/design-validator.md` (decomposed from aggregate-quality-gatekeeper per phase-3/agent-architecture.md)
   -workflow phases reads `design.md` directly, NOT condensed context
-- Author test: compare aggregate-quality-gatekeeper input file path vs skills design.md actual path
+- Author test: compare design-validator input file path vs skills design.md actual path
 - Document in `.claude/knowledge/architecture-tensions.md` (new excerpt) explaining the override
 
 ### A4 — Defect Γ-7: Escalation Recursion & Open-Loop Fallbacks
@@ -295,7 +295,7 @@ echo "B2 PASS — hooks integration"
 
 ```bash
 # Verify all 5 agents deployed:
-for agent in subagent-forge skill-pipeline-orchestrator aggregate-quality-gatekeeper ba-pipeline-runner external-code-reviewer; do
+for agent in subagent-forge skill-pipeline-orchestrator quality-scorer design-validator drift-detector ba-pipeline-runner external-code-reviewer; do
   test -f .claude/agents/$agent.md || exit 1
 done
 
@@ -304,7 +304,7 @@ done
 # expect non-error response referencing 7 knowledge docs
 
 # Each agent should read 7 knowledge docs:
-for agent in skill-pipeline-orchestrator aggregate-quality-gatekeeper ba-pipeline-runner external-code-reviewer; do
+for agent in skill-pipeline-orchestrator quality-scorer design-validator ba-pipeline-runner external-code-reviewer; do
   count=$(grep -c "\.claude/knowledge/agents/" .claude/agents/$agent.md)
   test "$count" -ge 7 || exit 1
 done
@@ -333,7 +333,7 @@ For each defect A1-A10, run a regression test:
 
 ```bash
 # A1 — external validator invoked
-grep -E "aggregate-quality-gatekeeper|external-code-reviewer" .skill-context/_state-archive/tool-audit-*.log | head -1
+grep -E "quality-scorer|design-validator|external-code-reviewer" .skill-context/_state-archive/tool-audit-*.log | head -1
 
 # A2 — hysteresis triggered test
 # Create mock exploration with scs_score: 2.95 → verify re-eval triggered
@@ -350,7 +350,7 @@ echo "B6 PASS — defect regression tests"
 
 1.1 (A1): Author `.claude/hooks/events/post-tool-use_external_validator_required.sh`
 1.2: Update `.claude/hooks/registry.yaml` with new hook
-1.3: Test hook fires on Write to design.md without prior aggregate-quality-gatekeeper Task call
+1.3: Test hook fires on Write to design.md without prior quality-scorer/design-validator Task call
 
 2 (A2): Edit `.claude/skills/production-quality-gatekeeper/SKILL.md` — add hysteresis handling phase
 2.2: Update `drc_resolver.py` for hysteresis validation

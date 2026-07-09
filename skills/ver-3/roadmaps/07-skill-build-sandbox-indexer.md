@@ -450,7 +450,7 @@ echo "AC-6 PASS — rollback correctly triggered on fail"
 6. **Author build_and_run.py** — D7-1-6 (full Django-style: argparse with --target-skill, parse criteria.md, run docker, aggregate).
 7. **Author DRC** — D7-1-7.
 8. **Author rollback decision tree** — D7-1-8.
-9. **Invoke aggregate-quality-gatekeeper** audit sandbox-tester. Fix findings.
+9. **Invoke quality-scorer** audit sandbox-tester. Fix findings.
 10. **Test sandbox-tester với mock skill** from Phase 6 (mock-prompt-cleaner passes, mock-broken-skill fails + rollback).
 11. **Deploy sandbox-tester** to .claude/skills/.
 
@@ -460,7 +460,7 @@ echo "AC-6 PASS — rollback correctly triggered on fail"
 15. **Author update_registry.py** — D7-2-6.
 16. **Author generate_llms_txt.py** — D7-2-7.
 17. **Author DRC** — D7-2-7.
-18. **Invoke aggregate-quality-gatekeeper** audit indexer.
+18. **Invoke quality-scorer** audit indexer.
 19. **Test indexer** on mock-prompt-cleaner after Phase 6 mock passes sandbox.
 20. **Deploy indexer**.
 

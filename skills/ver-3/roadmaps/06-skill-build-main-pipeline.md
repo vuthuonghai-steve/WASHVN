@@ -53,7 +53,7 @@ Phase 6 là **bulk effort** — 8 skills × 7-Zone × with heterogeneity content
 ```yaml
 prerequisites:
   - Phase 5 done: BA pipeline ready. skill-explorer inputs business-analysis.md.
-  - Phase 3: skill-pipeline-orchestrator agent deployed + aggregate-quality-gatekeeper deployed
+  - Phase 3: pipeline-orchestrator deployed + quality-scorer + design-validator + external-code-reviewer (replaces aggregate-quality-gatekeeper, decomposed per phase-3/agent-architecture.md)
   - Phase 4: 14 schemas, DRC template, validators available
   - Phase 2: hooks active — writes outside .skill-context/ gated, so skill build process safe
 ```
@@ -283,9 +283,9 @@ Workflow:
 2. <phase_meta1_evaluate>: META-1.1 domain anchor (domain terms referenced), META-1.2 phase deconstruct (3-5 phases)
 3. <phase_meta2_evaluate>: META-2.1 4 signals (S1 must_not≥5, S2 reverse Q 4-aspect, S3 multi-stakeholder, S4 constraint anchoring) — AND gate
 4. <phase_meta3_evaluate>: META-3.1 mechanical pass/fail, META-3.2 negative space, META-3.3 sandbox testing
-5. <phase_external_validator>: Invoke aggregate-quality-gatekeeper agent (Phase 3 deployed) as co-evaluator — address Γ-1 self-audit
+5. <phase_external_validator>: Invoke quality-scorer agent (decomposed from aggregate-quality-gatekeeper per phase-3/agent-architecture.md) as co-evaluator — address Γ-1 self-audit
 6. <phase_emit_quality>: Output quality-matrix.yaml (scores), evaluation-report.md (reasoning), feedback.yaml (recommended fixes)
-7. <phase_gate>: If aggregate score < 85% OR any signal S1-S4 FAIL, emit feedback to skill-architect (F3 fallback)
+7. <phase_gate>: If quality-scorer aggregate score < 85% OR any signal S1-S4 FAIL, emit feedback to skill-architect (F3 fallback)
 </workflow_phases>
 
 <acceptance_criteria>
@@ -615,10 +615,9 @@ echo "AC-6 PASS"
 
 ### AC-7 — External validator agent invoked at gates that need it
 ```bash
-# Verify aggregate-quality-gatekeeper invoked during skill-pipeline-orchestrator run
+# Verify external co-validator (quality-scorer/design-validator/external-code-reviewer) invoked during skill-pipeline-orchestrator run
 # Via check audit logs:
-grep -q "aggregate-quality-gatekeeper" .skill-context/_state-archive/tool-audit-*.log | head -1 || \
-  grep -q "external-code-reviewer" .skill-context/_state-archive/tool-audit-*.log | head -1 || \
+grep -qE "quality-scorer|design-validator|external-code-reviewer" .skill-context/_state-archive/tool-audit-*.log | head -1 || \
   echo "WARNING: external co-validator not detected in audit log"
 ```
 
@@ -640,7 +639,7 @@ For each skill (8 iterations):
 5. **Author loop/ checklist** (self-verification)
 6. **Author data/drc.yaml** (DRC contract per template)
 7. **Run local validator** if script exists (e.g., compute_scs.py for skill-explorer)
-8. **Invoke aggregate-quality-gatekeeper** audit on skill SKILL.md
+8. **Invoke quality-scorer** audit on skill SKILL.md
 9. **Fix findings** until score ≥70%
 10. **Test invoke skill** with mock data (skill-explorer receives mock business-analysis.md, etc.)
 11. **Commit atomic** per skill: `phase-6: <skill-name> built + tested`
@@ -663,7 +662,7 @@ dod:
   - Skills-registry.json updated (8 main skills marked `installed` lifecycle)
   - End-to-end test: skill-pipeline-orchestrator invokes all 8 stages successfully với 1 mock skill "mock-prompt-cleaner"
   - Every artifact in pipeline passes schema validation
-  - External co-validator (aggregate-quality-gatekeeper + external-code-reviewer) invoked at META gate + code review gate
+  - External co-validator (quality-scorer + design-validator + external-code-reviewer) invoked at META gate + code review gate
   - SCS hysteresis flag detected in mock-prompt-cleaner/exploration.md
   - Zero placeholder strings anywhere in built skills
 ```

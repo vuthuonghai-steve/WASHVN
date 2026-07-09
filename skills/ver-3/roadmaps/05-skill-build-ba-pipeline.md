@@ -32,7 +32,7 @@ For each skill (3 vòng lặp):
   4. Tác giả scripts/ validator scripts (cho BA-elicitor cần empathy/constraints extraction)
   5. Tác giả loop/ kiểm soát chất lượng checklist
   6. Tác giả DRC YAML contract file
-  7. Invoke aggregate-quality-gatekeeper agent (Phase 3) để audit
+  7. Invoke quality-scorer agent (Phase 3) để audit
   8. Fix findings → re-audit until ≥80% quality score
   9. Test invoke skill với mock user request
   10. Deploy (move file từ raw/ver-3/ sang .claude/skills/ via deploy script)
@@ -567,8 +567,8 @@ echo "AC-7 PASS (mock pipeline test)"
 
 ### AC-8 — Aggregate quality gatekeeper agent (Phase 3) gives ≥70% score
 ```bash
-# Manually invoke aggregate-quality-gatekeeper on each skill's SKILL.md:
-# task(subagent_type=aggregate-quality-gatekeeper, prompt="evaluate .claude/skills/ba-elicitor/SKILL.md vs META-1→3 criteria")
+# Manually invoke quality-scorer on each skill's SKILL.md:
+# task(subagent_type=quality-scorer, prompt="evaluate .claude/skills/ba-elicitor/SKILL.md vs META-1→3 criteria")
 # Receive evaluation-report.md, ensure quality_score ≥ 70
 echo "AC-8 NEEDED_MANUAL"
 ```
@@ -588,19 +588,19 @@ Should be verified through AC-7 (same test path).
 
 2. **Run local validator** on ba-elicitor scripts/validate_outputs.py.
 
-3. **Invoke aggregate-quality-gatekeeper** to audit ba-elicitor. Fix findings ≥70% score.
+3. **Invoke quality-scorer** to audit ba-elicitor. Fix findings ≥70% score.
 
 4. **Test invoke skill manually** with a mock user request (e.g., "build an e-commerce skill"). Verify elicitation-report.md + thought-cache.yaml created.
 
 5. **Build ba-analyst** (D5-2-1 to D5-2-6). Commit per group.
 
-6. **Invoke aggregate-quality-gatekeeper** audit, fix.
+6. **Invoke quality-scorer** audit, fix.
 
 7. **Test ba-analyst** with output từ step 4's elicitation-report. Verify analysis-report.md created.
 
 8. **Build ba-synthesizer** (D5-3-1 to D5-3-6). Commit per group.
 
-9. **Invoke aggregate-quality-gatekeeper** audit, fix.
+9. **Invoke quality-scorer** audit, fix.
 
 10. **Test ba-synthesizer** with output từ steps 4 + 7. Verify business-analysis.md created.
 
@@ -628,7 +628,7 @@ dod:
   - Skills-registry.json references valid
   - Full BA pipeline test invocation successful with 1 mock feature
   - business-analysis.md output creates file ready for skill-explorer consumption (Phase 6)
-  - Each skill reviewed aggregate-quality-gatekeeper approved ≥70%
+  - Each skill reviewed quality-scorer approved ≥70%
 ```
 
 ---

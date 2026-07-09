@@ -119,8 +119,8 @@ Mỗi phase phải document trong header chỉ rõ những architectural defects
 | 2 | 6 hook files exist + executable; exit codes 0/2 tested cho mỗi hook | `done` |
 | 3 | 4 agents deploy; mỗi agent pass subagent-forge 4-evaluator ≥ APPROVED_FOR_REVIEW | `pending` |
 | 4 | `schema_validator.py --all` pass; 14 schemas parse; DRC resolver pass; artifact-registry valid | `pending` |
-| 5 | 3 BA skills deploy; ≥4 zones populate; pass aggregate-quality-gatekeeper ≥70% | `pending` |
-| 6A | 4 discovery skills (explorer, miner, architect, gatekeeper) deploy; pass subagent-forge + aggregate-quality-gatekeeper | `pending` |
+| 5 | 3 BA skills deploy; ≥4 zones populate; pass quality-scorer ≥70% (decomposed from aggregate-quality-gatekeeper) | `pending` |
+| 6A | 4 discovery skills (explorer, miner, architect, gatekeeper) deploy; pass subagent-forge + quality-scorer + design-validator (decomposed from aggregate-quality-gatekeeper) | `pending` |
 | 6B (checkpoint before) | `quality-matrix.yaml` từ 4 skills 6A PASS aggregate score ≥80% — gate to start 6B | `pending` |
 | 6B | 4 execution skills (planner, builder, code-reviewer, security-reviewer) deploy; pass all 3 evaluators | `pending` |
 | 7 | 2 skills deploy; Docker sandbox pass ≥2 test cases mỗi skill; llms.txt generate | `pending` |
