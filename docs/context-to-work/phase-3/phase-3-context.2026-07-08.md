@@ -136,8 +136,8 @@ out_of_scope:
 
 | Component | Impact | Mức độ |
 |:----------|:-------|:------:|
-| `.claude/agents/` | +4 production agents deployed | 🔴 Cao |
-| `.claude/agents/_staging/` | 4 staging files created | 🟡 Trung |
+| `.claude/agents/` | +8 agents deployed (7 mandatory + 1 optional branch-orchestrator) | 🔴 Cao |
+| `.claude/agents/_staging/` | 8 staging files created (7 mandatory + 1 optional) | 🟡 Trung |
 | `.skill-context/_subagent-staging/` | 4+ eval reports generated | 🟢 Thấp |
 | `workspce_tree.md` | +4 entries (typo "workspce" giữ nguyên) | 🟢 Thấp |
 | `.claude/agents/subagent-forge.md` | Sẽ được invoke 4 lần | 🟡 Trung |
@@ -163,7 +163,7 @@ out_of_scope:
 
 ## §5: Call Chain
 
-### 5.1 Phase 3 Execution Flow (Build 4 Agents)
+### 5.1 Phase 3 Execution Flow (Build 8 Agents: 7 mandatory + 1 optional)
 
 ```mermaid
 flowchart TD
@@ -306,7 +306,7 @@ dependencies:
 
 | File | Action | Mức độ |
 |:-----|:-------|:------:|
-| `.claude/agents/subagent-forge.md` | Invoked 7+ lần (read-only) | 🟢 Tidak berubah |
+| `.claude/agents/subagent-forge.md` | Invoked 7+ lần (read-only) | 🟢 Không đổi |
 | `.claude/agents/_staging/pipeline-orchestrator.md` | **CREATE** | 🔴 New file |
 | `.claude/agents/_staging/design-validator.md` | **CREATE** | 🔴 New file |
 | `.claude/agents/_staging/quality-scorer.md` | **CREATE** | 🔴 New file |

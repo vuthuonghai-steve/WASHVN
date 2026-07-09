@@ -19,12 +19,12 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/hooks/events/pre-tool-use_write_gate.sh",
+            "command": "bash ${CLAUDE_PROJECT_DIR}/.claude/hooks/events/pre-tool-use_write_gate.sh",
             "timeout": 10
           },
           {
             "type": "command",
-            "command": "bash .claude/hooks/events/pre-tool-use_skill_staging_gate.sh",
+            "command": "bash ${CLAUDE_PROJECT_DIR}/.claude/hooks/events/pre-tool-use_skill_staging_gate.sh",
             "timeout": 10
           }
         ]
@@ -34,7 +34,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/hooks/events/pre-tool-use_bash_validate_command.sh",
+            "command": "bash ${CLAUDE_PROJECT_DIR}/.claude/hooks/events/pre-tool-use_bash_validate_command.sh",
             "timeout": 10
           }
         ]
@@ -46,12 +46,12 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/hooks/events/post-tool-use_log_artifact.sh",
+            "command": "bash ${CLAUDE_PROJECT_DIR}/.claude/hooks/events/post-tool-use_log_artifact.sh",
             "timeout": 10
           },
           {
             "type": "command",
-            "command": "bash .claude/hooks/validate-state-ledger.sh",
+            "command": "bash ${CLAUDE_PROJECT_DIR}/.claude/hooks/validate-state-ledger.sh",
             "timeout": 10
           },
           {
@@ -68,7 +68,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/hooks/events/session-start_record_metadata.sh",
+            "command": "bash ${CLAUDE_PROJECT_DIR}/.claude/hooks/events/session-start_record_metadata.sh",
             "timeout": 15
           }
         ]
@@ -79,12 +79,12 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/hooks/events/stop_session_log_state.sh",
+            "command": "bash ${CLAUDE_PROJECT_DIR}/.claude/hooks/events/stop_session_log_state.sh",
             "timeout": 30
           },
           {
             "type": "prompt",
-            "prompt": "Evaluate the structural completeness of workspace documentation before session closure. Event context: $ARGUMENTS. Check for: (1) valid YAML frontmatter with all required fields (name, version, suite, tags), (2) well-formed Markdown structure (no broken tables, no unterminated code fences), (3) no dangling TODO or placeholder patterns in documentation files. Return JSON matching this schema: {\"ok\": boolean, \"reason\": string}",
+            "prompt": "Evaluate the structural completeness of workspace documentation before session closure. Event context: $ARGUMENTS. Check for: (1) valid YAML frontmatter with all required fields (name, version, suite, tags), (2) well-formed Markdown structure (no broken tables, no unterminated code fences), (3) no dangling TODO or placeholder patterns in documentation files. Return JSON matching this schema: {\"ok\": boolean, \"reason\": string}. CRITICAL: advisory only — ALWAYS return {\"ok\": true, \"reason\": \"...\"} with findings in reason. NEVER ok:false (causes infinite Stop loop). ok:true lets session close.",
             "timeout": 45,
             "continueOnBlock": true
           }

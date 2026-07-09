@@ -85,5 +85,63 @@ Hoặc: thêm field `severity: advisory|block` trong prompt JSON để UI render
 ## §9. Related
 
 - `docs/context-to-work/hooks-hybrid-design.2026-07-09.md` — thiết kế hybrid, giải thích tại sao prompt advisory-only.
-- `knowleages/hooks/hooks.md` dòng 685 — PostToolUse ok:false không block (evidence).
-- `knowleages/hooks/hooks.md` dòng 2839-2848 — behavior ok:false per event.
+- `.claude/knowleages/hooks/hooks.md` dòng 685 — PostToolUse ok:false không block (evidence). **[FIXED 2026-07-09]** path gốc thiếu prefix `.claude/`.
+- `.claude/knowleages/hooks/hooks.md` dòng 2839-2848 — behavior ok:false per event.
+
+---
+
+## §10. Verification log (2026-07-09)
+
+**Phương pháp:** đọc source thực tế `.claude/knowleages/hooks/hooks.md` (3100 dòng) + `.claude/settings.json` + `.claude/settings.local.json`, đối chiếu với claims trong report.
+
+| Claim trong report | Kết quả | Evidence |
+|:--|:--|:--|
+| PostToolUse ok:false không block (file đã ghi) | ✅ CONFIRMED | hooks.md:685 — `PostToolUse \| No \| Shows stderr to Claude; the tool already ran` |
+| `continueOnBlock:true` feed reason + continue turn | ✅ CONFIRMED | hooks.md:2844 |
+| Config trong settings.json khớp mô tả | ✅ CONFIRMED | settings.json:57-62 (prompt + continueOnBlock:true) |
+| Banner "Error writing file / blocking error" | ⚠️ UNVERIFIED | Chỉ có 1 observation 2026-07-09, doc mô tả là **"warning line"** chứ không phải "Error writing file". Cần live repro để chụp exact banner string. |
+| Path `knowleages/hooks/hooks.md` | ❌ WRONG PATH | Thiếu prefix `.claude/` (file thực tế tại `.claude/knowleages/hooks/hooks.md`) |
+
+**Kết luận:** Cơ chế hook ĐÚNG. Report mechanics xác thực. Nhưng:
+1. Citation path sai (đã sửa §9).
+2. Headline claim "mislabeled as Error writing file" **chưa được chứng minh** từ docs — doc nói "warning line". Cần live repro trước khi report upstream.
+3. §8 `severity` field = upstream feature request, không phải config fix hiện có (prompt hook chỉ trả `ok`+`reason`).
+
+---
+
+## §11. Derived bugs (phát hiện trong lúc verify)
+
+### §11.1 BUG-002: Stop command hook path sai cwd → "No such file"
+- **Symptom:** Stop event (chạy từ cwd `build-workflow`) báo `bash: .claude/hooks/events/stop_session_log_state.sh: No such file or directory`.
+- **Root cause:** bare `.claude/...` resolve theo **session cwd**, không phải project root. Khi cwd ≠ WASHVN thì miss. hooks.md:479-481 khuyến nghị dùng `${CLAUDE_PROJECT_DIR}`.
+- **Fix (đã apply):** settings.json:82 → `bash ${CLAUDE_PROJECT_DIR}/.claude/hooks/events/stop_session_log_state.sh`. JSON valid.
+- **Residual:** 5 sibling command hooks (PreToolUse ×3, PostToolUse ×2, SessionStart ×1) vẫn dùng bare `.claude/...` — cùng fragility. Chưa fix (chờ user approve).
+
+### §11.2 BUG-003: Stop prompt hook loop (ok:false on no-doc-change)
+- **Symptom:** session không đóng được; Stop prompt hook trả `ok:false` liên tục → hooks.md:2841 (Stop ok:false feed reason back + continue turn) → infinite loop, drain token.
+- **Root cause:** prompt yêu cầu trả JSON, nhưng khi không có doc nào đổi, model vẫn trả `ok:false` ("did not evaluate") → tự trigger tiếp turn.
+- **Fix (đã apply):** settings.local.json Stop prompt hook thêm directive: nếu không có doc thay đổi → trả `{"ok": true, "reason": "No doc changes to evaluate"}`, NEVER ok:false. JSON valid.
+- **Note:** fix chỉ có hiệu lực sau khi **restart session** (settings không hot-reload). Session hiện tại vẫn loop vì hook cũ đã load.
+
+---
+
+## §12. Session handoff (cho restart)
+
+**Tình hình hiện tại (2026-07-09):**
+- BUG-001: mechanics verified, headline claim UNVERIFIED (cần live repro).
+- BUG-002 (Stop command path): FIXED in settings.json, cần verify sau restart.
+- BUG-003 (Stop prompt loop): FIXED in settings.local.json, **chỉ生效 sau restart**.
+
+**Action bắt buộc trước khi tiếp tục:**
+1. **RESTART session** để reload `.claude/settings.json` + `.claude/settings.local.json` → chấm dứt Stop-hook loop, kích hoạt path fix.
+2. Sau restart: xác nhận Stop event trả `ok:true` ("No doc changes to evaluate") và không loop.
+
+**Open items (chờ user quyết định):**
+- [ ] Live repro BUG-001: write temp file thiếu `tags` + real placeholder marker, capture exact banner string.
+- [ ] Widen `${CLAUDE_PROJECT_DIR}` tới 5 sibling command hooks.
+- [ ] Update BUG-001 report path citation (đã làm §9) — confirm với user.
+
+**Files changed this session:**
+- `.claude/settings.json` (Stop command hook path)
+- `.claude/settings.local.json` (Stop prompt hook loop guard)
+- `docs/bugs/hooks/posttooluse-prompt-misleading-error-label.md` (this update)

@@ -20,8 +20,9 @@ fi
 CMD=$(echo "$INPUT" | jq -r '.tool_input.command // empty' 2>/dev/null)
 [ -z "$CMD" ] && exit 0
 
-# Pattern blocklist for destructive commands
-if echo "$CMD" | grep -qE "(rm -rf|sudo |truncate -s 0|dd of=/dev/|chmod -R|chown -R .* /|> */dev/)"; then
+# Pattern blocklist — restrict to canonical block devices; /dev/null, /dev/stdout, /dev/zero are safe.
+DESTRUCTIVE_REGEX="(rm -rf|sudo |truncate -s 0|chmod -R|chown -R .* /|> */dev/(sd[a-z]+|nvme[0-9]+|disk[0-9]*|loop[0-9]+|ram[0-9]+|md[0-9]+)|of=/dev/(sd[a-z]+|nvme[0-9]+|disk[0-9]*|loop[0-9]+|ram[0-9]+|md[0-9]+))"
+if echo "$CMD" | grep -qE "$DESTRUCTIVE_REGEX"; then
   echo "BLOCKED: destructive pattern detected in Bash command" >&2
   echo "Command snippet: $(echo "$CMD" | head -c 200)" >&2
   exit 2

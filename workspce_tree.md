@@ -15,6 +15,14 @@ A comprehensive routing map and layout guide for the WASHVN Master Skill Suite r
     - `settings.json` - Custom settings & permission bounds
     - `agents/` - Active agent templates and orchestrators
       - `subagent-forge.md` - Automated agent construction forge
+      - `pipeline-orchestrator.md` - 8-stage pipeline orchestration (sonnet)
+      - `design-validator.md` - Schema/contract design validation gate (sonnet)
+      - `quality-scorer.md` - META-1→3 quality scoring gate (opus)
+      - `ba-pipeline-runner.md` - BA sub-pipeline orchestrator (elicitor→analyst→synthesizer) (opus)
+      - `external-code-reviewer.md` - Fresh-eyes static code analyst, Γ-1 fix (sonnet)
+      - `drift-detector.md` - Plan-design alignment drift check, Stage 2.5 (sonnet)
+      - `user-knowledge-ingestor.md` - User resource ingestion & knowledge parse (opus)
+      - `branch-orchestrator.md` - Branch B parallel micro-skill coordination (opus, optional)
       - `_staging/` - Quarantine/Staging path for generated agents
       - `_archive/` - Historic and deprecated versions of agents
     - `knowledge/` - Repository-scoped structural guides & knowledge bases

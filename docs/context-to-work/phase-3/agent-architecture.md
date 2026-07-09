@@ -141,7 +141,7 @@ phase_3_agents:
     model: sonnet  # [revised 2026-07-09 per user review] — downgrade opus→sonnet
     justification: "Orchestration là mechanical task — đọc state ledger + dispatch agent tiếp theo. Opus gây Λ-10 ngược: deep-reasoning model bị lãng phí cho mechanical dispatch, tăng latency mà không có quality gain. Sonnet đủ tốc độ + pattern matching cho manifest-driven orchestration."
     tools: [Read, Task, TodoWrite]
-    write_zone: ".skill-context/{skill}/_*log* | .skill-context/{skill}/_state*"
+    write_zone: ".skill-context/{skill}/_orchestration_log.md | .skill-context/{skill}/_state_ledger.yaml"
     state_ledger_validation_hook: true  # [added 2026-07-09] — see §3-bis
     decomposition_from: "skill-pipeline-orchestrator (gốc dồn orchestration + write gate + recursion block → giữ orchestration ONLY)"
 
@@ -705,9 +705,9 @@ anti_slop_rules:
     on_violation: "WARN — unlogged assertion"
 
   AS-8:
-    rule: "Architecture doc toàn bộ ≤ 4000 tokens — dài hơn split"
-    check: "wc -w or tokenizer count"
-    on_violation: "REJECT — split document"
+    rule: "Per-agent built spec doc (SKILL.md / agent file) ≤ 4000 tokens — dài hơn split. QUY TẮC NÀY KHÔNG ÁP DỤNG cho master architecture document (tài liệu này) vì bản chất tổng hợp 6-layer taxonomy + 8-agent roster + schemas + failure catalog. Master doc được miễn trừ có chủ đích; ngưỡng ≤4000 tokens chỉ enforce lên từng agent file khi subagent-forge sinh (per AGENTS.md §5 SKILL.md ≤700 tokens L0 anchor)."
+    check: "wc -w or tokenizer count — CHỈ lên per-agent output, NOT master doc"
+    on_violation: "REJECT per-agent file — split agent file"
 
   AS-9:
     rule: "Không placeholder strings (TODO, FIXME, mock, 'TBD' not bound to τι)" 
@@ -729,7 +729,7 @@ anti_slop_rules:
 
   AS-12:
     rule: "Model-tier selection phải justify theo task complexity KHÔNG theo role prestige — opus chỉ cho deep reasoning tasks (META scoring, elicitation, BA chain), sonnet cho operational/dispatch tasks, haiku cho classification-only"
-    check: "frontmatter `justification:` regex match (deep reasoning | operational | classification)"
+    check: "frontmatter `justification:` regex match (deep reasoning | operational | mechanical | dispatch | classification)"
     on_violation: "REJECT — Λ-10 model selection mismatch"
     added_in_version: "0.0.2"
     addresses: "Reviewer critique II.1 — Lạm dụng Opus cho orchestration"

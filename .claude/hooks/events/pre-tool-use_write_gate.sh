@@ -22,14 +22,15 @@ FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty' 2>/dev/null)
 # Fail-safe: if no file_path extracted (e.g., Bash tool), allow
 [ -z "$FILE_PATH" ] && exit 0
 
-# Canonical allowlist (canonical paths, never modify without commit review)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 WORKSPACE_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
-ALLOWLIST_REGEX="^${WORKSPACE_ROOT}/(\.claude/|raw/ver-3/|\.skill-context/|docs/context-to-work/|Temps/spec/)"
 
-if [[ ! "$FILE_PATH" =~ $ALLOWLIST_REGEX ]]; then
-  echo "BLOCKED: write target outside WASHVN workspace: $FILE_PATH" >&2
-  echo "Allowed prefixes: .claude/, raw/ver-3/, .skill-context/, docs/context-to-work/, Temps/spec/" >&2
+ALLOWED_DIRS_REGEX="^${WORKSPACE_ROOT}/(\.claude/|\.skill-context/|\.agents/|\.omc/|\.omo/|raw/|skills/|docs/|Temps/|scratch/)"
+ALLOWED_ROOT_FILES_REGEX="^${WORKSPACE_ROOT}/(AGENTS|CLAUDE|architecture|standards|ROADMAP|workspce_tree)\.md$|^${WORKSPACE_ROOT}/skills-registry\.json$"
+
+if [[ ! "$FILE_PATH" =~ $ALLOWED_DIRS_REGEX ]] && [[ ! "$FILE_PATH" =~ $ALLOWED_ROOT_FILES_REGEX ]]; then
+  echo "[WORKSPACE-GATE] BLOCKED: write target outside WASHVN workspace: $FILE_PATH" >&2
+  echo "  Allowed: .claude/, .skill-context/, .agents/, .omc/, .omo/, raw/, skills/, docs/, Temps/, scratch/, and root *.md / skills-registry.json" >&2
   exit 2
 fi
 

@@ -20,13 +20,25 @@ fi
 FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty' 2>/dev/null)
 [ -z "$FILE_PATH" ] && exit 0
 
-# Block pattern: writes to .claude/skills/<any>/ except for _staging/
-if [[ "$FILE_PATH" =~ \.claude/skills/ ]] && [[ ! "$FILE_PATH" =~ \.claude/skills/_staging/ ]]; then
-  # Unless DEPLOY_PHASE_ACTIVE env var is set (reserved for deployflow)
-  if [ -z "$WASHVN_DEPLOY_PHASE_ACTIVE" ]; then
-    echo "BLOCKED: writes to runtime .claude/skills/ gated. Edit at raw/ver-3/<name>/ then deploy via 'deploy-skill <name>'." >&2
-    exit 2
-  fi
-fi
+# Scope to workspace root — bare substring match would catch $HOME/.claude/skills/ (false positive)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+WORKSPACE_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
+RUNTIME_SKILLS_DIR="${WORKSPACE_ROOT}/.claude/skills/"
+STAGING_SUBDIR="${WORKSPACE_ROOT}/.claude/skills/_staging/"
+
+case "$FILE_PATH" in
+  "$STAGING_SUBDIR"*)
+    exit 0
+    ;;
+  "$RUNTIME_SKILLS_DIR"*)
+    if [ -z "$WASHVN_DEPLOY_PHASE_ACTIVE" ]; then
+      echo "[SKILL-STAGING-GATE] BLOCKED: direct writes to runtime .claude/skills/ gated." >&2
+      echo "  path: $FILE_PATH" >&2
+      echo "  Fix: edit at raw/ver-3/<name>/ then deploy via 'deploy-skill <name>'" >&2
+      echo "  Bypass: set WASHVN_DEPLOY_PHASE_ACTIVE env var (reserved for deploy flow)" >&2
+      exit 2
+    fi
+    ;;
+esac
 
 exit 0
