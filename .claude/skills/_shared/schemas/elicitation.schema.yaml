@@ -1,0 +1,113 @@
+$schema: "http://json-schema.org/draft-07/schema#"
+$id: "washvn://schemas/elicitation"
+title: "Elicitation Schema"
+description: "Validation schema for elicitation-report.md (BA Elicitor output)"
+type: "object"
+required:
+  - skill_name
+  - domain_ontology
+  - stakeholder_analysis
+  - nrfs
+  - thought_cache
+additionalProperties: false
+properties:
+  skill_name:
+    type: "string"
+    pattern: "^[a-z][a-z0-9-]*$"
+    description: "The unique name of the skill in kebab-case"
+  domain_ontology:
+    type: "object"
+    required:
+      - terms
+      - relationships
+    additionalProperties: false
+    properties:
+      terms:
+        type: "array"
+        items:
+          type: "object"
+          required:
+            - term
+            - definition
+          properties:
+            term:
+              type: "string"
+            definition:
+              type: "string"
+      relationships:
+        type: "array"
+        items:
+          type: "object"
+          required:
+            - source
+            - target
+            - type
+          properties:
+            source:
+              type: "string"
+            target:
+              type: "string"
+            type:
+              type: "string"
+  stakeholder_analysis:
+    type: "array"
+    items:
+      type: "object"
+      required:
+        - role
+        - goals
+        - pain_points
+      additionalProperties: false
+      properties:
+        role:
+          type: "string"
+        goals:
+          type: "array"
+          items:
+            type: "string"
+        pain_points:
+          type: "array"
+          items:
+            type: "string"
+  nrfs:
+    type: "array"
+    items:
+      type: "object"
+      required:
+        - id
+        - category
+        - metric
+        - value
+        - unit
+      additionalProperties: false
+      properties:
+        id:
+          type: "string"
+        category:
+          type: "string"
+        metric:
+          type: "string"
+        value:
+          type: "number"
+        unit:
+          type: "string"
+  thought_cache:
+    type: "object"
+    required:
+      - business_thought_process
+      - stakeholder_empathy
+      - reverse_questions
+    additionalProperties: false
+    properties:
+      business_thought_process:
+        type: "array"
+        items:
+          type: "string"
+      stakeholder_empathy:
+        type: "array"
+        items:
+          type: "string"
+      reverse_questions:
+        type: "array"
+        items:
+          type: "string"

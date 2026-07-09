@@ -1,0 +1,23 @@
+skill_name: "test-skill-one"
+domain_ontology:
+  terms:
+    - term: "DRC"
+      definition: "Dynamic Routing Contract"
+  relationships:
+    - source: "DRC"
+      target: "Registry"
+      type: "mapped_by"
+stakeholder_analysis:
+  - role: "Developer"
+    goals: ["Write compliant code"]
+    pain_points: ["Manual check overhead"]
+nrfs:
+  - id: "NFR-01"
+    category: "Performance"
+    metric: "Execution overhead"
+    value: 120.5
+    unit: "ms"
+thought_cache:
+  business_thought_process: ["Process flow defined."]
+  stakeholder_empathy: ["Need developer comfort."]
+  reverse_questions: ["Should we support JSON?"]

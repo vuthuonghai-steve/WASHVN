@@ -1,0 +1,65 @@
+$schema: "http://json-schema.org/draft-07/schema#"
+$id: "washvn://schemas/analysis"
+title: "Analysis Schema"
+description: "Validation schema for analysis-report.md (BA Analyst output)"
+type: "object"
+required:
+  - skill_name
+  - criteria_analysis
+  - metrics
+  - risk_assessment
+additionalProperties: false
+properties:
+  skill_name:
+    type: "string"
+    pattern: "^[a-z][a-z0-9-]*$"
+    description: "The unique name of the skill in kebab-case"
+  criteria_analysis:
+    type: "array"
+    items:
+      type: "object"
+      required:
+        - criterion_id
+        - description
+        - classification
+      additionalProperties: false
+      properties:
+        criterion_id:
+          type: "string"
+        description:
+          type: "string"
+        classification:
+          type: "string"
+          enum: [FR, NFR]
+  metrics:
+    type: "array"
+    items:
+      type: "object"
+      required:
+        - name
+        - value
+        - unit
+      additionalProperties: false
+      properties:
+        name:
+          type: "string"
+        value:
+          type: "number"
+        unit:
+          type: "string"
+  risk_assessment:
+    type: "array"
+    items:
+      type: "object"
+      required:
+        - risk_id
+        - edge_case
+        - mitigation
+      additionalProperties: false
+      properties:
+        risk_id:
+          type: "string"
+        edge_case:
+          type: "string"
+        mitigation:
+          type: "string"

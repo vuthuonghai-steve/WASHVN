@@ -1,0 +1,106 @@
+$schema: "http://json-schema.org/draft-07/schema#"
+$id: "washvn://schemas/quality-matrix"
+title: "Quality Matrix Schema"
+description: "Validation schema for quality-matrix.yaml (Stage 1.5 — Spec Gatekeeper output)"
+type: "object"
+required:
+  - skill_name
+  - meta_scores
+  - overall_score
+  - verdict
+additionalProperties: false
+properties:
+  skill_name:
+    type: "string"
+    pattern: "^[a-z][a-z0-9-]*$"
+    description: "The unique name of the skill in kebab-case"
+  meta_scores:
+    type: "object"
+    required:
+      - META-1
+      - META-2
+      - META-3
+    additionalProperties: false
+    properties:
+      META-1:
+        type: "object"
+        required:
+          - score
+          - structural_integrity
+          - domain_anchoring
+        additionalProperties: false
+        properties:
+          score:
+            type: "number"
+            minimum: 0
+            maximum: 100
+          structural_integrity:
+            type: "string"
+          domain_anchoring:
+            type: "string"
+      META-2:
+        type: "object"
+        required:
+          - score
+          - semantic_depth
+          - reverse_q
+        additionalProperties: false
+        properties:
+          score:
+            type: "number"
+            minimum: 0
+            maximum: 100
+          semantic_depth:
+            type: "string"
+          reverse_q:
+            type: "string"
+      META-3:
+        type: "object"
+        required:
+          - score
+          - mechanical
+          - negative_space
+          - sandbox
+        additionalProperties: false
+        properties:
+          score:
+            type: "number"
+            minimum: 0
+            maximum: 100
+          mechanical:
+            type: "string"
+          negative_space:
+            type: "string"
+          sandbox:
+            type: "string"
+  overall_score:
+    type: "number"
+    minimum: 0
+    maximum: 100
+  verdict:
+    type: "string"
+    enum:
+      - PASS
+      - FAIL
+      - PASS_WITH_WARNING
+  signal_details:
+    type: "object"
+    additionalProperties: true
+  criteria_ref:
+    type: "string"
+  gate_results:
+    type: "array"
+    items:
+      type: "object"
+      required:
+        - gate_id
+        - status
+        - detail
+      properties:
+        gate_id:
+          type: "string"
+        status:
+          type: "string"
+          enum: ["PASS", "FAIL", "WARNING"]
+        detail:
+          type: "string"

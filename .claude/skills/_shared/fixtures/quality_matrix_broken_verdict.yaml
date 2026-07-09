@@ -1,0 +1,17 @@
+skill_name: "test-skill-one"
+meta_scores:
+  META-1:
+    score: 85
+    structural_integrity: "All 7 zones defined."
+    domain_anchoring: "Glossary words matching project terminology."
+  META-2:
+    score: 90
+    semantic_depth: "Detailed ontology mapping complete."
+    reverse_q: "Edge cases analyzed."
+  META-3:
+    score: 88
+    mechanical: "No placeholders found."
+    negative_space: "5 must_not rules set."
+    sandbox: "Docker environment isolated."
+overall_score: 87.6
+verdict: "APPROVED"

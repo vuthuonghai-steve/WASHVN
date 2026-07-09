@@ -1,0 +1,28 @@
+---
+skill_name: "test-skill-one"
+tasks:
+  - task_id: "task-01"
+    description: "Prepare project structure"
+    zone: "core"
+    priority: "high"
+    input_schema: "raw/ver-3/_shared/schemas/exploration.schema.yaml"
+    output_schema: "raw/ver-3/_shared/schemas/criteria.schema.json"
+    verification_cmd: "python3 test.py"
+    must_not:
+      - "No stub files."
+  - task_id: "task-02"
+    description: "Write unit tests"
+    zone: "scripts"
+    priority: "medium"
+    input_schema: null
+    output_schema: null
+    verification_cmd: "pytest test_units.py"
+    must_not:
+      - "Do not use mock DB."
+dag_dependencies:
+  - from: "task-01"
+    to: "task-02"
+total_tasks: 2
+---
+# Todo Plan
+This is the markdown body.

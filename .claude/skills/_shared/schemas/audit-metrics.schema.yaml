@@ -1,0 +1,66 @@
+$schema: "http://json-schema.org/draft-07/schema#"
+$id: "washvn://schemas/audit-metrics"
+title: "Audit Metrics Schema"
+description: "Validation schema for audit-metrics.yaml (cross-cutting audit data)"
+type: "object"
+required:
+  - run_id
+  - audit_type
+  - metrics
+additionalProperties: false
+properties:
+  run_id:
+    type: "string"
+    description: "Unique identifier for the audit execution run"
+  audit_type:
+    type: "string"
+    enum:
+      - sampling
+      - full
+      - spot
+  metrics:
+    type: "object"
+    required:
+      - total_artifacts
+      - artifacts_sampled
+      - pass_rate
+      - fail_rate
+    additionalProperties: false
+    properties:
+      total_artifacts:
+        type: "integer"
+        minimum: 0
+      artifacts_sampled:
+        type: "integer"
+        minimum: 0
+      pass_rate:
+        type: "number"
+        minimum: 0
+        maximum: 100
+      fail_rate:
+        type: "number"
+        minimum: 0
+        maximum: 100
+  sampling_rate:
+    type: "number"
+    minimum: 0
+    maximum: 1.0
+  audit_log:
+    type: "array"
+    items:
+      type: "object"
+      required:
+        - artifact_id
+        - result
+      properties:
+        artifact_id:
+          type: "string"
+        result:
+          type: "string"
+          enum: ["PASS", "FAIL"]
+        details:
+          type: "string"
+  recommendations:
+    type: "array"
+    items:
+      type: "string"

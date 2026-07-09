@@ -1,0 +1,79 @@
+$schema: "http://json-schema.org/draft-07/schema#"
+$id: "washvn://schemas/domain-handbook"
+title: "Domain Handbook Schema"
+description: "Validation schema for domain-handbook.md (Miner output)"
+type: "object"
+required:
+  - skill_name
+  - glossary
+  - anti_patterns
+  - exemplars
+  - domain_anchors
+additionalProperties: false
+properties:
+  skill_name:
+    type: "string"
+    pattern: "^[a-z][a-z0-9-]*$"
+    description: "The unique name of the skill in kebab-case"
+  glossary:
+    type: "array"
+    minItems: 10
+    items:
+      type: "object"
+      required:
+        - term
+        - definition
+      additionalProperties: false
+      properties:
+        term:
+          type: "string"
+        definition:
+          type: "string"
+  anti_patterns:
+    type: "array"
+    minItems: 3
+    items:
+      type: "object"
+      required:
+        - name
+        - symptom
+        - solution
+      additionalProperties: false
+      properties:
+        name:
+          type: "string"
+        symptom:
+          type: "string"
+        solution:
+          type: "string"
+  exemplars:
+    type: "array"
+    items:
+      type: "object"
+      required:
+        - name
+        - description
+      properties:
+        name:
+          type: "string"
+        description:
+          type: "string"
+        reference_url_or_path:
+          type: "string"
+  domain_anchors:
+    type: "array"
+    items:
+      type: "string"
+  success_criteria:
+    type: "array"
+    items:
+      type: "string"
+  error_boundaries:
+    type: "array"
+    items:
+      type: "string"
+  structural_exemplars:
+    type: "array"
+    items:
+      type: "object"
+      additionalProperties: true

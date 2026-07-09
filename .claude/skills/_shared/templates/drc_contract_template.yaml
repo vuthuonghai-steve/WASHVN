@@ -1,0 +1,36 @@
+skill_name: "<skill-name-placeholder>"
+skill_version: "0.0.1"
+suite: "WASHVN"
+last_updated: "YYYY-MM-DD"
+
+inputs:
+  - name: "input_artifact_name"
+    path_template: ".skill-context/{target_skill}/input_filename.md"
+    format: "markdown"
+    schema: "raw/ver-3/_shared/schemas/exploration.schema.yaml"
+    required: true
+    consumed_by: "this-skill"
+    downstream_phase: "phase-X"
+
+outputs:
+  - file_id: "output_artifact_id"
+    path_template: ".skill-context/{skill_name}/output_filename.md"
+    format: "markdown"
+    schema: "raw/ver-3/_shared/schemas/criteria.schema.json"
+    lifecycle_status: "WORM"
+    versioning: "semver"
+
+routing:
+  upstream_skills: []
+  downstream_skills: []
+  fallback_targets:
+    - trigger: "validation_fail"
+      target_skill: "fallback-escalation"
+      target_stage: "escalate"
+
+state_persistence:
+  context_bus_write: true
+  state_yaml_write: true
+  fields_to_write:
+    - "field_name_1"
+    - "field_name_2"

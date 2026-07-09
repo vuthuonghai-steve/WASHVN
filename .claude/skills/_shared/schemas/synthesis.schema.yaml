@@ -1,0 +1,57 @@
+$schema: "http://json-schema.org/draft-07/schema#"
+$id: "washvn://schemas/synthesis"
+title: "Synthesis Schema"
+description: "Validation schema for business-analysis.md (BA Synthesizer output)"
+type: "object"
+required:
+  - skill_name
+  - synthesized_requirements
+  - congruence_check
+  - pipeline_ready
+additionalProperties: false
+properties:
+  skill_name:
+    type: "string"
+    pattern: "^[a-z][a-z0-9-]*$"
+    description: "The unique name of the skill in kebab-case"
+  synthesized_requirements:
+    type: "array"
+    items:
+      type: "object"
+      required:
+        - req_id
+        - title
+        - description
+        - source
+        - classification
+      additionalProperties: false
+      properties:
+        req_id:
+          type: "string"
+        title:
+          type: "string"
+        description:
+          type: "string"
+        source:
+          type: "string"
+          enum: [elicitation, analysis, both]
+        classification:
+          type: "string"
+          enum: [FR, NFR]
+  congruence_check:
+    type: "object"
+    required:
+      - conflicts_found
+      - conflicts_resolved
+      - check_verdict
+    additionalProperties: false
+    properties:
+      conflicts_found:
+        type: "boolean"
+      conflicts_resolved:
+        type: "boolean"
+      check_verdict:
+        type: "string"
+        enum: [PASS, FAIL]
+  pipeline_ready:
+    type: "boolean"

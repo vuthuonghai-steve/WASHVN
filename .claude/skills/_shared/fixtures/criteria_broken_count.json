@@ -1,0 +1,22 @@
+{
+  "skill_name": "test-skill-one",
+  "acceptance_criteria": [
+    "Criterion number one",
+    "Criterion number two",
+    "Criterion number three"
+  ],
+  "test_cases": [
+    {
+      "name": "test_case_one",
+      "description": "Verify first scenario",
+      "expected_result": "PASS",
+      "type": "pass"
+    },
+    {
+      "name": "test_case_two",
+      "description": "Verify second scenario",
+      "expected_result": "FAIL",
+      "type": "fail"
+    }
+  ]
+}

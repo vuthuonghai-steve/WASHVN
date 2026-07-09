@@ -1,0 +1,13 @@
+---
+skill_name: "test-skill-one"
+build_status: "done"
+build_phases:
+  - phase: "Scaffolding"
+    start_time: "2026-07-10T00:00:00Z"
+    end_time: "2026-07-10T00:05:00Z"
+    status: "completed"
+    artifacts: ["exploration.md"]
+warnings: []
+---
+# Build Log
+This is the markdown body.

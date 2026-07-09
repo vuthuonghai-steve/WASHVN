@@ -1,0 +1,79 @@
+$schema: "http://json-schema.org/draft-07/schema#"
+$id: "washvn://schemas/security-review"
+title: "Security Review Schema"
+description: "Validation schema for security-review.md (security reviewer output)"
+type: "object"
+required:
+  - skill_name
+  - owasp_coverage
+  - vulnerabilities
+  - secret_scan
+  - overall_verdict
+additionalProperties: false
+properties:
+  skill_name:
+    type: "string"
+    pattern: "^[a-z][a-z0-9-]*$"
+    description: "The unique name of the skill in kebab-case"
+  owasp_coverage:
+    type: "array"
+    items:
+      type: "string"
+      pattern: "^A0[1-9]:2021|A10:2021.*$"
+    description: "List of OWASP Top 10 categories covered (A01-A10)"
+  vulnerabilities:
+    type: "array"
+    items:
+      type: "object"
+      required:
+        - id
+        - severity
+        - category
+        - description
+        - file
+        - line
+        - remediation
+      additionalProperties: false
+      properties:
+        id:
+          type: "string"
+        severity:
+          type: "string"
+          enum: [critical, high, medium, low]
+        category:
+          type: "string"
+        description:
+          type: "string"
+        file:
+          type: "string"
+        line:
+          type: "integer"
+          minimum: 0
+        remediation:
+          type: "string"
+  secret_scan:
+    type: "object"
+    required:
+      - enabled
+      - findings_count
+    additionalProperties: false
+    properties:
+      enabled:
+        type: "boolean"
+      findings_count:
+        type: "integer"
+        minimum: 0
+  overall_verdict:
+    type: "string"
+    enum:
+      - SAFE
+      - FLAGGED
+      - UNSAFE
+  unsafe_patterns:
+    type: "array"
+    items:
+      type: "string"
+  remediation_priority:
+    type: "array"
+    items:
+      type: "string"
