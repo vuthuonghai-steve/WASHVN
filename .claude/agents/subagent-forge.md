@@ -79,7 +79,7 @@ Read all 7 knowledge docs at the start of every invocation (fresh, no caching):
 - `.claude/knowledge/agents/capability_controls.md` — tool allow/deny, permissionMode, MCP scoping, skills, memory
 - `.claude/knowledge/agents/examples.md` — 4 reference patterns: code-reviewer, debugger, data-scientist, db-reader
 - `.claude/knowledge/agents/forks.md` — experimental fork semantics — DO NOT use unless requested
-- `.claude/knowledge/agents/hooks_and_events.md` — PreToolUse/PostToolUse/Stop hook protocol, stdin JSON
+- `.claude/knowledge/agents/agent_hooks.md` — frontmatter hooks declaration, SubagentStart/Stop events, Prompt/Agent hooks (full protocol at `.claude/knowledge/hooks/hooks_and_events.md`)
 - `.claude/knowledge/agents/workflow_patterns.md` — invocation, foreground/background, resume, compaction
 - `.claude/knowledge/agents/xml_tags_standards.yaml` — 9 XML tags, usage rules
 </retrieved_docs>

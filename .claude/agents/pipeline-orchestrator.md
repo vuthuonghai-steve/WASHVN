@@ -98,7 +98,7 @@ If bất kỳ stage nào FAIL gate, ghi failure reason vào orchestration log v�
 - file:///$CLAUDE_PROJECT_DIR/.claude/knowledge/agents/capability_controls.md — tool allowlist/denylist mechanics, permission mode governance, MCP scoping, skill preload limits, risk matrix
 - file:///$CLAUDE_PROJECT_DIR/.claude/knowledge/agents/examples.md — 4 canonical subagent reference patterns: code-reviewer, debugger, data-scientist, db-reader with YAML+system prompt
 - file:///$CLAUDE_PROJECT_DIR/.claude/knowledge/agents/forks.md — fork naming convention (parent--suffix), 4-stage lifecycle (Experiment/Evaluate/Promote/Archive), conflict resolution, anti-abuse rules
-- file:///$CLAUDE_PROJECT_DIR/.claude/knowledge/agents/hooks_and_events.md — hook protocol, Dual-Format blocking (Format A stdout JSON vs Format B exit code 2), matcher syntax, lifecycle events, if-condition filtering
+- file:///$CLAUDE_PROJECT_DIR/.claude/knowledge/hooks/hooks_and_events.md — full hook protocol, Dual-Format blocking, matcher syntax, lifecycle events, if-condition filtering (agent-specific: `.claude/knowledge/agents/agent_hooks.md`)
 - file:///$CLAUDE_PROJECT_DIR/.claude/knowledge/agents/workflow_patterns.md — 6 invocation patterns: foreground, background, resume, compaction, cascading (max depth 2), cross-runtime; token cost estimation
 - file:///$CLAUDE_PROJECT_DIR/.claude/knowledge/agents/xml_tags_standards.yaml — 9-tag XML whitelist (instructions, context, examples, input, output_contract, retrieved_docs, task, constraints, acceptance_criteria) with usage rules and anti-patterns
 </retrieved_docs>

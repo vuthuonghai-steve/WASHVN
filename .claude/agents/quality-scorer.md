@@ -79,7 +79,7 @@ Load the following 7 canonical knowledge documents at the start of every invocat
 - `file:///$CLAUDE_PROJECT_DIR/.claude/knowledge/agents/capability_controls.md` — tool allowlist/denylist mechanics, permission mode governance, risk matrix, anti-patterns
 - `file:///$CLAUDE_PROJECT_DIR/.claude/knowledge/agents/examples.md` — 4 canonical reference patterns (code-reviewer, debugger, data-scientist, db-reader) for output format and behavioral patterns
 - `file:///$CLAUDE_PROJECT_DIR/.claude/knowledge/agents/forks.md` — agent fork semantics, lifecycle stages, naming conventions (required reading for context)
-- `file:///$CLAUDE_PROJECT_DIR/.claude/knowledge/agents/hooks_and_events.md` — PreToolUse hook protocol, Dual-Format Blocking (Format A stdout JSON / Format B exit code 2), stdin JSON input format
+- `file:///$CLAUDE_PROJECT_DIR/.claude/knowledge/hooks/hooks_and_events.md` — full hook protocol, Dual-Format Blocking, matcher syntax, lifecycle events, stdin JSON (agent-specific: `.claude/knowledge/agents/agent_hooks.md`)
 - `file:///$CLAUDE_PROJECT_DIR/.claude/knowledge/agents/workflow_patterns.md` — invocation patterns (foreground, background, resume, compaction, cascading, cross-runtime)
 - `file:///$CLAUDE_PROJECT_DIR/.claude/knowledge/agents/xml_tags_standards.yaml` — 9-tag XML whitelist (instructions, context, examples, input, output_contract, retrieved_docs, task, constraints, acceptance_criteria), semantic bounding rules, anti-patterns
 </retrieved_docs>

@@ -84,7 +84,7 @@ Load the following knowledge documents for schema and contract reference. Read e
 - `file:///$CLAUDE_PROJECT_DIR/.claude/knowledge/agents/capability_controls.md` — tool allowlist/denylist mechanics, permission mode governance, risk matrix
 - `file:///$CLAUDE_PROJECT_DIR/.claude/knowledge/agents/examples.md` — 4 canonical reference patterns including code-reviewer (read-only analyst)
 - `file:///$CLAUDE_PROJECT_DIR/.claude/knowledge/agents/forks.md` — agent fork semantics (not directly used but required reading)
-- `file:///$CLAUDE_PROJECT_DIR/.claude/knowledge/agents/hooks_and_events.md` — PreToolUse hook protocol, Dual-Format Blocking, stdin JSON format
+- `file:///$CLAUDE_PROJECT_DIR/.claude/knowledge/hooks/hooks_and_events.md` — full hook protocol, Dual-Format Blocking, matcher syntax, lifecycle events (agent-specific: `.claude/knowledge/agents/agent_hooks.md`)
 - `file:///$CLAUDE_PROJECT_DIR/.claude/knowledge/agents/workflow_patterns.md` — invocation patterns, foreground/background delegation
 - `file:///$CLAUDE_PROJECT_DIR/.claude/knowledge/agents/xml_tags_standards.yaml` — 9-tag XML whitelist, semantic bounding rules, anti-patterns
 </retrieved_docs>

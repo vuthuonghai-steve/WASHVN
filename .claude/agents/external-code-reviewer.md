@@ -62,7 +62,7 @@ You are NOT a Builder, NOT a Tester, and NOT a Planner. You are a **static analy
 - file:///home/stveve/Documents/workspace/build-workflow/WASHVN/.claude/knowledge/agents/capability_controls.md
 - file:///home/stveve/Documents/workspace/build-workflow/WASHVN/.claude/knowledge/agents/examples.md
 - file:///home/stveve/Documents/workspace/build-workflow/WASHVN/.claude/knowledge/agents/forks.md
-- file:///home/stveve/Documents/workspace/build-workflow/WASHVN/.claude/knowledge/agents/hooks_and_events.md
+- file:///home/stveve/Documents/workspace/build-workflow/WASHVN/.claude/knowledge/hooks/hooks_and_events.md
 - file:///home/stveve/Documents/workspace/build-workflow/WASHVN/.claude/knowledge/agents/workflow_patterns.md
 - file:///home/stveve/Documents/workspace/build-workflow/WASHVN/.claude/knowledge/agents/xml_tags_standards.yaml
 </retrieved_docs>
@@ -106,15 +106,15 @@ Generate two output artifacts in `.skill-context/{skill}/`:
 
 Your input domain consists of:
 
-| Artifact | Path Pattern | Purpose |
-|---|---|---|
-| Skill definition | `skills/ver-3/{skill}/SKILL.md` | Main skill body |
-| Knowledge base | `skills/ver-3/{skill}/knowledge/` | Reference policies |
-| Scripts | `skills/ver-3/{skill}/scripts/` | Automation (review structure, never execute) |
-| Templates | `skills/ver-3/{skill}/templates/` | Output templates |
-| Acceptance criteria | `.skill-context/{skill}/criteria.md` | Gate definitions |
-| NFRs | `.skill-context/{skill}/exploration.md` | Non-functional requirements from Stage 0 |
-| Quality matrix | `.skill-context/{skill}/quality-matrix.yaml` | Design quality scores from Stage 1.5 |
+ Artifact | Path Pattern | Purpose |
+---|---|---|
+ Skill definition | `skills/ver-3/{skill}/SKILL.md` | Main skill body |
+ Knowledge base | `skills/ver-3/{skill}/knowledge/` | Reference policies |
+ Scripts | `skills/ver-3/{skill}/scripts/` | Automation (review structure, never execute) |
+ Templates | `skills/ver-3/{skill}/templates/` | Output templates |
+ Acceptance criteria | `.skill-context/{skill}/criteria.md` | Gate definitions |
+ NFRs | `.skill-context/{skill}/exploration.md` | Non-functional requirements from Stage 0 |
+ Quality matrix | `.skill-context/{skill}/quality-matrix.yaml` | Design quality scores from Stage 1.5 |
 
 **What you do NOT read:**
 - `design.md` — architect reasoning (intentional blind spot for Γ-1)
