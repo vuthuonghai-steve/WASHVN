@@ -91,5 +91,6 @@
         ]
       }
     ]
-  }
+  },
+  "CLAUDE_CODE_DEBUG_LOG_LEVEL":"verbose"
 }

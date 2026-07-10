@@ -1,0 +1,42 @@
+# Thought Cache Template — Business Reasoning Trace (ba-elicitor)
+# Schema-aligned to elicitation.schema.yaml §thought_cache (3 required + 2 optional).
+# This is a SEMANTIC VECTOR ANCHOR artifact (see synthesis-llm-principles.md §1.1):
+#   - business_thought_process + stakeholder_empathy + reverse_questions anchor the
+#     LLM into the expert BA vector space before it writes elicitation-report.md.
+
+skill_name: "{{ skill_name }}"
+elicitation_date: "{{ date }}"
+
+# REQUIRED (per elicitation.schema.yaml)
+business_thought_process:
+  # > 200 words total across entries. Each entry = one dimension of cognitive depth.
+  - "Systems Thinking: [phân tích tính năng trong tổng thể Master Skill Suite — feedback loops, boundaries, interconnections]"
+  - "Root Cause Isolation: [dùng 5 Whys / Ishikawa để tìm lỗ hổng thiết kế gốc, không mô tả triệu chứng]"
+  - "First Principles: [bóc tách về sự thật cơ bản: hạ tầng, giới hạn token, ranh giới file]"
+  - "Impact Analysis: [propagation map — upstream schema change tác động downstream thế nào]"
+  - "Structural Decomposition: [Epic → Feature → User Story → Acceptance Criteria]"
+
+stakeholder_empathy:
+  # ≥4 stakeholder angles (META-2.1 S3 multi-stakeholder). End-User / Operator / Developer / Security Reviewer.
+  - "End-User: mục tiêu [..], pain point [..]"
+  - "System Operator: mục tiêu [..], pain point [..]"
+  - "Developer/Maintainer: mục tiêu [..], pain point [..]"
+  - "Security Reviewer: mục tiêu [..], pain point [..]"
+
+reverse_questions:
+  # META-2.1 S2 — defensive space: what could go wrong, what MUST NOT happen.
+  - "Điều gì sai nếu input bị prompt-injected?"
+  - "Boundary nào bị phá vỡ nếu NFR không lượng hóa?"
+  - "Luồng nào (Happy/Alternative/Exception) đang bị bỏ sót?"
+  - "Rủi ro nào xảy ra khi stakeholder bảo mật bị bỏ qua?"
+
+# OPTIONAL (extended depth)
+confidence_breakdown:
+  scope_clarity: 0.0   # 0-1
+  requirement_stability: 0.0
+  stakeholder_coverage: 0.0
+  nfr_quantification: 0.0
+  overall: 0.0
+
+uncertainty_areas:
+  - "[CẦN LÀM RÕ] thông tin còn thiếu: [..]"

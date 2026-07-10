@@ -1,0 +1,43 @@
+skill_name: "ba-elicitor"
+skill_version: "0.0.1"
+suite: "WASHVN"
+last_updated: "2026-07-11"
+
+inputs:
+  - name: "raw_request"
+    path_template: "<user_skill_request>"
+    format: "xml-wrapped-free-text"
+    required: true
+    consumed_by: "ba-elicitor"
+    downstream_phase: "ba-analyst"
+
+outputs:
+  - file_id: "elicitation_report"
+    path_template: ".skill-context/{feature_name}/ba-elicitor/elicitation-report.md"
+    format: "markdown"
+    schema: "skills/ver-3/_shared/schemas/elicitation.schema.yaml"
+    lifecycle_status: "WORM"
+    versioning: "semver"
+  - file_id: "thought_cache"
+    path_template: ".skill-context/{feature_name}/ba-elicitor/thought-cache.yaml"
+    format: "yaml"
+    schema: "skills/ver-3/ba-elicitor/templates/thought_cache_template.yaml"
+    lifecycle_status: "WORM"
+    versioning: "semver"
+
+routing:
+  upstream_skills: []
+  downstream_skills:
+    - "ba-analyst"
+  fallback_targets:
+    - trigger: "validation_fail"
+      target_skill: "ba-pipeline-runner"
+      target_stage: "escalate"
+
+state_persistence:
+  context_bus_write: true
+  state_yaml_write: true
+  fields_to_write:
+    - "feature_name"
+    - "confidence_score"
+    - "status"
