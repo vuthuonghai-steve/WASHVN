@@ -7,7 +7,7 @@ inputs:
   - name: "input_artifact_name"
     path_template: ".skill-context/{target_skill}/input_filename.md"
     format: "markdown"
-    schema: "raw/ver-3/_shared/schemas/exploration.schema.yaml"
+    schema: "skills/ver-3/_shared/schemas/exploration.schema.yaml"
     required: true
     consumed_by: "this-skill"
     downstream_phase: "phase-X"
@@ -16,7 +16,7 @@ outputs:
   - file_id: "output_artifact_id"
     path_template: ".skill-context/{skill_name}/output_filename.md"
     format: "markdown"
-    schema: "raw/ver-3/_shared/schemas/criteria.schema.json"
+    schema: "skills/ver-3/_shared/schemas/criteria.schema.json"
     lifecycle_status: "WORM"
     versioning: "semver"
 

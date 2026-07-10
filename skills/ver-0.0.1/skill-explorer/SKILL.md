@@ -110,10 +110,10 @@ must_not:
     - file_id: "exploration_report"
       path_template: ".skill-context/{target_skill}/exploration.md"
       format: "markdown"
-      schema: "raw/ver-3/_shared/schemas/exploration.schema.yaml"
+      schema: "skills/ver-3/_shared/schemas/exploration.schema.yaml"
     - file_id: "test_criteria"
       path_template: ".skill-context/{target_skill}/criteria.md"
       format: "markdown"
-      schema: "raw/ver-3/_shared/schemas/criteria.schema.json"
+      schema: "skills/ver-3/_shared/schemas/criteria.schema.json"
 </output_contract>
 

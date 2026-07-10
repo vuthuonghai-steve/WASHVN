@@ -82,7 +82,7 @@ Báo cáo này được tổng hợp và kiểm định chéo từ các tài li�
 
 ### Deliverable 1: Báo cáo Khơi gợi Yêu cầu (Elicitation Report)
 Được lưu tại tệp: [elicitation-report.md](file:///home/steve/Work-space/WASHVN/docs/context-to-work/arch-sync/elicitation-report.md).
-- **Chuẩn hóa mô tả hệ thống**: Tinh lọc và đồng bộ hóa toàn bộ 12 skills thô trong `raw/ver-3/` cùng thư mục cấu hình dùng chung `_shared/` để đạt được phiên bản thống nhất đầu tiên (version 1.0.0). Loại bỏ hoàn toàn sự lệch pha về pipeline stage numbering, trace tags standard, cấu trúc 7-Zones, và sự phân biệt giữa các zone `policy/`, `data/`, và `knowledge/`.
+- **Chuẩn hóa mô tả hệ thống**: Tinh lọc và đồng bộ hóa toàn bộ 12 skills thô trong `skills/ver-3/` cùng thư mục cấu hình dùng chung `_shared/` để đạt được phiên bản thống nhất đầu tiên (version 1.0.0). Loại bỏ hoàn toàn sự lệch pha về pipeline stage numbering, trace tags standard, cấu trúc 7-Zones, và sự phân biệt giữa các zone `policy/`, `data/`, và `knowledge/`.
 - **Pain Points**:
   - Pain Point 1: Sự không đồng bộ về số thứ tự stage giữa các skill riêng lẻ và tài liệu kiến trúc trung tâm framework.md.
   - Pain Point 2: Tệp `format-standards.md` bị sao chép nhân bản ra nhiều vị trí cục bộ và bị sai lệch nội dung so với tệp master tại `_shared/`.

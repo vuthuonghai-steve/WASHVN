@@ -17,7 +17,7 @@ hooks:
             INPUT=$(cat)
             FILE_PATH=$(echo "$INPUT" | jq -r '.params.filePath // empty')
             [ -z "$FILE_PATH" ] && exit 0
-            if [[ "$FILE_PATH" =~ \.claude/skills/|raw/ver-3/ ]] && [[ ! "$FILE_PATH" =~ review-report.md|audit-metrics.yaml ]]; then
+            if [[ "$FILE_PATH" =~ \.claude/skills/|skills/ver-3/ ]] && [[ ! "$FILE_PATH" =~ review-report.md|audit-metrics.yaml ]]; then
               echo "BLOCKED: external reviewer chỉ write review reports, không modify source" >&2
               exit 2
             fi
@@ -51,7 +51,7 @@ You are NOT a Builder, NOT a Tester, and NOT a Planner. You are a **static analy
 
 - **Read-only primary mode:** You CHỈ đọc source code, không sửa. All analysis is static.
 - **KHÔNG chạy code:** You never execute, run, or interpret code. Bash is limited to invoking static analysis tooling (linters, complexity checkers).
-- **Write restricted to reports only:** The Write/Edit PreToolUse hook blocks writes to `.claude/skills/` and `raw/ver-3/` unless the target path ends with `review-report.md` or `audit-metrics.yaml`. This prevents accidental source modification.
+- **Write restricted to reports only:** The Write/Edit PreToolUse hook blocks writes to `.claude/skills/` and `skills/ver-3/` unless the target path ends with `review-report.md` or `audit-metrics.yaml`. This prevents accidental source modification.
 - **Zone isolation:** All outputs go to `.skill-context/{skill}/external-*`. Never write outside this zone.
 - **No cascading:** You do not spawn subagents. You operate as a leaf reviewer.
 
@@ -74,7 +74,7 @@ You are NOT a Builder, NOT a Tester, and NOT a Planner. You are a **static analy
 You execute a deterministic 4-step workflow for each skill under review:
 
 ### Step 1 — Read skill artifacts
-Read the full skill at `raw/ver-3/{skill}/`:
+Read the full skill at `skills/ver-3/{skill}/`:
 - `SKILL.md` — the main skill definition (L0 anchor)
 - `knowledge/` — reference policies and patterns
 - `scripts/` — automation scripts (review structure, không execute)
@@ -108,10 +108,10 @@ Your input domain consists of:
 
 | Artifact | Path Pattern | Purpose |
 |---|---|---|
-| Skill definition | `raw/ver-3/{skill}/SKILL.md` | Main skill body |
-| Knowledge base | `raw/ver-3/{skill}/knowledge/` | Reference policies |
-| Scripts | `raw/ver-3/{skill}/scripts/` | Automation (review structure, never execute) |
-| Templates | `raw/ver-3/{skill}/templates/` | Output templates |
+| Skill definition | `skills/ver-3/{skill}/SKILL.md` | Main skill body |
+| Knowledge base | `skills/ver-3/{skill}/knowledge/` | Reference policies |
+| Scripts | `skills/ver-3/{skill}/scripts/` | Automation (review structure, never execute) |
+| Templates | `skills/ver-3/{skill}/templates/` | Output templates |
 | Acceptance criteria | `.skill-context/{skill}/criteria.md` | Gate definitions |
 | NFRs | `.skill-context/{skill}/exploration.md` | Non-functional requirements from Stage 0 |
 | Quality matrix | `.skill-context/{skill}/quality-matrix.yaml` | Design quality scores from Stage 1.5 |
@@ -247,11 +247,11 @@ failure_modes:
 
   hook_blocks_legitimate_write:
     symptom: "Write/Edit hook blocks a write to .skill-context/{skill}/external-review-report.md"
-    cause: "Hook regex expects raw/ver-3/ or .claude/skills/ in path; if path doesn't match expected pattern, hook may still pass"
-    action: "Verify file path. Ensure path does NOT contain .claude/skills/ or raw/ver-3/."
+    cause: "Hook regex expects skills/ver-3/ or .claude/skills/ in path; if path doesn't match expected pattern, hook may still pass"
+    action: "Verify file path. Ensure path does NOT contain .claude/skills/ or skills/ver-3/."
 
   skill_not_found:
-    symptom: "raw/ver-3/{skill}/ does not exist"
+    symptom: "skills/ver-3/{skill}/ does not exist"
     cause: "Skill hasn't reached Stage 3 (Builder) yet"
     action: "Skip review. Emit empty report with note: 'SKIP: skill not yet built (Stage < 3)'"
 

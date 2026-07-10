@@ -371,7 +371,7 @@ Bước 7: Verify: python3 yaml.safe_load() + L2 Schema script
 
 | # | Test Script | Input (stdin JSON) | Expected Exit | Hook Tested | Category |
 |:-:|:------------|:--------------------|:-------------:|:------------|:---------|
-| 1 | `test_write_gate_allow.sh` | `{"tool_name":"Write","tool_input":{"file_path":"<ws>/raw/ver-3/test/SKILL.md"}}` | **0** | D2-1 write_gate | Allow |
+| 1 | `test_write_gate_allow.sh` | `{"tool_name":"Write","tool_input":{"file_path":"<ws>/skills/ver-3/test/SKILL.md"}}` | **0** | D2-1 write_gate | Allow |
 | 2 | `test_write_gate_block.sh` | `{"tool_name":"Write","tool_input":{"file_path":"/tmp/test.txt"}}` | **2** | D2-1 write_gate | Block |
 | 3 | `test_skill_staging_allow_staging.sh` | `{"tool_name":"Write","tool_input":{"file_path":"<ws>/.claude/skills/_staging/test.md"}}` | **0** | D2-2 staging_gate | Allow |
 | 4 | `test_skill_staging_block_runtime.sh` | `{"tool_name":"Write","tool_input":{"file_path":"<ws>/.claude/skills/foo/SKILL.md"}}` | **2** | D2-2 staging_gate | Block |

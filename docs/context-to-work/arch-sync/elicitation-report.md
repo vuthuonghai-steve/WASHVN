@@ -11,7 +11,7 @@ status: "ready_for_analyst"
 
 *Mô tả: Dữ liệu thô đã loại bỏ nhiễu và cấu trúc hóa dựa trên scope document.*
 
-- **Mục tiêu cốt lõi**: Tinh lọc và đồng bộ hóa toàn bộ 12 skills thô trong `raw/ver-3/` cùng thư mục cấu hình dùng chung `_shared/` để đạt được phiên bản thống nhất đầu tiên (version 1.0.0). Loại bỏ hoàn toàn sự lệch pha về pipeline stage numbering, trace tags standard, cấu trúc 7-Zones, và sự phân biệt giữa các zone `policy/`, `data/`, và `knowledge/`. Mục tiêu tối thượng là cung cấp cho LLM quy trình nghiệp vụ rõ ràng, chuẩn hóa tài nguyên để LLM hiểu và làm việc nhanh, chất lượng, thay vì phải đoán mò. `[TỪ INPUT]`
+- **Mục tiêu cốt lõi**: Tinh lọc và đồng bộ hóa toàn bộ 12 skills thô trong `skills/ver-3/` cùng thư mục cấu hình dùng chung `_shared/` để đạt được phiên bản thống nhất đầu tiên (version 1.0.0). Loại bỏ hoàn toàn sự lệch pha về pipeline stage numbering, trace tags standard, cấu trúc 7-Zones, và sự phân biệt giữa các zone `policy/`, `data/`, và `knowledge/`. Mục tiêu tối thượng là cung cấp cho LLM quy trình nghiệp vụ rõ ràng, chuẩn hóa tài nguyên để LLM hiểu và làm việc nhanh, chất lượng, thay vì phải đoán mò. `[TỪ INPUT]`
 - **Môi trường vận hành**: Hệ điều hành Linux, tương thích với Claude Code runtime (`.claude/skills/`) và Antigravity runtime (`.agents/skills/`). `[TỪ INPUT]`
 - **Các tác nhân chính**:
   - Developer (Steve / User): Người giám sát, đưa ra yêu cầu, phê duyệt thiết kế, lập kế hoạch, cấu hình hệ thống và ra quyết định đi tiếp qua các cổng chất lượng. `[TỪ INPUT]`
@@ -83,9 +83,9 @@ status: "ready_for_analyst"
 
 ## 5. Đánh Giá Tác Động Ban Đầu (Initial Impact Assessment)
 
-- **Phân hệ bị ảnh hưởng**: Toàn bộ 12 skills nằm trong `raw/ver-3/` và thư mục runtime `.agents/skills/`, `.claude/skills/`. Tệp cấu trúc trung tâm `framework.md` và `format-standards.md` sẽ bị chỉnh sửa để làm chuẩn. `[SUY LUẬN]`
+- **Phân hệ bị ảnh hưởng**: Toàn bộ 12 skills nằm trong `skills/ver-3/` và thư mục runtime `.agents/skills/`, `.claude/skills/`. Tệp cấu trúc trung tâm `framework.md` và `format-standards.md` sẽ bị chỉnh sửa để làm chuẩn. `[SUY LUẬN]`
 - **Rủi ro nghiệp vụ**: Đồng bộ sai hoặc thiếu tệp cấu hình gây treo / crash runtime của Agent Claude Code hoặc Antigravity trong quá trình Steve làm việc. `[SUY LUẬN]`
-- **Phương án giảm thiểu rủi ro**: Chạy validator nội bộ trước trên thư mục `raw/ver-3/` độc lập. Thực hiện sao lưu (archive) các skills trong runtime trước khi thực hiện ghi đè dữ liệu mới. `[SUY LUẬN]`
+- **Phương án giảm thiểu rủi ro**: Chạy validator nội bộ trước trên thư mục `skills/ver-3/` độc lập. Thực hiện sao lưu (archive) các skills trong runtime trước khi thực hiện ghi đè dữ liệu mới. `[SUY LUẬN]`
 
 ## 6. Kết Quả Tự Kiểm Định Chất Lượng (Self-Verification Checklist)
 

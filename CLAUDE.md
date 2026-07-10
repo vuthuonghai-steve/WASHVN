@@ -6,7 +6,7 @@
 
 <instructions>
 Luôn ưu tiên thay đổi an toàn. Workspace này là Personal AI Skill Lab — không phải production runtime codebase.
-KHÔNG sửa trực tiếp `.claude/skills/` — edit ở `raw/ver-3/` rồi sync qua cp.
+KHÔNG sửa trực tiếp `.claude/skills/` — edit ở `skills/ver-3/` rồi sync qua cp.
 KHÔNG xóa skill context artifacts mà không archive.
 KHÔNG di chuyển file mà không cập nhật routing maps.
 </instructions>
@@ -57,11 +57,11 @@ tech_stack:
 ```yaml
 commands:
   sync_skill:
-    run: "cp -r raw/ver-3/* .claude/skills/"
-    desc: "Sync các skills từ raw/ver-3 vào runtime .claude/skills/"
+    run: "cp -r skills/ver-3/* .claude/skills/"
+    desc: "Sync các skills từ skills/ver-3 vào runtime .claude/skills/"
 
   validate_suite:
-    run: "python3 raw/ver-3/scripts/validate_suite_integrity.py"
+    run: "python3 skills/ver-3/scripts/validate_suite_integrity.py"
     desc: "Chạy script kiểm tra tính toàn vẹn của Master Skill Suite"
 
   view_architecture:
@@ -98,7 +98,7 @@ conventions:
 ```yaml
 must:
   - Đọc CLAUDE.md và architecture.md để xác định đúng zone cần làm việc
-  - Phát triển và edit skill ở raw/ver-3/ — KHÔNG sửa trực tiếp .claude/skills/
+  - Phát triển và edit skill ở skills/ver-3/ — KHÔNG sửa trực tiếp .claude/skills/
   - Chạy validate_suite_integrity.py trước khi đồng bộ hóa sang runtime
   - Viết YAML frontmatter đầy đủ cho mọi SKILL.md mới (gồm version: 0.0.1 và suite: WASHVN)
   - Xác định đầu ra động qua Dynamic Routing Contract (DRC) dưới .skill-context/ thay vì chạy script khởi tạo thủ công
@@ -108,7 +108,7 @@ must:
   - Báo cáo summary_of_changes + zones_affected sau mỗi task
 
 must_not:
-  - Sửa trực tiếp các runtime skills trong .claude/skills/ — sử dụng workflow phát triển ở raw/ver-3/ rồi sync
+  - Sửa trực tiếp các runtime skills trong .claude/skills/ — sử dụng workflow phát triển ở skills/ver-3/ rồi sync
   - Nhồi domain context vào AGENTS.md (file này) — chuyển sang docs/ hoặc knowledge/
   - Dùng placeholder (TODO, mock, pass) trong production skill code
   - Di chuyển file mà không cập nhật routing maps
@@ -171,7 +171,7 @@ testing:
 constraints:
   runtime_sync_required:
     desc: "Các custom skills của Claude Code hoạt động trong .claude/skills/ cần đồng bộ định kỳ"
-    workaround: "Chỉnh sửa tại raw/ver-3/ rồi chạy cp -r raw/ver-3/* .claude/skills/"
+    workaround: "Chỉnh sửa tại skills/ver-3/ rồi chạy cp -r skills/ver-3/* .claude/skills/"
 
   stateless_sessions:
     desc: "Mỗi agent stage là một session độc lập (stateless)"
@@ -187,7 +187,7 @@ constraints:
     status: "Resolved (architecture.md is standardized)"
 
   raw_skills_unverified:
-    desc: "raw/ver-3/ chứa các skills chưa kiểm chứng tự động toàn diện"
+    desc: "skills/ver-3/ chứa các skills chưa kiểm chứng tự động toàn diện"
     workaround: "Chạy validate_suite_integrity.py định kỳ trước khi deploy"
 
   omx_unclear:
@@ -235,7 +235,7 @@ quality_gates:
 load_when_needed:
   skill_framework_architecture: "architecture.md"
   documentation_format_standard: "standards.md"
-  shared_schemas_validators: "raw/ver-3/_shared/"
+  shared_schemas_validators: "skills/ver-3/_shared/"
   knowledge_base_index: ".claude/knowledge/README.md"
 ```
 
@@ -249,7 +249,7 @@ agent_protocol:
     - Đọc CLAUDE.md và architecture.md để xác định đúng Zone cần làm việc
     - Xác định skill đang ở lifecycle phase nào (raw / designed / planned / built / verified / installed)
   before_editing_skill:
-    - Nếu runtime (.claude/skills/): edit raw/ver-3/ → sync
+    - Nếu runtime (.claude/skills/): edit skills/ver-3/ → sync
     - Nếu new: tạo design.md + criteria.md trong .skill-context/{name}/
   during_editing:
     - Preserve SKILL.md contract (frontmatter, sections, 7 Zones structure)

@@ -80,7 +80,7 @@ It operates in a strict execution loop with a placeholder count gate (< 5 placeh
     - file_id: "build_log"
       path_template: ".skill-context/{target_skill}/build-log.md"
       format: "markdown"
-      schema: "raw/ver-3/_shared/schemas/build-log.schema.yaml"
+      schema: "skills/ver-3/_shared/schemas/build-log.schema.yaml"
 </output_contract>
 Skill Builder là Phase 3 trong Master Skill Suite: Architect → Planner → Builder.
 Nó nhận design.md từ skill-architect và todo.md từ skill-planner, tạo production-ready Agent Skill.

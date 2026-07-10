@@ -14,13 +14,13 @@ Dưới đây là bảng phân loại chi tiết các yêu cầu chức năng (F
 | ID | Loại yêu cầu | Phân loại cụ thể | Mô tả đặc tả kỹ thuật | Độ ưu tiên MoSCoW | Lý do kỹ thuật |
 |---|---|---|---|---|---|
 | **FR-1** | Functional | Data Validation | Định nghĩa và hoàn thiện **14 Schemas** (JSON Schema draft-07) đại diện cho 14 loại artifacts trong pipeline để máy có thể parse tự động. [TỪ INPUT] | **Must Have** | Cung cấp nền tảng validation cho toàn bộ các stage của Master Skill Suite, ngăn ngừa lỗi định dạng trước khi dữ liệu được chuyển đến stage tiếp theo. |
-| **FR-2** | Functional | CLI Validation Tool | Xây dựng CLI script [schema_validator.py](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/raw/ver-3/_shared/validators/schema_validator.py) để thực hiện parse frontmatter và validate artifact cụ thể hoặc tất cả artifacts. [TỪ INPUT] | **Must Have** | Cho phép tự động hóa việc validate tài liệu/artifacts trong CI/CD hoặc qua git hooks. |
-| **FR-3** | Functional | CLI Lifecycle Tool | Xây dựng CLI script [artifact_lifecycle.py](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/raw/ver-3/_shared/validators/artifact_lifecycle.py) để kiểm tra tính toàn vẹn thư mục, sự tồn tại của file, tính hợp lệ của timestamp và phát hiện mtime drift. [TỪ INPUT] | **Should Have** | Đảm bảo tính nhất quán về mặt thời gian và phiên bản của artifacts trong suốt vòng đời của skill. |
-| **FR-4** | Functional | CLI DRC Resolver | Xây dựng CLI script [drc_resolver.py](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/raw/ver-3/_shared/scripts/drc_resolver.py) kiểm tra tính tương thích đầu ra/đầu vào (Input/Output contracts) của các skill với registry. [TỪ INPUT] | **Should Have** | Đảm bảo hợp đồng dữ liệu giữa các stage (DRC) được giải quyết chính xác và không có xung đột giao tiếp. |
-| **FR-5** | Functional | Data Configuration | Xây dựng [artifact_registry.yaml](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/raw/ver-3/_shared/artifact_registry.yaml) định nghĩa cấu trúc của 14 artifacts cốt lõi (ID, path template, format, lifecycle type, creator/consumer). [TỪ INPUT] | **Must Have** | Đóng vai trò là single source of truth để `schema_validator.py` và `drc_resolver.py` thực hiện tra cứu. |
+| **FR-2** | Functional | CLI Validation Tool | Xây dựng CLI script [schema_validator.py](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/skills/ver-3/_shared/validators/schema_validator.py) để thực hiện parse frontmatter và validate artifact cụ thể hoặc tất cả artifacts. [TỪ INPUT] | **Must Have** | Cho phép tự động hóa việc validate tài liệu/artifacts trong CI/CD hoặc qua git hooks. |
+| **FR-3** | Functional | CLI Lifecycle Tool | Xây dựng CLI script [artifact_lifecycle.py](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/skills/ver-3/_shared/validators/artifact_lifecycle.py) để kiểm tra tính toàn vẹn thư mục, sự tồn tại của file, tính hợp lệ của timestamp và phát hiện mtime drift. [TỪ INPUT] | **Should Have** | Đảm bảo tính nhất quán về mặt thời gian và phiên bản của artifacts trong suốt vòng đời của skill. |
+| **FR-4** | Functional | CLI DRC Resolver | Xây dựng CLI script [drc_resolver.py](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/skills/ver-3/_shared/scripts/drc_resolver.py) kiểm tra tính tương thích đầu ra/đầu vào (Input/Output contracts) của các skill với registry. [TỪ INPUT] | **Should Have** | Đảm bảo hợp đồng dữ liệu giữa các stage (DRC) được giải quyết chính xác và không có xung đột giao tiếp. |
+| **FR-5** | Functional | Data Configuration | Xây dựng [artifact_registry.yaml](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/skills/ver-3/_shared/artifact_registry.yaml) định nghĩa cấu trúc của 14 artifacts cốt lõi (ID, path template, format, lifecycle type, creator/consumer). [TỪ INPUT] | **Must Have** | Đóng vai trò là single source of truth để `schema_validator.py` và `drc_resolver.py` thực hiện tra cứu. |
 | **FR-6** | Functional | Templates Authoring | Cung cấp 3 templates chuẩn: DRC Contract template, Skill Skeleton, và Skill README template. [TỪ INPUT] | **Must Have** | Tiêu chuẩn hóa cấu trúc thư mục 7-Zone cho các skill ở Phase 5-7. |
 | **FR-7** | Functional | Testing & Fixtures | Viết **28 test fixtures** (2 files cho mỗi schema: 1 valid và 1 broken vi phạm đúng 1 ràng buộc). [TỪ INPUT] | **Should Have** | Dùng để chạy unit test cho các schemas và validator scripts, đảm bảo validator phát hiện đúng lỗi. |
-| **FR-8** | Functional | Documentation | Viết tài liệu [karpathy-standards.md](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/raw/ver-3/_shared/knowledge/karpathy-standards.md) định nghĩa các quy tắc coding và documentation. [TỪ INPUT] | **Should Have** | Cung cấp tri thức định hướng hành vi (L1 standards) cho các agent trong việc lập trình an toàn. |
+| **FR-8** | Functional | Documentation | Viết tài liệu [karpathy-standards.md](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/skills/ver-3/_shared/knowledge/karpathy-standards.md) định nghĩa các quy tắc coding và documentation. [TỪ INPUT] | **Should Have** | Cung cấp tri thức định hướng hành vi (L1 standards) cho các agent trong việc lập trình an toàn. |
 | **NFR-1** | Non-Functional | Performance | Tốc độ chạy validation của `schema_validator.py`: < 500ms đối với single file check và < 2.0 giây đối với toàn bộ suite check. [SUY LUẬN] | **Should Have** | Tránh làm nghẽn quá trình commit/push hoặc trải nghiệm tương tác trực tiếp của nhà phát triển. |
 | **NFR-2** | Non-Functional | Structural Constraint | Mỗi schema file (dạng YAML/JSON) phải có dung lượng tối thiểu **≥ 30 dòng**. [TỪ INPUT] | **Must Have** | Đảm bảo tính chi tiết và đầy đủ của schema, không dùng stubs rỗng hoặc schema quá sơ sài. |
 | **NFR-3** | Non-Functional | Logic Constraint | Schema `criteria.schema.json` bắt buộc yêu cầu danh sách `acceptance_criteria` có **≥ 5 phần tử** và `test_cases` có **≥ 2 phần tử**. [TỪ INPUT] | **Must Have** | Ràng buộc chất lượng đầu ra của Stage 0 (Explorer) theo chuẩn chất lượng của Master Skill Suite. |
@@ -46,7 +46,7 @@ sequenceDiagram
 
     Dev->>CLI: "Chạy lệnh validate (e.g., --artifact exploration --path exploration.md)"
     CLI->>Reg: "Tra cứu thông tin định nghĩa cho artifact 'exploration'"
-    Reg-->>CLI: "Trả về đường dẫn schema (raw/ver-3/_shared/schemas/exploration.schema.yaml)"
+    Reg-->>CLI: "Trả về đường dẫn schema (skills/ver-3/_shared/schemas/exploration.schema.yaml)"
     CLI->>Sch: "Đọc file định nghĩa schema"
     Sch-->>CLI: "Trả về cấu trúc schema dạng JSON/YAML"
     CLI->>Art: "Đọc nội dung artifact và tách frontmatter (YAML)"
@@ -145,7 +145,7 @@ erDiagram
 
 ### Chi tiết bảng cơ sở dữ liệu logical của `artifact_registry`
 
-Dưới đây mô tả cấu trúc của một bản ghi artifact đăng ký trong [artifact_registry.yaml](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/raw/ver-3/_shared/artifact_registry.yaml).
+Dưới đây mô tả cấu trúc của một bản ghi artifact đăng ký trong [artifact_registry.yaml](file:///home/stveve/Documents/workspace/build-workflow/WASHVN/skills/ver-3/_shared/artifact_registry.yaml).
 
 | Tên trường | Kiểu dữ liệu | Ràng buộc | Mô tả |
 |---|---|---|---|
@@ -155,7 +155,7 @@ Dưới đây mô tả cấu trúc của một bản ghi artifact đăng ký tro
 | `format` | `string` | `NOT NULL, Enum: [markdown, yaml, json]` | Định dạng lưu trữ của tệp tin. |
 | `created_by` | `string` | `NOT NULL` | Skill hoặc Agent chịu trách nhiệm tạo ra artifact này. |
 | `consumed_by` | `array of strings` | `NOT NULL` | Danh sách các skills tiêu thụ artifact này ở hạ nguồn. |
-| `schema` | `string` | `NOT NULL, Pattern: ^raw/ver-3/_shared/schemas/...` | Đường dẫn tuyệt đối hoặc tương đối tới file schema validator. |
+| `schema` | `string` | `NOT NULL, Pattern: ^skills/ver-3/_shared/schemas/...` | Đường dẫn tuyệt đối hoặc tương đối tới file schema validator. |
 | `lifecycle` | `string` | `NOT NULL, Enum: [WORM, append-only, versioned]` | Quy tắc quản lý vòng đời tệp tin (Write Once Read Many, Ghi đè hay Đánh số phiên bản). |
 
 ### JSON Schema tương ứng cho `artifact_registry.yaml`
@@ -214,7 +214,7 @@ Schema này sẽ được sử dụng để validate trực tiếp tính toàn v
           },
           "schema": {
             "type": "string",
-            "pattern": "^raw/ver-3/_shared/schemas/[a-z0-9_-]+\\.schema\\.(yaml|json)$"
+            "pattern": "^skills/ver-3/_shared/schemas/[a-z0-9_-]+\\.schema\\.(yaml|json)$"
           },
           "lifecycle": {
             "type": "string",

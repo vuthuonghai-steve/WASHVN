@@ -35,7 +35,7 @@ For each skill (3 vòng lặp):
   7. Invoke aggregate-quality-gatekeeper agent (Phase 3) để audit
   8. Fix findings → re-audit until ≥80% quality score
   9. Test invoke skill với mock user request
-  10. Deploy (move file từ raw/ver-3/ sang .claude/skills/ via deploy script)
+  10. Deploy (move file từ skills/ver-3/ sang .claude/skills/ via deploy script)
 ```
 
 ---
@@ -44,7 +44,7 @@ For each skill (3 vòng lặp):
 
 ```yaml
 prerequisites:
-  - Phase 0: raw/ver-3/ba-elicitor/, ba-analyst/, ba-synthesizer/ 7-Zone dirs tồn tại
+  - Phase 0: skills/ver-3/ba-elicitor/, ba-analyst/, ba-synthesizer/ 7-Zone dirs tồn tại
   - Phase 3: ba-pipeline-runner agent deployed, able to invoke skills
   - Phase 4: schemas elicitation/analysis/synthesis schemas + DRC template + validator scripts available
   - subagent-forge not broken (Phase 1 fixed knowledge references)
@@ -57,7 +57,7 @@ prerequisites:
 
 > Skill đầu tiên — **most important** — establishes thought-cache pattern
 
-### D5-1-1: `raw/ver-3/ba-elicitor/SKILL.md`
+### D5-1-1: `skills/ver-3/ba-elicitor/SKILL.md`
 
 Frontmatter theo skill_skeleton.md template:
 
@@ -99,8 +99,8 @@ must_not:
 <knowledge_anchors>
 - .claude/knowledge/agents/configuration.md
 - .claude/knowledge/agents/capability_controls.md
-- raw/ver-3/_shared/knowledge/karpathy-standards.md
-- raw/ver-3/_shared/schemas/elicitation.schema.yaml
+- skills/ver-3/_shared/knowledge/karpathy-standards.md
+- skills/ver-3/_shared/schemas/elicitation.schema.yaml
 </knowledge_anchors>
 
 <workflow_phases>
@@ -122,7 +122,7 @@ must_not:
 <output_contract>
 - file_id: elicitation_report
   path: .skill-context/{feature_name}/ba-elicitor/elicitation-report.md
-  schema: raw/ver-3/_shared/schemas/elicitation.schema.yaml
+  schema: skills/ver-3/_shared/schemas/elicitation.schema.yaml
 - file_id: thought_cache
   path: .skill-context/{feature_name}/thought-cache.yaml
   schema: inline (5 fields per spec P2/thought-cache-check.md)
@@ -146,7 +146,7 @@ must_not:
 See full docs: knowledge/, templates/, loop/.
 ```
 
-### D5-1-2: `raw/ver-3/ba-elicitor/knowledge/elicitation_patterns.md`
+### D5-1-2: `skills/ver-3/ba-elicitor/knowledge/elicitation_patterns.md`
 
 Knowledge doc - 4 elicitation patterns reference:
 
@@ -172,7 +172,7 @@ aspects:
 - Confidence anchoring
 ```
 
-### D5-1-3: `raw/ver-3/ba-elicitor/templates/elicitation_report.template.md`
+### D5-1-3: `skills/ver-3/ba-elicitor/templates/elicitation_report.template.md`
 
 Markdown template cho elicitation-report output:
 
@@ -215,7 +215,7 @@ For each high-risk aspect:
 {terms with definitions}
 ```
 
-### D5-1-4: `raw/ver-3/ba-elicitor/templates/thought_cache_template.yaml`
+### D5-1-4: `skills/ver-3/ba-elicitor/templates/thought_cache_template.yaml`
 
 ```yaml
 # thought-cache.yaml template
@@ -242,7 +242,7 @@ reflection_cache:
     {term}: { definition within domain }
 ```
 
-### D5-1-5: `raw/ver-3/ba-elicitor/loop/scoping_checklist.md`
+### D5-1-5: `skills/ver-3/ba-elicitor/loop/scoping_checklist.md`
 
 Checklist cho self-verification:
 
@@ -258,7 +258,7 @@ post_run_checklist:
   - "YAML frontmatter elicit-report parses?"
 ```
 
-### D5-1-6: `raw/ver-3/ba-elicitor/scripts/validate_outputs.py`
+### D5-1-6: `skills/ver-3/ba-elicitor/scripts/validate_outputs.py`
 
 Script Python local validator:
 
@@ -272,7 +272,7 @@ Validates 8 criteria per checklist.
 # Implementation: parse markdown frontmatter, parse YAML, check 5 thought block token counts via simple wc heuristic
 ```
 
-### D5-1-7: `raw/ver-3/ba-elicitor/data/drc.yaml`
+### D5-1-7: `skills/ver-3/ba-elicitor/data/drc.yaml`
 
 DRC contract file (copy template D4-4, fill concrete paths):
 
@@ -292,7 +292,7 @@ outputs:
   - file_id: elicitation_report
     path_template: ".skill-context/{feature_name}/ba-elicitor/elicitation-report.md"
     format: markdown
-    schema: raw/ver-3/_shared/schemas/elicitation.schema.yaml
+    schema: skills/ver-3/_shared/schemas/elicitation.schema.yaml
     lifecycle: WORM
     consumed_by: [ba-analyst]
     downstream_phase: "BA Stage -0.5"
@@ -319,7 +319,7 @@ routing:
       target_stage: "BA Stage -1"
 ```
 
-### D5-1-8: Empty placeholders (`raw/ver-3/ba-elicitor/assets/`)
+### D5-1-8: Empty placeholders (`skills/ver-3/ba-elicitor/assets/`)
 
 Thêm 1 `.gitkeep` file để maintain dir. Assets sẽ fill nếu cần diagrams sau.
 
@@ -329,7 +329,7 @@ Thêm 1 `.gitkeep` file để maintain dir. Assets sẽ fill nếu cần diagram
 
 > Skill thứ 2 — consumes elicitation-report, outputs analysis-report
 
-### D5-2-1: `raw/ver-3/ba-analyst/SKILL.md`
+### D5-2-1: `skills/ver-3/ba-analyst/SKILL.md`
 
 Frontmatter:
 
@@ -373,7 +373,7 @@ Body sections tương tự ba-elicitor structure (identity, safety, knowledge_an
 <output_contract>
 - file_id: analysis_report
   path: .skill-context/{feature_name}/ba-analyst/analysis-report.md
-  schema: raw/ver-3/_shared/schemas/analysis.schema.yaml
+  schema: skills/ver-3/_shared/schemas/analysis.schema.yaml
 </output_contract>
 
 <acceptance_criteria>
@@ -385,19 +385,19 @@ Body sections tương tự ba-elicitor structure (identity, safety, knowledge_an
 </acceptance_criteria>
 ```
 
-### D5-2-2: `raw/ver-3/ba-analyst/knowledge/fr_nfr_taxonomy.md`
+### D5-2-2: `skills/ver-3/ba-analyst/knowledge/fr_nfr_taxonomy.md`
 
 Knowledge doc với FR/NFR classification framework.
 
-### D5-2-3: `raw/ver-3/ba-analyst/templates/analysis_report.template.md`
+### D5-2-3: `skills/ver-3/ba-analyst/templates/analysis_report.template.md`
 
-### D5-2-4: `raw/ver-3/ba-analyst/loop/interlock_checklist.md`
+### D5-2-4: `skills/ver-3/ba-analyst/loop/interlock_checklist.md`
 
-### D5-2-5: `raw/ver-3/ba-analyst/scripts/validate_metrics.py`
+### D5-2-5: `skills/ver-3/ba-analyst/scripts/validate_metrics.py`
 
 Script check NFR quantification (regex detect number + unit).
 
-### D5-2-6: `raw/ver-3/ba-analyst/data/drc.yaml`
+### D5-2-6: `skills/ver-3/ba-analyst/data/drc.yaml`
 
 ---
 
@@ -405,7 +405,7 @@ Script check NFR quantification (regex detect number + unit).
 
 > Skill thứ 3 — consumes both elicitation + analysis, outputs business-analysis.md (input cho Phase 6 skill-explorer)
 
-### D5-3-1: `raw/ver-3/ba-synthesizer/SKILL.md`
+### D5-3-1: `skills/ver-3/ba-synthesizer/SKILL.md`
 
 ```yaml
 ---
@@ -455,7 +455,7 @@ Quan trọng workflow phases:
 <output_contract>
 - file_id: synthesized_business_analysis
   path: .skill-context/{feature_name}/business-analysis.md
-  schema: raw/ver-3/_shared/schemas/synthesis.schema.yaml
+  schema: skills/ver-3/_shared/schemas/synthesis.schema.yaml
   consumed_by: [skill-explorer]
   downstream_phase: "Stage 0"
 </output_contract>
@@ -609,7 +609,7 @@ Should be verified through AC-7 (same test path).
     - Verify `_ba_pipeline_state.yaml` updated
     - Verify all 3 artifacts produced in order
 
-12. **Deploy 3 skills**: move `raw/ver-3/ba-*/` to `.claude/skills/ba-*/` via deploy script.
+12. **Deploy 3 skills**: move `skills/ver-3/ba-*/` to `.claude/skills/ba-*/` via deploy script.
 
 13. **Update `skills-registry.json`** — verify 3 BA skills already listed.
 

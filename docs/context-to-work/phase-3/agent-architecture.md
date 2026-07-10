@@ -202,7 +202,7 @@ phase_3_agents:
   7_external_code_reviewer:
     primary_responsibility: "Fresh-eyes static analysis — NOT biết design.md context, fix Γ-1 self-referential blindness"
     not_responsible_for: ["META scoring", "Plan drift check"]
-    input_artifacts: ["raw/ver-3/{skill}/ artifacts"]
+    input_artifacts: ["skills/ver-3/{skill}/ artifacts"]
     output_artifacts:
       - ".skill-context/{skill}/external-review-report.md"
       - ".skill-context/{skill}/external-audit-metrics.yaml"

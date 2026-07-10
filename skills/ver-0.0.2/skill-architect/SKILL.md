@@ -138,6 +138,6 @@ G7_FormatCompliance:
     - file_id: "architect_design"
       path_template: ".skill-context/{target_skill}/design.md"
       format: "markdown"
-      schema: "raw/ver-3/_shared/schemas/design.schema.yaml"
+      schema: "skills/ver-3/_shared/schemas/design.schema.yaml"
 </output_contract>
 

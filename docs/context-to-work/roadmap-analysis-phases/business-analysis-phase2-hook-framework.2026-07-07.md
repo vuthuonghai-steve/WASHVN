@@ -309,7 +309,7 @@ flowchart TD
 Feature: Write Gate (D2-1)
   Scenario: Agent writes file trong allowlist path
     Given hook pre-tool-use_write_gate.sh được kích hoạt bởi PreToolUse(Write)
-    And tool_input.file_path là "raw/ver-3/skill-architect/SKILL.md"
+    And tool_input.file_path là "skills/ver-3/skill-architect/SKILL.md"
     When script parse stdin JSON và kiểm tra path
     Then script trả về exit 0
     And tool call được cho phép thực thi
@@ -404,7 +404,7 @@ Feature: Stop Hook (D2-5)
 ```yaml
 allowed_prefixes:
   - ".claude/"
-  - "raw/ver-3/"
+  - "skills/ver-3/"
   - ".skill-context/"
   - "docs/context-to-work/"
   - "Temps/spec/"

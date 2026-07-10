@@ -13,7 +13,7 @@ def find_repo_root():
     return os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
 
 REPO_ROOT = find_repo_root()
-REGISTRY_PATH = os.path.join(REPO_ROOT, 'raw/ver-3/_shared/artifact_registry.yaml')
+REGISTRY_PATH = os.path.join(REPO_ROOT, 'skills/ver-3/_shared/artifact_registry.yaml')
 
 def load_yaml(path):
     if not os.path.exists(path):
@@ -107,7 +107,7 @@ def verify_drc_contract(skill_name, contract_path, registry):
     return errors
 
 def verify_single_skill(skill_name, registry):
-    skill_dir = os.path.join(REPO_ROOT, 'raw/ver-3', skill_name)
+    skill_dir = os.path.join(REPO_ROOT, 'skills/ver-3', skill_name)
     if not os.path.exists(skill_dir):
         return [f"Skill directory not found: {skill_dir}"]
 
@@ -129,7 +129,7 @@ def verify_single_skill(skill_name, registry):
 
 @click.command()
 @click.option('--skill', help="Verify a specific skill (e.g. ba-analyst)")
-@click.option('--all', 'verify_all', is_flag=True, help="Verify DRC contracts for all skills in raw/ver-3/")
+@click.option('--all', 'verify_all', is_flag=True, help="Verify DRC contracts for all skills in skills/ver-3/")
 @click.option('--registry-only', is_flag=True, help="Only verify registry consistency")
 @click.option('--registry', type=click.Path(exists=True), help="Custom path to artifact_registry.yaml")
 def main(skill, verify_all, registry_only, registry):
@@ -164,7 +164,7 @@ def main(skill, verify_all, registry_only, registry):
         sys.exit(0)
 
     if verify_all:
-        skills_dir = os.path.join(REPO_ROOT, 'raw/ver-3')
+        skills_dir = os.path.join(REPO_ROOT, 'skills/ver-3')
         if not os.path.exists(skills_dir):
             click.echo(f"Skills directory not found at: {skills_dir}", err=True)
             sys.exit(2)

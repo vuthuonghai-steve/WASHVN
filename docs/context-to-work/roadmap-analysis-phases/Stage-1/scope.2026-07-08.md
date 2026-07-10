@@ -159,7 +159,7 @@ exit_codes:
 ```yaml
 allowed_prefixes:
   - ".claude/"
-  - "raw/ver-3/"
+  - "skills/ver-3/"
   - ".skill-context/"
   - "docs/context-to-work/"
   - "Temps/spec/"
@@ -167,7 +167,7 @@ allowed_prefixes:
 logic:
   type: "prefix regex matching"
   derivation: "SCRIPT_DIR → WORKSPACE_ROOT → ALLOWLIST_REGEX"
-  pattern: "^${WORKSPACE_ROOT}/(\.claude/|raw/ver-3/|\.skill-context/|docs/context-to-work/|Temps/spec/)"
+  pattern: "^${WORKSPACE_ROOT}/(\.claude/|skills/ver-3/|\.skill-context/|docs/context-to-work/|Temps/spec/)"
   note: "WORKSPACE_ROOT được tính động từ SCRIPT_DIR (cd $(dirname $0)/../../..) — không hardcode"
 ```
 
@@ -190,7 +190,7 @@ FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
 [ -z "$FILE_PATH" ] && exit 0
 
 WORKSPACE_ROOT="..."
-ALLOWLIST_REGEX="^${WORKSPACE_ROOT}/(\.claude/|raw/ver-3/|\.skill-context/|docs/context-to-work/|Temps/spec/)"
+ALLOWLIST_REGEX="^${WORKSPACE_ROOT}/(\.claude/|skills/ver-3/|\.skill-context/|docs/context-to-work/|Temps/spec/)"
 
 if [[ ! "$FILE_PATH" =~ $ALLOWLIST_REGEX ]]; then
   echo "BLOCKED: ..." >&2
@@ -231,7 +231,7 @@ exit 0
 ### 3.2 D2-2: `pre-tool-use_skill_staging_gate.sh`
 
 #### Mục đích
-Bảo vệ thư mục runtime `.claude/skills/` — chỉ cho phép ghi vào `_staging/`. Tất cả skill build phải stage tại `raw/ver-3/<name>/` trước, sau đó deploy qua cơ chế chính thức.
+Bảo vệ thư mục runtime `.claude/skills/` — chỉ cho phép ghi vào `_staging/`. Tất cả skill build phải stage tại `skills/ver-3/<name>/` trước, sau đó deploy qua cơ chế chính thức.
 
 #### Input/Output
 
@@ -623,7 +623,7 @@ Step 2: D2-4 → pre-tool-use_bash_validate_command.sh
 Step 3: D2-2 → pre-tool-use_skill_staging_gate.sh
         Lý do: "Third gate — DEPLOY_PHASE_ACTIVE pattern. Ít critical hơn D2-4.
                  Phụ thuộc vào D2-1 cùng event type (có thể test riêng)."
-        Verify: Pipe JSON với 'raw/ver-3/test/SKILL.md' → exit 0
+        Verify: Pipe JSON với 'skills/ver-3/test/SKILL.md' → exit 0
                 Pipe JSON với '.claude/skills/_staging/test.md' → exit 0
                 Pipe JSON với '.claude/skills/foo/SKILL.md' → exit 2
 ```
@@ -712,7 +712,7 @@ bash -n .claude/hooks/events/pre-tool-use_write_gate.sh
 test -x .claude/hooks/events/pre-tool-use_write_gate.sh
 
 # 3. Test allow path
-JSON='{"tool_name":"Write","tool_input":{"file_path":"'$(pwd)'/raw/ver-3/test/SKILL.md"}}'
+JSON='{"tool_name":"Write","tool_input":{"file_path":"'$(pwd)'/skills/ver-3/test/SKILL.md"}}'
 echo "$JSON" | bash .claude/hooks/events/pre-tool-use_write_gate.sh
 echo "Exit: $?"  # Expect 0
 

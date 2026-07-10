@@ -14,7 +14,7 @@ Bảng phân loại dưới đây phân tích các yêu cầu nghiệp vụ thà
 | ID | Loại yêu cầu | Phân loại cụ thể | Mô tả đặc tả kỹ thuật | Độ ưu tiên MoSCoW | Lý do kỹ thuật |
 |---|---|---|---|---|---|
 | FR-1 | Functional | Pipeline Stage Alignment | Điều chỉnh số thứ tự stage của `skill-planner` thành 3, `skill-builder` thành 4 trong cả `framework.md` và tệp `SKILL.md` tương ứng để khớp với chuỗi cuộc gọi (Call Chain). | Must Have | Tránh đứt gãy luồng dữ liệu tự động giữa Planner và Builder. |
-| FR-2 | Functional | Centralization | Loại bỏ 3 bản sao cục bộ `format-standards.md` tại các skill đơn lẻ. Chỉ định cấu hình nạp từ tệp master duy nhất `/home/steve/Work-space/WASHVN/raw/ver-3/_shared/knowledge/format-standards.md`. | Must Have | Tránh phân mảnh quy tắc định dạng và mâu thuẫn tiêu chuẩn. |
+| FR-2 | Functional | Centralization | Loại bỏ 3 bản sao cục bộ `format-standards.md` tại các skill đơn lẻ. Chỉ định cấu hình nạp từ tệp master duy nhất `/home/steve/Work-space/WASHVN/skills/ver-3/_shared/knowledge/format-standards.md`. | Must Have | Tránh phân mảnh quy tắc định dạng và mâu thuẫn tiêu chuẩn. |
 | FR-3 | Functional | Trace Tag Standardization | Thống nhất cấu trúc Trace Tags cho cả Pipeline skills và BA skills, đưa về chuẩn biểu thức chính quy (Regex): `^\[(TỪ DESIGN §[0-9]+(\.[0-9]+)?\|GỢI Ý BỔ SUNG\|TỪ AUDIT TÀI NGUYÊN\|CẦN LÀM RÕ\|TỪ INPUT\|SUY LUẬN)\]$`. | Must Have | Đảm bảo tính truy vết nguồn gốc (Traceability) và chống ảo giác (Anti-hallucination). |
 | FR-4 | Functional | Structural Refactoring | Tái cấu trúc cấu trúc thư mục của 12 skills theo mô hình 7-Zones (hoặc 8-Zones). Bổ sung các thư mục `templates/`, `data/`, `scripts/`, `loop/` còn thiếu cho `skill-knowledge-miner`, `skill-builder`, và bộ 3 BA Skills. | Must Have | Đảm bảo tính module hóa cao và tuân thủ tuyệt đối quy định cấu trúc suite. |
 | FR-5 | Functional | Zone Formalization | Khai báo zone `policy/` (chứa L1 behavioral rules, guardrails) làm zone chính thức trong `framework.md` (chuyển đổi hệ thống thành 8-Zones) hoặc tích hợp triệt để nó vào zone `knowledge/` dưới định dạng quy định cụ thể. | Should Have | Xóa bỏ sự mập mờ trong Zone Contract giữa các skill hiện tại. |
@@ -63,7 +63,7 @@ Sơ đồ thể hiện 3 luồng xử lý chính: Happy Path (đồng bộ thàn
 ```mermaid
 flowchart TD
     Start["Bắt đầu chạy kiểm tra và đồng bộ"] --> ReadConfig["Nạp cấu hình suite_config.yaml và framework.md"]
-    ReadConfig --> ScanSkills["Quét toàn bộ 11 Skills trong raw/ver-3/"]
+    ReadConfig --> ScanSkills["Quét toàn bộ 11 Skills trong skills/ver-3/"]
     ScanSkills --> CheckXML["Kiểm tra XML Boundary & YAML must/must_not"]
     
     CheckXML -- "Không hợp lệ" --> ExcPath["Exception Path: Lỗi XML/YAML"]
@@ -194,7 +194,7 @@ So that my AI agents have a unified, zero-error execution flow without guessing.
 Feature: Đặc tả quy trình đồng bộ hóa và kiểm định Master Skill Suite ver-3
 
   Scenario: Happy Path — Kiểm định thành công 100% và thực hiện đồng bộ hóa sang runtime
-    Given Thư mục "raw/ver-3/" có đầy đủ 11 skills và tệp cấu hình "_shared/" hợp lệ
+    Given Thư mục "skills/ver-3/" có đầy đủ 11 skills và tệp cấu hình "_shared/" hợp lệ
     And Tất cả các tệp "SKILL.md" tuân thủ số thứ tự Stage từ 0 đến 5
     And Hệ thống Trace Tags sử dụng đúng chuẩn thống nhất và không có placeholder
     When Chạy script "validate_suite_integrity.py"
@@ -202,14 +202,14 @@ Feature: Đặc tả quy trình đồng bộ hóa và kiểm định Master Skil
     And Hệ thống tự động sao chép mã nguồn sang ".agents/skills/" và ".claude/skills/"
 
   Scenario: Alternative Path — Thiếu tệp SPEC.md hoặc assets phụ trợ nhưng vẫn cho phép đồng bộ
-    Given Thư mục "raw/ver-3/skill-explorer/" không có tệp "SPEC.md"
+    Given Thư mục "skills/ver-3/skill-explorer/" không có tệp "SPEC.md"
     But Tệp "SKILL.md" và các zone bắt buộc khác (Core, Loop, Knowledge) hợp lệ đầy đủ
     When Chạy script "validate_suite_integrity.py"
     Then Trạng thái kết quả trả về là "PASS" kèm theo 1 cảnh báo "WARNING: Missing SPEC.md"
     And Hệ thống vẫn thực hiện sao chép mã nguồn sang ".agents/skills/" và ".claude/skills/"
 
   Scenario: Exception Path — Sai Stage Order hoặc Trace Tag sai cấu trúc gây chặn đồng bộ
-    Given Tệp "raw/ver-3/skill-planner/SKILL.md" khai báo "stage_order: 2" trong khi framework quy định Stage 3
+    Given Tệp "skills/ver-3/skill-planner/SKILL.md" khai báo "stage_order: 2" trong khi framework quy định Stage 3
     When Chạy script "validate_suite_integrity.py"
     Then Trạng thái kết quả trả về là "FAIL" với lỗi "Stage Order mismatch in skill-planner"
     And Quy trình sao chép runtime bị chặn hoàn toàn để bảo vệ hệ thống

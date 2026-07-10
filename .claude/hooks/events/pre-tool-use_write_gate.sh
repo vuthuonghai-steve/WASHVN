@@ -25,12 +25,12 @@ FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty' 2>/dev/null)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 WORKSPACE_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 
-ALLOWED_DIRS_REGEX="^${WORKSPACE_ROOT}/(\.claude/|\.skill-context/|\.agents/|\.omc/|\.omo/|raw/|skills/|docs/|Temps/|scratch/)"
+ALLOWED_DIRS_REGEX="^${WORKSPACE_ROOT}/(\.claude/|\.skill-context/|\.agents/|\.omc/|\.omo/|skills/|docs/|Temps/|scratch/)"
 ALLOWED_ROOT_FILES_REGEX="^${WORKSPACE_ROOT}/(AGENTS|CLAUDE|architecture|standards|ROADMAP|workspce_tree)\.md$|^${WORKSPACE_ROOT}/skills-registry\.json$"
 
 if [[ ! "$FILE_PATH" =~ $ALLOWED_DIRS_REGEX ]] && [[ ! "$FILE_PATH" =~ $ALLOWED_ROOT_FILES_REGEX ]]; then
   echo "[WORKSPACE-GATE] BLOCKED: write target outside WASHVN workspace: $FILE_PATH" >&2
-  echo "  Allowed: .claude/, .skill-context/, .agents/, .omc/, .omo/, raw/, skills/, docs/, Temps/, scratch/, and root *.md / skills-registry.json" >&2
+  echo "  Allowed: .claude/, .skill-context/, .agents/, .omc/, .omo/, skills/, docs/, Temps/, scratch/, and root *.md / skills-registry.json" >&2
   exit 2
 fi
 

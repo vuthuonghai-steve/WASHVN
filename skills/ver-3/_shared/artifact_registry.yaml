@@ -8,7 +8,7 @@ artifacts:
       - "skill-knowledge-miner"
       - "skill-architect"
       - "production-quality-gatekeeper"
-    schema: "raw/ver-3/_shared/schemas/exploration.schema.yaml"
+    schema: "skills/ver-3/_shared/schemas/exploration.schema.yaml"
     lifecycle: "WORM"
 
   - artifact_id: "test_criteria"
@@ -20,7 +20,7 @@ artifacts:
       - "skill-architect"
       - "skill-planner"
       - "sandbox-tester"
-    schema: "raw/ver-3/_shared/schemas/criteria.schema.json"
+    schema: "skills/ver-3/_shared/schemas/criteria.schema.json"
     lifecycle: "WORM"
 
   - artifact_id: "design_doc"
@@ -33,7 +33,7 @@ artifacts:
       - "skill-hydrator"
       - "skill-planner"
       - "drift-detector"
-    schema: "raw/ver-3/_shared/schemas/design.schema.yaml"
+    schema: "skills/ver-3/_shared/schemas/design.schema.yaml"
     lifecycle: "WORM"
 
   - artifact_id: "quality_matrix"
@@ -45,7 +45,7 @@ artifacts:
       - "skill-planner"
       - "drift-detector"
       - "skill-builder"
-    schema: "raw/ver-3/_shared/schemas/quality-matrix.schema.yaml"
+    schema: "skills/ver-3/_shared/schemas/quality-matrix.schema.yaml"
     lifecycle: "WORM"
 
   - artifact_id: "todo_plan"
@@ -56,7 +56,7 @@ artifacts:
     consumed_by:
       - "skill-builder"
       - "drift-detector"
-    schema: "raw/ver-3/_shared/schemas/todo.schema.yaml"
+    schema: "skills/ver-3/_shared/schemas/todo.schema.yaml"
     lifecycle: "WORM"
 
   - artifact_id: "build_log"
@@ -66,7 +66,7 @@ artifacts:
     created_by: "skill-builder"
     consumed_by:
       - "production-code-reviewer"
-    schema: "raw/ver-3/_shared/schemas/build-log.schema.yaml"
+    schema: "skills/ver-3/_shared/schemas/build-log.schema.yaml"
     lifecycle: "append-only"
 
   - artifact_id: "review_report"
@@ -76,7 +76,7 @@ artifacts:
     created_by: "production-code-reviewer"
     consumed_by:
       - "sandbox-tester"
-    schema: "raw/ver-3/_shared/schemas/review-report.schema.yaml"
+    schema: "skills/ver-3/_shared/schemas/review-report.schema.yaml"
     lifecycle: "WORM"
 
   - artifact_id: "audit_metrics"
@@ -86,7 +86,7 @@ artifacts:
     created_by: "drift-detector"
     consumed_by:
       - "cross-cutting"
-    schema: "raw/ver-3/_shared/schemas/audit-metrics.schema.yaml"
+    schema: "skills/ver-3/_shared/schemas/audit-metrics.schema.yaml"
     lifecycle: "append-only"
 
   - artifact_id: "verification_result"
@@ -96,7 +96,7 @@ artifacts:
     created_by: "sandbox-tester"
     consumed_by:
       - "delivery"
-    schema: "raw/ver-3/_shared/schemas/verification.schema.yaml"
+    schema: "skills/ver-3/_shared/schemas/verification.schema.yaml"
     lifecycle: "WORM"
 
   - artifact_id: "security_review"
@@ -106,7 +106,7 @@ artifacts:
     created_by: "skill-security-reviewer"
     consumed_by:
       - "delivery"
-    schema: "raw/ver-3/_shared/schemas/security-review.schema.yaml"
+    schema: "skills/ver-3/_shared/schemas/security-review.schema.yaml"
     lifecycle: "WORM"
 
   - artifact_id: "elicitation_report"
@@ -117,7 +117,7 @@ artifacts:
     consumed_by:
       - "scs-router"
       - "skill-knowledge-miner"
-    schema: "raw/ver-3/_shared/schemas/elicitation.schema.yaml"
+    schema: "skills/ver-3/_shared/schemas/elicitation.schema.yaml"
     lifecycle: "WORM"
 
   - artifact_id: "analysis_report"
@@ -127,7 +127,7 @@ artifacts:
     created_by: "ba-analyst"
     consumed_by:
       - "ba-synthesizer"
-    schema: "raw/ver-3/_shared/schemas/analysis.schema.yaml"
+    schema: "skills/ver-3/_shared/schemas/analysis.schema.yaml"
     lifecycle: "WORM"
 
   - artifact_id: "synthesis_report"
@@ -138,7 +138,7 @@ artifacts:
     consumed_by:
       - "scs-router"
       - "skill-architect"
-    schema: "raw/ver-3/_shared/schemas/synthesis.schema.yaml"
+    schema: "skills/ver-3/_shared/schemas/synthesis.schema.yaml"
     lifecycle: "WORM"
 
   - artifact_id: "domain_handbook"
@@ -149,5 +149,5 @@ artifacts:
     consumed_by:
       - "skill-architect"
       - "skill-hydrator"
-    schema: "raw/ver-3/_shared/schemas/domain-handbook.schema.yaml"
+    schema: "skills/ver-3/_shared/schemas/domain-handbook.schema.yaml"
     lifecycle: "WORM"

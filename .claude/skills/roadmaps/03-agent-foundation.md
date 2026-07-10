@@ -252,7 +252,7 @@ hooks:
         INPUT=$(cat)
         FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
         [ -z "$FILE_PATH" ] && exit 0
-        if [[ "$FILE_PATH" =~ \.claude/skills/|raw/ver-3/ ]] && [[ ! "$FILE_PATH" =~ review-report.md|audit-metrics.yaml ]]; then
+        if [[ "$FILE_PATH" =~ \.claude/skills/|skills/ver-3/ ]] && [[ ! "$FILE_PATH" =~ review-report.md|audit-metrics.yaml ]]; then
           echo "BLOCKED: external reviewer chỉ write review reports, không modify source" >&2
           exit 2
         fi
@@ -268,7 +268,7 @@ hooks:
 ```
 
 Workflow:
-1. Read `raw/ver-3/<skill>/` SKILL.md + scripts/ + knowledge/
+1. Read `skills/ver-3/<skill>/` SKILL.md + scripts/ + knowledge/
 2. Run static analysis: `pyflakes`, `eslint` (nếu JS), `--check` complexity metrics
 3. Compare with criteria.md và criteria defined trước (NFRs từ exploration.md)
 4. Emit `review-report.md` (different from skill's review-report.md produced by production-code-reviewer skill)
@@ -439,9 +439,9 @@ for a in agents:
     skills = data.get('skills', [])
     if skills:
         for s in skills:
-            # Phase 5/6 build skills. At runtime, check skill dir exists tại raw/ver-3/
+            # Phase 5/6 build skills. At runtime, check skill dir exists tại skills/ver-3/
             # At Phase 3, scaffolded only by Phase 0
-            if not os.path.isdir(f'raw/ver-3/{s}'):
+            if not os.path.isdir(f'skills/ver-3/{s}'):
                 print(f"WARNING: {a} skills:{s} not yet built — Phase 5 or 6 must build")
 print("AC-7 PASS — no errors")
 EOF

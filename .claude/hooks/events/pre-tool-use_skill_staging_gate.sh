@@ -34,7 +34,7 @@ case "$FILE_PATH" in
     if [ -z "$WASHVN_DEPLOY_PHASE_ACTIVE" ]; then
       echo "[SKILL-STAGING-GATE] BLOCKED: direct writes to runtime .claude/skills/ gated." >&2
       echo "  path: $FILE_PATH" >&2
-      echo "  Fix: edit at raw/ver-3/<name>/ then deploy via 'deploy-skill <name>'" >&2
+      echo "  Fix: edit at skills/ver-3/<name>/ then deploy via 'deploy-skill <name>'" >&2
       echo "  Bypass: set WASHVN_DEPLOY_PHASE_ACTIVE env var (reserved for deploy flow)" >&2
       exit 2
     fi

@@ -892,7 +892,7 @@ not_affected:
   - ".claude/hooks/tests/test_*.sh"   # Stage 3 — không sửa (tạo mới fixtures/ riêng)
   - ".claude/knowledge/*"             # Phase 1 — không sửa
   - ".skill-context/*"                # State — không sửa
-  - "raw/ver-3/*"                     # Skills — không sửa
+  - "skills/ver-3/*"                     # Skills — không sửa
   - "docs/context-to-work/*"          # Các scope docs khác — không sửa
 ```
 

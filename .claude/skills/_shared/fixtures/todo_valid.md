@@ -5,8 +5,8 @@ tasks:
     description: "Prepare project structure"
     zone: "core"
     priority: "high"
-    input_schema: "raw/ver-3/_shared/schemas/exploration.schema.yaml"
-    output_schema: "raw/ver-3/_shared/schemas/criteria.schema.json"
+    input_schema: "skills/ver-3/_shared/schemas/exploration.schema.yaml"
+    output_schema: "skills/ver-3/_shared/schemas/criteria.schema.json"
     verification_cmd: "python3 test.py"
     must_not:
       - "No stub files."

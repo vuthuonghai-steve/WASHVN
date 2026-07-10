@@ -55,7 +55,7 @@ Tạo cây thư mục runtime đầy đủ:
 ├── rules/                    ← Đã tồn tại rỗng, để DHCP default rules Phase 0
 └── settings.json             ← Tạo Phase 0 nếu không tồn tại
 
-raw/ver-3/                    ← Tái tạo (đã mất trong baseline)
+skills/ver-3/                    ← Tái tạo (đã mất trong baseline)
 ├── _shared/
 │   ├── schemas/              ← Phase 4 fill với YAML schemas
 │   ├── validators/            ← Phase 4 fill với scripts
@@ -188,12 +188,12 @@ last_updated: 2026-07-04
 (to be authored in Phase 1)
 ```
 
-### D6 — 11 raw/ver-3/ skill directory stubs
+### D6 — 11 skills/ver-3/ skill directory stubs
 
 Mỗi 11 dirs cần có cấu trúc 7-Zone skeleton:
 
 ```text
-raw/ver-3/<skill-name>/
+skills/ver-3/<skill-name>/
 ├── SKILL.md          ← Phase 5/6/7 fill
 ├── knowledge/         ← empty
 ├── scripts/           ← empty
@@ -205,12 +205,12 @@ raw/ver-3/<skill-name>/
 
 Chỉ cần tạo các dir rỗng (`.gitkeep` trong mỗi dir) — Phase 5/6/7 sẽ fill content.
 
-### D7 — `raw/ver-3/_shared/` skeleton
+### D7 — `skills/ver-3/_shared/` skeleton
 
 Tạo skeleton:
 
 ```text
-raw/ver-3/_shared/
+skills/ver-3/_shared/
 ├── schemas/             ← Phase 4 fill với:
 │   ├── exploration.schema.yaml
 │   ├── criteria.schema.json
@@ -269,8 +269,8 @@ test -d .claude/knowledge/agents/ && \
 test -d .claude/hooks/events/ && \
 test -d .claude/scripts/ && \
 test -d .claude/agents/_archive/ && \
-test -d raw/ver-3/_shared/schemas/ && \
-test -d raw/ver-3/_shared/validators/ && \
+test -d skills/ver-3/_shared/schemas/ && \
+test -d skills/ver-3/_shared/validators/ && \
 test -d .skill-context/_state-archive/ && \
 test -d .skill-context/registry/ && \
 echo "AC-1 PASS"
@@ -280,9 +280,9 @@ echo "AC-1 PASS"
 ```bash
 for skill in skill-explorer skill-knowledge-miner skill-architect production-quality-gatekeeper skill-planner skill-builder production-code-reviewer skill-security-reviewer sandbox-tester indexer ba-elicitor ba-analyst ba-synthesizer; do
   for zone in knowledge scripts templates data loop assets; do
-    test -d raw/ver-3/$skill/$zone || exit 1
+    test -d skills/ver-3/$skill/$zone || exit 1
   done
-  test -f raw/ver-3/$skill/SKILL.md || echo "$skill SKILL.md chưa fill (OK tại Phase 0)"
+  test -f skills/ver-3/$skill/SKILL.md || echo "$skill SKILL.md chưa fill (OK tại Phase 0)"
 done
 echo "AC-2 PASS"
 ```
@@ -360,7 +360,7 @@ echo "AC-8 PASS — Docker environment healthy for Phase 7 sandbox"
 
 > Mỗi task phải commit atomic trước khi sang task sau.
 
-1. **Scaffold directories** — chạy `mkdir -p` cho tất cả 11 raw/ver-3/ skill dirs, 7-zone subdirs, .claude/knowledge/agents/, .claude/hooks/events/, .claude/scripts/, .skill-context/_state-archive/, .skill-context/registry/. Tạo `.gitkeep` files. → commit `phase-0: scaffold directory structure`
+1. **Scaffold directories** — chạy `mkdir -p` cho tất cả 11 skills/ver-3/ skill dirs, 7-zone subdirs, .claude/knowledge/agents/, .claude/hooks/events/, .claude/scripts/, .skill-context/_state-archive/, .skill-context/registry/. Tạo `.gitkeep` files. → commit `phase-0: scaffold directory structure`
 
 2. **Author `validate_suite_integrity.py`** — viết script Python ~100-150 dòng, parse skills-registry.json, kiểm tra 11 skill dirs, frontmatter hợp lệ. Test với một BROKEN case (e.g., tạo một SKILL.md sai frontmatter tạm thời, verify exit 2). Xóa broken case. → commit `phase-0: integrity validator script`
 
@@ -370,7 +370,7 @@ echo "AC-8 PASS — Docker environment healthy for Phase 7 sandbox"
 
 5. **Tạo 7 knowledge docs stubs** — copy template từ D5 vào 7 file. → commit `phase-0: knowledge agent doc stubs`
 
-6. **Tạo raw/ver-3/_shared/ skeleton** — tất cả subdirs rỗng + schema files rỗng (chỉ header `# schema stub — Phase 4 fill`). Karpathy-standards.md: copy nếu tìm thấy trong Temps/raw/ hoặc create stub. → commit `phase-0: shared schemas scaffold`
+6. **Tạo skills/ver-3/_shared/ skeleton** — tất cả subdirs rỗng + schema files rỗng (chỉ header `# schema stub — Phase 4 fill`). Karpathy-standards.md: copy nếu tìm thấy trong Temps/raw/ hoặc create stub. → commit `phase-0: shared schemas scaffold`
 
 7. **Tạo `.claude/hooks/registry.yaml`** — copy template từ D8. → commit `phase-0: hook registry stub`
 

@@ -15,7 +15,7 @@ Phase 4 build **foundation contracts** cho skills:
 
 Phase này là cơ sở để Phase 5-7 build skills mỗi skill có output contract hợp lệ, schema validate được.
 
-**Quan trọng**: Phase 4 KHÔNG build skills, chỉ build **scaffolding** cho skills. Skills Phase 5-7 sẽ reference scaff + populate SKILL.md với `output_contract` field pointing tới schemas tại `raw/ver-3/_shared/schemas/`.
+**Quan trọng**: Phase 4 KHÔNG build skills, chỉ build **scaffolding** cho skills. Skills Phase 5-7 sẽ reference scaff + populate SKILL.md với `output_contract` field pointing tới schemas tại `skills/ver-3/_shared/schemas/`.
 
 ---
 
@@ -23,7 +23,7 @@ Phase này là cơ sở để Phase 5-7 build skills mỗi skill có output cont
 
 ```yaml
 prerequisites:
-  - Phase 0 done (skeleton dirs tại raw/ver-3/_shared/schemas/)
+  - Phase 0 done (skeleton dirs tại skills/ver-3/_shared/schemas/)
   - Python pyyaml, jsonschema installed
   - Phase 1 knowledge docs can be referenced (xml_tags_standards.yaml etc.)
 ```
@@ -32,7 +32,7 @@ prerequisites:
 
 ## Deliverables
 
-### D4-1: 14 YAML/JSON schemas trong `raw/ver-3/_shared/schemas/`
+### D4-1: 14 YAML/JSON schemas trong `skills/ver-3/_shared/schemas/`
 
 Mỗi file đặc tả cấu trúc JSON-schema hoặc YAML-schema:
 
@@ -106,7 +106,7 @@ Mỗi schema phải:
 - Có `additionalProperties: false` unless deliberately extendable
 - Document `description` cho mỗi field
 
-### D4-2: `raw/ver-3/_shared/validators/schema_validator.py`
+### D4-2: `skills/ver-3/_shared/validators/schema_validator.py`
 
 Script Python validator:
 
@@ -136,7 +136,7 @@ Exit codes:
 
 Refperiments: `jsonschema`, `pyyaml`, `click` (CLI).
 
-### D4-3: `raw/ver-3/_shared/validators/artifact_lifecycle.py`
+### D4-3: `skills/ver-3/_shared/validators/artifact_lifecycle.py`
 
 Script Python kiểm tra artifact lifecycle:
 - Dir tồn tại (per skill)
@@ -145,7 +145,7 @@ Script Python kiểm tra artifact lifecycle:
 - Artifact version pinned (v1, v2 if regenerated)
 - Drift detection: file mtime vs upstream artifact mtimes (mới nhất vs stage ran)
 
-### D4-4: `raw/ver-3/_shared/templates/drc_contract_template.yaml`
+### D4-4: `skills/ver-3/_shared/templates/drc_contract_template.yaml`
 
 Dynamic Routing Contract template — mỗi skill phải emit output_contract theo template này:
 
@@ -162,7 +162,7 @@ inputs:
   - name: <input_artifact_id>
     path_template: ".skill-context/{target_skill}/<filename>.<ext>"
     format: <markdown|yaml|json|python>
-    schema: "raw/ver-3/_shared/schemas/<input_schema_file>"
+    schema: "skills/ver-3/_shared/schemas/<input_schema_file>"
     required: <true|false>
     consumed_by: <consuming skill name>
     downstream_phase: <stage number naming>
@@ -171,7 +171,7 @@ outputs:
   - file_id: <output_id>
     path_template: ".skill-context/{target_skill}/<filename>.<ext>"
     format: <markdown|yaml|json|python>
-    schema: "raw/ver-3/_shared/schemas/<output_schema_file>"
+    schema: "skills/ver-3/_shared/schemas/<output_schema_file>"
     lifecycle_status: <draft|final|superseded>
     versioning: <WORM|append-only|versioned>
 
@@ -189,7 +189,7 @@ state_persistence:
   fields_to_write: [<field names>]
 ```
 
-### D4-5: `raw/ver-3/_shared/templates/skill_readme_template.md`
+### D4-5: `skills/ver-3/_shared/templates/skill_readme_template.md`
 
 Skill README template — mỗi SKILL.md phải reference canonic template:
 
@@ -236,7 +236,7 @@ Skill README template — mỗi SKILL.md phải reference canonic template:
 {Trigger phrases và invocation conditions}
 ```
 
-### D4-6: `raw/ver-3/_shared/templates/skill_skeleton.md`
+### D4-6: `skills/ver-3/_shared/templates/skill_skeleton.md`
 
 Skill skeleton markdown — template cho tác giả SKILL.md trong Phase 5-7:
 
@@ -264,7 +264,7 @@ output_contract: ".skill-context/{target}/drc-<skill-name>.yaml"
 </safety_contract>
 
 <knowledge_anchors>
-{References to .claude/knowledge/agents/, raw/ver-3/_shared/knowledge/}
+{References to .claude/knowledge/agents/, skills/ver-3/_shared/knowledge/}
 </knowledge_anchors>
 
 <workflow_phases>
@@ -288,7 +288,7 @@ output_contract: ".skill-context/{target}/drc-<skill-name>.yaml"
 </failure_modes>
 ```
 
-### D4-7: `raw/ver-3/_shared/artifact_registry.yaml`
+### D4-7: `skills/ver-3/_shared/artifact_registry.yaml`
 
  bảng tổng hợp artifact registry (machine-parseable theo spec P0):
 
@@ -305,7 +305,7 @@ artifacts:
     format: markdown
     created_by: skill-explorer
     consumed_by: [skill-knowledge-miner, skill-architect, production-quality-gatekeeper]
-    schema: raw/ver-3/_shared/schemas/exploration.schema.yaml
+    schema: skills/ver-3/_shared/schemas/exploration.schema.yaml
     lifecycle: WORM  # Write-Once-Read-Many — versioning by re-firing skill
 
   - artifact_id: test_criteria
@@ -314,7 +314,7 @@ artifacts:
     format: markdown
     created_by: skill-explorer
     consumed_by: [skill-architect, skill-planner, sandbox-tester]
-    schema: raw/ver-3/_shared/schemas/criteria.schema.json
+    schema: skills/ver-3/_shared/schemas/criteria.schema.json
     lifecycle: WORM
 
   # ... 14 artifacts per D4-1 schemas
@@ -322,7 +322,7 @@ artifacts:
   # artifact_id, file_name, path_template, format, created_by, consumed_by, schema, lifecycle
 ```
 
-### D4-8: `raw/ver-3/_shared/scripts/drc_resolver.py`
+### D4-8: `skills/ver-3/_shared/scripts/drc_resolver.py`
 
 Script Python resolve DRC — verify that each skill frontmatter `output_contract` field references existing schemas + path templates:
 
@@ -338,7 +338,7 @@ Exit 1 = DRC mismatch (path/schema mismatch)
 """
 ```
 
-### D4-9: `raw/ver-3/_shared/test_fixtures/` directory
+### D4-9: `skills/ver-3/_shared/test_fixtures/` directory
 
 Test fixtures cho validators — 1 valid + 1 broken example per schema:
 
@@ -353,13 +353,13 @@ test_fixtures/
 └── ... (2 fixtures per schema, total ~28 files)
 ```
 
-### D4-10: `raw/ver-3/_shared/knowledge/karpathy-standards.md` (backfill)
+### D4-10: `skills/ver-3/_shared/knowledge/karpathy-standards.md` (backfill)
 
 Nếu Phase 0 không tìm thấy, Phase 4 phải backfill từ git history hoặc compose từ standards.md condensed:
 
 ```bash
 # Recover từ git log nếu đã tồn tại trong archived commits:
-git log --all --oneline --diff-filter=A -- 'raw/ver-3/_shared/knowledge/karpathy-standards.md' | head -5
+git log --all --oneline --diff-filter=A -- 'skills/ver-3/_shared/knowledge/karpathy-standards.md' | head -5
 ```
 
 Nếu không recover, seed file condensed từ `standards.md` §5 (4-layer knowledge model) — extract ~150 dòng condensed content.
@@ -379,7 +379,7 @@ schemas = ['exploration.schema.yaml', 'design.schema.yaml', 'quality-matrix.sche
            'domain-handbook.schema.yaml']
 import json
 for s in schemas:
-    p = f'raw/ver-3/_shared/schemas/{s}'
+    p = f'skills/ver-3/_shared/schemas/{s}'
     if p.endswith('.json'):
         with open(p) as f: json.load(f)
     else:
@@ -391,22 +391,22 @@ EOF
 ### AC-2 — Schema validator runs on fixtures
 ```bash
 # Validate against valid fixture (expect PASS):
-python3 raw/ver-3/_shared/validators/schema_validator.py \
+python3 skills/ver-3/_shared/validators/schema_validator.py \
   --artifact exploration \
-  --path raw/ver-3/_shared/test_fixtures/exploration_valid.md
+  --path skills/ver-3/_shared/test_fixtures/exploration_valid.md
 # Should exit 0
 
 # Validate against broken fixture (expect FAIL):
-python3 raw/ver-3/_shared/validators/schema_validator.py \
+python3 skills/ver-3/_shared/validators/schema_validator.py \
   --artifact exploration \
-  --path raw/ver-3/_shared/test_fixtures/exploration_broken_scs_invalid.md
+  --path skills/ver-3/_shared/test_fixtures/exploration_broken_scs_invalid.md
 # Should exit 1
 echo "AC-2 PASS"
 ```
 
 ### AC-3 — DRC template parses + 2-field placeholder replaced
 ```bash
-python3 -c "import yaml; data = yaml.safe_load(open('raw/ver-3/_shared/templates/drc_contract_template.yaml'))"
+python3 -c "import yaml; data = yaml.safe_load(open('skills/ver-3/_shared/templates/drc_contract_template.yaml'))"
 echo "AC-3 PASS"
 ```
 
@@ -414,7 +414,7 @@ echo "AC-3 PASS"
 ```bash
 python3 << 'EOF'
 import yaml
-d = yaml.safe_load(open('raw/ver-3/_shared/artifact_registry.yaml'))
+d = yaml.safe_load(open('skills/ver-3/_shared/artifact_registry.yaml'))
 assert 'artifacts' in d
 for a in d['artifacts']:
     for f in ['artifact_id', 'file_name', 'path_template', 'format', 'created_by', 'consumed_by', 'schema', 'lifecycle']:
@@ -425,24 +425,24 @@ EOF
 
 ### AC-5 — DRC resolver runs on registry
 ```bash
-python3 raw/ver-3/_shared/scripts/drc_resolver.py --registry-only \
-  --registry raw/ver-3/_shared/artifact_registry.yaml
+python3 skills/ver-3/_shared/scripts/drc_resolver.py --registry-only \
+  --registry skills/ver-3/_shared/artifact_registry.yaml
 # Should exit 0
 echo "AC-5 PASS"
 ```
 
 ### AC-6 — Skill skeleton template parses
 ```bash
-test -f raw/ver-3/_shared/templates/skill_skeleton.md
-grep -q "^name:" raw/ver-3/_shared/templates/skill_skeleton.md
-grep -q "^suite: WASHVN" raw/ver-3/_shared/templates/skill_skeleton.md
+test -f skills/ver-3/_shared/templates/skill_skeleton.md
+grep -q "^name:" skills/ver-3/_shared/templates/skill_skeleton.md
+grep -q "^suite: WASHVN" skills/ver-3/_shared/templates/skill_skeleton.md
 echo "AC-6 PASS"
 ```
 
 ### AC-7 — Karpathy standards exist
 ```bash
-test -f raw/ver-3/_shared/knowledge/karpathy-standards.md
-test $(wc -l < raw/ver-3/_shared/knowledge/karpathy-standards.md) -ge 100
+test -f skills/ver-3/_shared/knowledge/karpathy-standards.md
+test $(wc -l < skills/ver-3/_shared/knowledge/karpathy-standards.md) -ge 100
 echo "AC-7 PASS"
 ```
 
@@ -452,7 +452,7 @@ echo "AC-7 PASS"
 
 1. **Plan Durante**: review lại spec Temps/spec/architects/P0-P7 + skill-explorer để ensure schemas cover all artifacts pipeline needs.
 
-2. **Author 14 schemas** — D4-1. 14 files trong raw/ver-3/_shared/schemas/. Mỗi schema ≥ 30 dòng với full field specs. Commit atomic smith per 3-4 schemas cùng chủ đề: `phase-4: schemas for <group>`
+2. **Author 14 schemas** — D4-1. 14 files trong skills/ver-3/_shared/schemas/. Mỗi schema ≥ 30 dòng với full field specs. Commit atomic smith per 3-4 schemas cùng chủ đề: `phase-4: schemas for <group>`
 
 3. **Author schema_validator.py** — D4-2. ~250 dòng. CLI với argparse, support `--all`, `--artifact <name> --path <file>`, `--skills-registry`. Validates frontmatter YAML bằng jsonschema package.
 

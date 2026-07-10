@@ -33,8 +33,8 @@ zone_mapping:
 data_contracts:
   - contract_id: "contract-01"
     description: "Syncs input configuration"
-    input_schema: "raw/ver-3/_shared/schemas/exploration.schema.yaml"
-    output_schema: "raw/ver-3/_shared/schemas/criteria.schema.json"
+    input_schema: "skills/ver-3/_shared/schemas/exploration.schema.yaml"
+    output_schema: "skills/ver-3/_shared/schemas/criteria.schema.json"
 state_machine:
   initial_state: "IDLE"
   states: ["IDLE", "RUNNING", "COMPLETED"]

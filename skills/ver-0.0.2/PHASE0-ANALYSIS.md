@@ -326,7 +326,7 @@ case-system.md: _shared/knowledge/case-system.md  # canonical
 
 ## 8. Recommended Next Step
 
-🔴 **BLOCKER:** Phase 0 chưa PASS — **KHÔNG sync runtime** (`cp -r raw/ver-3/* .claude/skills/`) cho đến khi 3 blocking gates đạt.
+🔴 **BLOCKER:** Phase 0 chưa PASS — **KHÔNG sync runtime** (`cp -r skills/ver-3/* .claude/skills/`) cho đến khi 3 blocking gates đạt.
 
 **Sequential execution (ước tính 55 phút):**
 

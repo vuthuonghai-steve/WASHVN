@@ -29,7 +29,7 @@
 | **Hooks standalone** | 0 | ~6 hệ thống hook events (+ 1 post-external-validator added Phase 8) |
 | **Knowledge docs** | 0 (knowleages/ trống) | 7 baseline + ~10 phase-specific |
 | **Schemas/validators** | 0 | 14 schemas + 2 validator scripts |
-| **raw/ver-3/ skill sources** | 0 (đã mất) | Tái tác giả toàn bộ |
+| **skills/ver-3/ skill sources** | 0 (đã mất) | Tái tác giả toàn bộ |
 | **Roadmap docs** | 0 (trống) | 9 files (index + 8 phase) |
 | **Architectural defects đã phát hiện** | 10 chưa resolve | Phải đưa vào milestones (Phase 8 primary, integration per phase) |
 

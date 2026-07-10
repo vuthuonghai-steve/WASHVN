@@ -156,7 +156,7 @@ indirect_impact:
 
 | Test Script | Input | Expected Exit |
 |:------------|:------|:-------------:|
-| `test_write_gate_allow.sh` | Workspace path: `raw/ver-3/test/SKILL.md` | 0 |
+| `test_write_gate_allow.sh` | Workspace path: `skills/ver-3/test/SKILL.md` | 0 |
 | `test_write_gate_block.sh` | Outside path: `/tmp/test.txt` | 2 |
 | `test_skill_staging_allow_staging.sh` | Staging path: `.claude/skills/_staging/test.md` | 0 |
 | `test_skill_staging_block_runtime.sh` | Runtime path: `.claude/skills/foo/SKILL.md` | 2 |
@@ -292,7 +292,7 @@ backup:
 ```yaml
 allowed_prefixes:
   - ".claude/"
-  - "raw/ver-3/"
+  - "skills/ver-3/"
   - ".skill-context/"
   - "docs/context-to-work/"
   - "Temps/spec/"

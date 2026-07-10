@@ -23,16 +23,16 @@ trace: "[TỪ ROADMAP INDEX], [TỪ PHASE 1 SCOPE], [SUY LUẬN], [CẦN LÀM R�
 
 | # | Nguồn | Loại | Mức độ chi tiết | Trạng thái |
 |:-:|:------|:----:|:----------------:|:----------:|
-| 1 | `raw/ver-3/roadmaps/index.md` | Roadmap tổng quan (8 phases) | Cao (147 dòng) | ✅ Đã đọc |
-| 2 | `raw/ver-3/roadmaps/00-foundation-bootstrap.md` | Phase 0 spec | Rất cao (420 dòng) | ✅ Đã đọc |
-| 3 | `raw/ver-3/roadmaps/01-knowledge-base-authoring.md` | **Phase 1 spec — mục tiêu chính** | Rất cao (311 dòng) | ✅ Đã đọc |
-| 4 | `raw/ver-3/roadmaps/02-hook-framework.md` | Phase 2 spec (downstream) | Rất cao (458 dòng) | ✅ Đã đọc |
-| 5 | `raw/ver-3/roadmaps/03-agent-foundation.md` | Phase 3 spec (downstream) | Cao (383 dòng) | ✅ Đã đọc |
-| 6 | `raw/ver-3/roadmaps/04-skill-pipeline-scaffold.md` | Phase 4 spec (parallel) | Cao (501 dòng) | ✅ Đã đọc |
-| 7 | `raw/ver-3/roadmaps/05-skill-build-ba-pipeline.md` | Phase 5 spec (BA skills) | Cao (642 dòng) | ✅ Đã đọc |
-| 8 | `raw/ver-3/roadmaps/06-skill-build-main-pipeline.md` | Phase 6 spec (main skills) | Cao (678 dòng) | ✅ Đã đọc (header) |
-| 9 | `raw/ver-3/roadmaps/07-skill-build-sandbox-indexer.md` | Phase 7 spec | Cao (492 dòng) | ✅ Đã đọc (header) |
-| 10 | `raw/ver-3/roadmaps/08-integration-tests-hardening.md` | Phase 8 spec | Cao (467 dòng) | ✅ Đã đọc (header) |
+| 1 | `skills/ver-3/roadmaps/index.md` | Roadmap tổng quan (8 phases) | Cao (147 dòng) | ✅ Đã đọc |
+| 2 | `skills/ver-3/roadmaps/00-foundation-bootstrap.md` | Phase 0 spec | Rất cao (420 dòng) | ✅ Đã đọc |
+| 3 | `skills/ver-3/roadmaps/01-knowledge-base-authoring.md` | **Phase 1 spec — mục tiêu chính** | Rất cao (311 dòng) | ✅ Đã đọc |
+| 4 | `skills/ver-3/roadmaps/02-hook-framework.md` | Phase 2 spec (downstream) | Rất cao (458 dòng) | ✅ Đã đọc |
+| 5 | `skills/ver-3/roadmaps/03-agent-foundation.md` | Phase 3 spec (downstream) | Cao (383 dòng) | ✅ Đã đọc |
+| 6 | `skills/ver-3/roadmaps/04-skill-pipeline-scaffold.md` | Phase 4 spec (parallel) | Cao (501 dòng) | ✅ Đã đọc |
+| 7 | `skills/ver-3/roadmaps/05-skill-build-ba-pipeline.md` | Phase 5 spec (BA skills) | Cao (642 dòng) | ✅ Đã đọc |
+| 8 | `skills/ver-3/roadmaps/06-skill-build-main-pipeline.md` | Phase 6 spec (main skills) | Cao (678 dòng) | ✅ Đã đọc (header) |
+| 9 | `skills/ver-3/roadmaps/07-skill-build-sandbox-indexer.md` | Phase 7 spec | Cao (492 dòng) | ✅ Đã đọc (header) |
+| 10 | `skills/ver-3/roadmaps/08-integration-tests-hardening.md` | Phase 8 spec | Cao (467 dòng) | ✅ Đã đọc (header) |
 | 11 | `docs/context-to-work/phase-1/phase-1-transition-scope.2026-07-07.md` | Scope document Phase 1 | Rất cao (1137 dòng) | ✅ Đã đọc |
 | 12 | `.agents/skills/ba-elicitor/SKILL.md` | BA elicitor skill spec | Cao (77 dòng) | ✅ Đã đọc |
 | 13 | `.agents/skills/ba-analyst/SKILL.md` | BA analyst skill spec | Medium (58 dòng) | ✅ Đã đọc |
@@ -143,7 +143,7 @@ trace: "[TỪ ROADMAP INDEX], [TỪ PHASE 1 SCOPE], [SUY LUẬN], [CẦN LÀM R�
 ### 3.4 WHERE (Ở đâu?)
 
 - **Vị trí lưu trữ**: `.claude/knowledge/agents/`
-- **Source material**: `.claude/knowleages/` (RAW), `raw/ver-3/roadmaps/` (spec)
+- **Source material**: `.claude/knowleages/` (RAW), `skills/ver-3/roadmaps/` (spec)
 - **Consumer**: `.claude/agents/subagent-forge.md` (reference trong `<retrieved_docs>`)
 - **Scope doc**: `docs/context-to-work/phase-1/phase-1-transition-scope.2026-07-07.md`
 

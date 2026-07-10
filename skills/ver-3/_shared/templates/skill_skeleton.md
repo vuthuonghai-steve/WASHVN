@@ -8,7 +8,7 @@ stage: 0
 target_variable: "target-variable-name"
 tags: ["tag1", "tag2"]
 when_to_use: "Describe when this skill should be activated"
-output_contract: "raw/ver-3/_shared/templates/drc_contract_template.yaml"
+output_contract: "skills/ver-3/_shared/templates/drc_contract_template.yaml"
 ---
 
 # Skill Description

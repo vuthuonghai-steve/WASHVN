@@ -22,7 +22,7 @@ Phase 0 (Foundation Bootstrap) đã hoàn thành — tất cả 8 AC pass, 10 ta
 | Thành phần | Path | Vai trò |
 |:-----------|:-----|:--------|
 | **Knowledge stubs** | `.claude/knowledge/agents/` (7 files) | Đầu vào — cần fill content |
-| **Roadmap spec** | `raw/ver-3/roadmaps/01-knowledge-base-authoring.md` (311 dòng) | Yêu cầu chi tiết từng doc |
+| **Roadmap spec** | `skills/ver-3/roadmaps/01-knowledge-base-authoring.md` (311 dòng) | Yêu cầu chi tiết từng doc |
 | **Plan checklist** | `docs/context-to-work/roadmap-analysis-phases/plan-checklist.2026-07-07.md` (1149 dòng) | Tasks + ACs + DoD tracking |
 | **Subagent-forge** | `.claude/agents/subagent-forge.md` | Consumer chính của 7 docs |
 | **Existing knowledge** | `.claude/knowleages/` (agents/, hooks/, memorys/, skills/) | Official Claude Code docs — có thể tái sử dụng |
@@ -94,7 +94,7 @@ subagent-forge.md <--reads-- 7 knowledge docs (canonical)
 | AC | Mô tả | Path verify | Kết quả |
 |:--:|:------|:------------|:--------|
 | AC-1 | Directory structure | 8 `test -d` checks | ✅ PASS |
-| AC-2 | 11 skill dirs 7-Zone | `raw/ver-3/` | ✅ PASS |
+| AC-2 | 11 skill dirs 7-Zone | `skills/ver-3/` | ✅ PASS |
 | AC-3 | `validate_suite_integrity.py` | `.claude/scripts/` | ✅ PASS |
 | AC-4 | 7 knowledge stubs | `.claude/knowledge/agents/` | ✅ PASS |
 | AC-5 | subagent-forge không broken | `.claude/agents/subagent-forge.md` | ✅ PASS |
@@ -241,7 +241,7 @@ Dựa trên `01-knowledge-base-authoring.md` và `plan-checklist.2026-07-07.md`:
 
 | File | Path | Bắt buộc? | Ghi chú |
 |:-----|:-----|:---------:|:--------|
-| `roadmap spec` | `raw/ver-3/roadmaps/01-knowledge-base-authoring.md` | ✅ Yes | Spec chi tiết từng doc |
+| `roadmap spec` | `skills/ver-3/roadmaps/01-knowledge-base-authoring.md` | ✅ Yes | Spec chi tiết từng doc |
 | `standards.md §3` | `WASHVN/standards.md` | ✅ Yes | Format rules |
 | `subagent-forge.md` | `.claude/agents/subagent-forge.md` | ✅ Yes | Consumer chính |
 | `architecture.md §1-2` | `WASHVN/architecture.md` | ✅ Yes | Master Skill Suite context |
@@ -329,7 +329,7 @@ flowchart TD
 </evidence>
 
 <evidence>
-<file>raw/ver-3/roadmaps/01-knowledge-base-authoring.md</file>
+<file>skills/ver-3/roadmaps/01-knowledge-base-authoring.md</file>
 <line>1-311</line>
 <finding>Full spec cho 7 knowledge docs: deliverables, AC checklist, DoD. Phase 1 có 10 tasks, 7 AC.</finding>
 </evidence>

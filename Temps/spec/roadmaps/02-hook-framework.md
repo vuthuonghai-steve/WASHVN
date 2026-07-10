@@ -66,11 +66,11 @@ FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
 # Canonical allowlist (canonical paths, never modify without commit review)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 WORKSPACE_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
-ALLOWLIST_REGEX="^${WORKSPACE_ROOT}/(\.claude/|raw/ver-3/|\.skill-context/|docs/context-to-work/|Temps/spec/)"
+ALLOWLIST_REGEX="^${WORKSPACE_ROOT}/(\.claude/|skills/ver-3/|\.skill-context/|docs/context-to-work/|Temps/spec/)"
 
 if [[ ! "$FILE_PATH" =~ $ALLOWLIST_REGEX ]]; then
   echo "BLOCKED: write target outside WASHVN workspace: $FILE_PATH" >&2
-  echo "Allowed prefixes: .claude/, raw/ver-3/, .skill-context/, docs/, Temps/spec/" >&2
+  echo "Allowed prefixes: .claude/, skills/ver-3/, .skill-context/, docs/, Temps/spec/" >&2
   exit 2
 fi
 
@@ -79,7 +79,7 @@ exit 0
 
 ### D2-2: `.claude/hooks/events/pre-tool-use_skill_staging_gate.sh`
 
-Hook bảo vệ `.claude/skills/` runtime — chỉ cho phép Phase 8 canonical deploy; tất cả skill build phải stage tại `raw/ver-3/<name>/` trước.
+Hook bảo vệ `.claude/skills/` runtime — chỉ cho phép Phase 8 canonical deploy; tất cả skill build phải stage tại `skills/ver-3/<name>/` trước.
 
 ```bash
 #!/usr/bin/env bash
@@ -93,7 +93,7 @@ FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
 if [[ "$FILE_PATH" =~ \.claude/skills/ ]] && [[ ! "$FILE_PATH" =~ \.claude/skills/_staging/ ]]; then
   # Unless DEPLOY_PHASE_ACTIVE env var is set (reserved for deployflow)
   if [ -z "$WASHVN_DEPLOY_PHASE_ACTIVE" ]; then
-    echo "BLOCKED: writes to runtime .claude/skills/ gated. Edit at raw/ver-3/<name>/ then deploy via 'deploy-skill <name>'." >&2
+    echo "BLOCKED: writes to runtime .claude/skills/ gated. Edit at skills/ver-3/<name>/ then deploy via 'deploy-skill <name>'." >&2
     exit 2
   fi
 fi
@@ -347,7 +347,7 @@ echo "AC-3 PASS"
 ```bash
 # Test allow case:
 WORKSPACE_ROOT="$(pwd)"
-JSON_INSIDE="{\"tool_name\":\"Write\",\"tool_input\":{\"file_path\":\"\${WORKSPACE_ROOT}/raw/ver-3/test/SKILL.md\"}}"
+JSON_INSIDE="{\"tool_name\":\"Write\",\"tool_input\":{\"file_path\":\"\${WORKSPACE_ROOT}/skills/ver-3/test/SKILL.md\"}}"
 EXIT=$(echo "$JSON_INSIDE" | bash .claude/hooks/events/pre-tool-use_write_gate.sh 2>&1; echo $?)
 [ "$EXIT" = "0" ] || exit 1
 

@@ -16,7 +16,7 @@ def find_repo_root():
     return os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
 
 REPO_ROOT = find_repo_root()
-REGISTRY_PATH = os.path.join(REPO_ROOT, 'raw/ver-3/_shared/artifact_registry.yaml')
+REGISTRY_PATH = os.path.join(REPO_ROOT, 'skills/ver-3/_shared/artifact_registry.yaml')
 
 def calculate_sha256(file_path):
     if not os.path.exists(file_path):

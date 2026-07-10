@@ -1,7 +1,7 @@
 # 📋 Phạm vi: Đồng bộ & Thống nhất Kiến trúc Skill Suite
 
 > **Generated**: 2026-06-07
-> **Target**: `raw/ver-3/` — 12 skills + `_shared/`
+> **Target**: `skills/ver-3/` — 12 skills + `_shared/`
 > **Type**: Architecture sync scope analysis
 > **Status**: 🔍 Discovery complete — ready for fix phase
 
@@ -36,7 +36,7 @@ Lượng skill lớn (12 skills) phát triển qua nhiều phiên bản → **kh
 
 ### 3.1 Affected Area
 ```
-raw/ver-3/
+skills/ver-3/
 ├── _shared/                          # 🔴 Trung tâm — sửa 1 ảnh hưởng toàn bộ
 │   ├── knowledge/framework.md        # Stage numbering, trace tags, 7-Zones
 │   ├── knowledge/format-standards.md # Trace tags, format rules
@@ -211,22 +211,22 @@ CONFLICT: stage numbering lệch 1 ở mọi chỗ!
 
 | Evidence | File:Line | Detail |
 |----------|-----------|--------|
-| Stage conflict | `raw/ver-3/_shared/knowledge/framework.md:100-109` | Pipeline table: Stage 2 = Gatekeeper, Stage 3 = Planner, Stage 4 = Builder |
-| Stage conflict | `raw/ver-3/skill-planner/SKILL.md:47` | `stage_order: 2` (should be 3 theo framework) |
-| Stage conflict | `raw/ver-3/skill-builder/SKILL.md:43` | `stage_order: 3` (should be 4 theo framework) |
-| Trace tag A | `raw/ver-3/_shared/knowledge/framework.md:200-205` | 4 standard tags |
-| Trace tag B | `raw/ver-3/_shared/knowledge/format-standards.md:65-70` | 5 different tags (incl. `[TỪ USER INPUT]`, `[TỪ NGUỒN EXTERNAL]`) |
-| Trace tag C | `raw/ver-3/ba-elicitor/SKILL.md:20-22` | `[TỪ INPUT]`, `[SUY LUẬN]` |
-| 7-Zones table | `raw/ver-3/_shared/knowledge/framework.md:14-23` | No `policy/` zone listed |
-| policy/ exists | `raw/ver-3/skill-architect/policy/` | 3 policy files |
-| policy/ exists | `raw/ver-3/skill-explorer/policy/` | 3 policy files |
-| Format dup | `raw/ver-3/skill-architect/knowledge/format-standards.md` | Local copy |
-| Format dup | `raw/ver-3/skill-planner/knowledge/format-standards.md` | Local copy |
-| Format dup | `raw/ver-3/skill-builder/knowledge/format-standards.md` | Local copy |
-| SPEC.md | `raw/ver-3/skill-planner/SPEC.md` | Exists |
-| SPEC.md | `raw/ver-3/skill-builder/SPEC.md` | Exists |
-| No SPEC.md | `raw/ver-3/skill-architect/` | Missing |
-| BA structure | `raw/ver-3/ba-analyst/` | No scripts/, no data/, no 7-Zones alignment |
+| Stage conflict | `skills/ver-3/_shared/knowledge/framework.md:100-109` | Pipeline table: Stage 2 = Gatekeeper, Stage 3 = Planner, Stage 4 = Builder |
+| Stage conflict | `skills/ver-3/skill-planner/SKILL.md:47` | `stage_order: 2` (should be 3 theo framework) |
+| Stage conflict | `skills/ver-3/skill-builder/SKILL.md:43` | `stage_order: 3` (should be 4 theo framework) |
+| Trace tag A | `skills/ver-3/_shared/knowledge/framework.md:200-205` | 4 standard tags |
+| Trace tag B | `skills/ver-3/_shared/knowledge/format-standards.md:65-70` | 5 different tags (incl. `[TỪ USER INPUT]`, `[TỪ NGUỒN EXTERNAL]`) |
+| Trace tag C | `skills/ver-3/ba-elicitor/SKILL.md:20-22` | `[TỪ INPUT]`, `[SUY LUẬN]` |
+| 7-Zones table | `skills/ver-3/_shared/knowledge/framework.md:14-23` | No `policy/` zone listed |
+| policy/ exists | `skills/ver-3/skill-architect/policy/` | 3 policy files |
+| policy/ exists | `skills/ver-3/skill-explorer/policy/` | 3 policy files |
+| Format dup | `skills/ver-3/skill-architect/knowledge/format-standards.md` | Local copy |
+| Format dup | `skills/ver-3/skill-planner/knowledge/format-standards.md` | Local copy |
+| Format dup | `skills/ver-3/skill-builder/knowledge/format-standards.md` | Local copy |
+| SPEC.md | `skills/ver-3/skill-planner/SPEC.md` | Exists |
+| SPEC.md | `skills/ver-3/skill-builder/SPEC.md` | Exists |
+| No SPEC.md | `skills/ver-3/skill-architect/` | Missing |
+| BA structure | `skills/ver-3/ba-analyst/` | No scripts/, no data/, no 7-Zones alignment |
 
 ---
 

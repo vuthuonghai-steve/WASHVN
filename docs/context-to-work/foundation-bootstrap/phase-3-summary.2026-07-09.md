@@ -81,7 +81,7 @@ The following agents reference skills that will be built in Phases 5-6:
 - `ba-pipeline-runner` → `ba-elicitor`, `ba-analyst`, `ba-synthesizer` (Phase 5)
 - `external-code-reviewer` → `production-code-reviewer` (Phase 6)
 
-At build time: ✅ All dependency skill directories exist at `raw/ver-3/` as scaffolds.
+At build time: ✅ All dependency skill directories exist at `skills/ver-3/` as scaffolds.
 
 ## Downstream Phases
 

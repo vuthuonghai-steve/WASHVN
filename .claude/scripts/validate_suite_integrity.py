@@ -195,11 +195,11 @@ def main():
 
     if not os.path.exists(registry_path):
         print(f"Warning: skills-registry.json not found at {registry_path}", file=sys.stderr)
-        print("Info: Falling back to directory walk of raw/ver-3/", file=sys.stderr)
+        print("Info: Falling back to directory walk of skills/ver-3/", file=sys.stderr)
         skills = walk_skill_dirs(repo_root)
         registry_mode = False
         if not skills:
-            errors.append({"skill": None, "type": "structural", "detail": "No skills found via fallback — raw/ver-3/ is empty or missing"})
+            errors.append({"skill": None, "type": "structural", "detail": "No skills found via fallback — skills/ver-3/ is empty or missing"})
             gen_escalation_report(errors, len(warnings), registry_path, escalation_dir)
             print(f"FAIL: {len(errors)} error(s), 0 valid (warnings: {len(warnings)})", file=sys.stderr)
             sys.exit(1)
@@ -286,8 +286,8 @@ def main():
             registered = set()
             for s in skills:
                 sp = s.get("src_path", "")
-                if sp.startswith("raw/ver-3/"):
-                    registered.add(sp[len("raw/ver-3/"):])
+                if sp.startswith("skills/ver-3/"):
+                    registered.add(sp[len("skills/ver-3/"):])
                 elif sp:
                     registered.add(sp)
             exclude = {"_shared", "roadmaps"}

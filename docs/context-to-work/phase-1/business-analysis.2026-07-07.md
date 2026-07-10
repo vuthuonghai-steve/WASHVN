@@ -26,8 +26,8 @@ trace: "[TỪ ELICITATION], [TỪ ANALYSIS], [SUY LUẬN], [KIỂM ĐỊNH CHÉO
 | Elicitation Report | `docs/context-to-work/phase-1/elicitation-report.2026-07-07.md` | ✅ completed | ~200 |
 | Analysis Report | `docs/context-to-work/phase-1/analysis-report.2026-07-07.md` | ✅ completed | ~250 |
 | Phase 1 Scope | `docs/context-to-work/phase-1/phase-1-transition-scope.2026-07-07.md` | ✅ reference | 1137 |
-| Roadmap Index | `raw/ver-3/roadmaps/index.md` | ✅ reference | 147 |
-| Phase 1 Roadmap | `raw/ver-3/roadmaps/01-knowledge-base-authoring.md` | ✅ reference | 311 |
+| Roadmap Index | `skills/ver-3/roadmaps/index.md` | ✅ reference | 147 |
+| Phase 1 Roadmap | `skills/ver-3/roadmaps/01-knowledge-base-authoring.md` | ✅ reference | 311 |
 
 ---
 

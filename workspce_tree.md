@@ -45,7 +45,7 @@ A comprehensive routing map and layout guide for the WASHVN Master Skill Suite r
     - `scripts/` - Script repository for active utilities
       - `validate_suite_integrity.py` - Python suite integrity validator
       
-  - `raw/ver-3/` - micro-skills raw development sources (symlink to skills/ver-3)
+  - `skills/ver-3/` - micro-skills raw development sources (symlink to skills/ver-3)
     - `_shared/` - Shared assets, schemas, templates, and libraries
       - `schemas/` - Validation schemas (YAML/JSON)
       - `validators/` - Validation helpers

@@ -8,23 +8,23 @@
 
 ## §1: Problem Summary
 
-Dự án tập trung vào **`raw/ver-3/`** — source of truth cho Master Skill Suite. `.agents/skills/` là deployment target (hoàn toàn đồng bộ 120/120 files).
+Dự án tập trung vào **`skills/ver-3/`** — source of truth cho Master Skill Suite. `.agents/skills/` là deployment target (hoàn toàn đồng bộ 120/120 files).
 
 Phát hiện **2 lớp vấn đề**:
 
 | Layer | Problem | Severity |
 |-------|---------|----------|
-| **Trong `raw/ver-3/`** | `skill-knowledge-miner/SKILL.md` ref `.skill-context/karpathy-standards.md` — **file tồn tại ở project khác** (`deep_work_by_steve/.skill-context/`), cần copy vào `_shared/knowledge/` | 🟡 Medium |
+| **Trong `skills/ver-3/`** | `skill-knowledge-miner/SKILL.md` ref `.skill-context/karpathy-standards.md` — **file tồn tại ở project khác** (`deep_work_by_steve/.skill-context/`), cần copy vào `_shared/knowledge/` | 🟡 Medium |
 | **Root-level docs** | `CLAUDE.md` ref `workspce_tree.md` 6 lần — file không tồn tại | 🔴 Critical |
 | **Root-level docs** | `workspce_tree.md` — file missing (typo tên?) | 🔴 Critical |
-| **Root-level docs** | `architecture.md` — Tarot skills + Stage 4/5 lỗi thời (không ảnh hưởng raw/ver-3) | 🟢 Low |
+| **Root-level docs** | `architecture.md` — Tarot skills + Stage 4/5 lỗi thời (không ảnh hưởng skills/ver-3) | 🟢 Low |
 
 ---
 
 ## §2: Entry Point
 
 ```
-raw/ver-3/                         ← SOURCE OF TRUTH (120 files)
+skills/ver-3/                         ← SOURCE OF TRUTH (120 files)
 ├── _shared/                       ← Shared infrastructure (OK)
 ├── ba-*/                          ← BA skills (OK)
 ├── production-*/                  ← Gatekeeper skills (OK)
@@ -44,14 +44,14 @@ raw/ver-3/                         ← SOURCE OF TRUTH (120 files)
 
 | Khu vực | In scope? | Lý do |
 |---------|-----------|-------|
-| `raw/ver-3/` SKILL.md files & refs | ✅ **YES** | Source of truth |
-| `raw/ver-3/_shared/` | ✅ YES | Core infrastructure |
+| `skills/ver-3/` SKILL.md files & refs | ✅ **YES** | Source of truth |
+| `skills/ver-3/_shared/` | ✅ YES | Core infrastructure |
 | `CLAUDE.md` | ⚠️ Partial | Chỉ ref workspce_tree.md — file mapping |
 | `workspce_tree.md` | ⚠️ Partial | Chỉ cần tồn tại hoặc xóa ref |
 | `architecture.md` | ❌ NO | Lỗi thời nhưng không block ver-3 dev |
 | `standards.md` | ❌ NO | Ổn định, không broken refs |
 
-### 3.2 Key Finding: raw/ver-3/ vs .agents/skills/ **100% SYNC**
+### 3.2 Key Finding: skills/ver-3/ vs .agents/skills/ **100% SYNC**
 
 ```
 Files in both:    120
@@ -63,20 +63,20 @@ Files only in agents: 13 (brainstorming + context-before-fix — NOT part of Mas
 
 ## §4: Impact Analysis
 
-### 4.1 Direct Impact (raw/ver-3/)
+### 4.1 Direct Impact (skills/ver-3/)
 
 | # | File | Ref | Line | Status |
 |---|------|-----|------|--------|
-| F1 | `raw/ver-3/skill-knowledge-miner/SKILL.md` | `.skill-context/karpathy-standards.md` | 45 | ❌ NOT FOUND |
-| F2 | `raw/ver-3/skill-knowledge-miner/SKILL.md` | `../_shared/knowledge/framework.md` | 26 | ✅ OK |
-| F3 | `raw/ver-3/skill-knowledge-miner/SKILL.md` | `../_shared/knowledge/case-system.md` | 27 | ✅ OK |
-| F4 | `raw/ver-3/skill-knowledge-miner/SKILL.md` | `../_shared/validators/check_status.py` | 28 | ✅ OK |
-| F5 | `raw/ver-3/skill-knowledge-miner/SKILL.md` | `knowledge/domain-handbook.md` | 74 | ✅ OK |
-| F6 | `raw/ver-3/skill-knowledge-miner/SKILL.md` | `loop/miner-checklist.md` | 47 | ✅ OK |
+| F1 | `skills/ver-3/skill-knowledge-miner/SKILL.md` | `.skill-context/karpathy-standards.md` | 45 | ❌ NOT FOUND |
+| F2 | `skills/ver-3/skill-knowledge-miner/SKILL.md` | `../_shared/knowledge/framework.md` | 26 | ✅ OK |
+| F3 | `skills/ver-3/skill-knowledge-miner/SKILL.md` | `../_shared/knowledge/case-system.md` | 27 | ✅ OK |
+| F4 | `skills/ver-3/skill-knowledge-miner/SKILL.md` | `../_shared/validators/check_status.py` | 28 | ✅ OK |
+| F5 | `skills/ver-3/skill-knowledge-miner/SKILL.md` | `knowledge/domain-handbook.md` | 74 | ✅ OK |
+| F6 | `skills/ver-3/skill-knowledge-miner/SKILL.md` | `loop/miner-checklist.md` | 47 | ✅ OK |
 
-### 4.2 Internal Reference Health (raw/ver-3/)
+### 4.2 Internal Reference Health (skills/ver-3/)
 
-Kiểm tra tất cả internal relative refs trong 11 skill source (`raw/ver-3/`):
+Kiểm tra tất cả internal relative refs trong 11 skill source (`skills/ver-3/`):
 
 | Skill | knowledge/ | templates/ | scripts/ | loop/ | policy/ | data/ | _shared/ | Verdict |
 |-------|-----------|-----------|---------|-------|---------|-------|---------|---------|
@@ -110,16 +110,16 @@ Kiểm tra tất cả internal relative refs trong 11 skill source (`raw/ver-3/`
 | # | Impact | Detail |
 |---|--------|--------|
 | I1 | **skill-knowledge-miner boot sequence lỗi** | `karpathy-standards.md` được load Tier 2 Conditional — khi agent cố gắng load sẽ fail vì file không tồn tại |
-| I2 | **Synced copy cũng mang lỗi** | Vì `.agents/skills/` là cp từ `raw/ver-3/`, lỗi này tồn tại ở cả 2 nơi |
+| I2 | **Synced copy cũng mang lỗi** | Vì `.agents/skills/` là cp từ `skills/ver-3/`, lỗi này tồn tại ở cả 2 nơi |
 | I3 | **workspce_tree.md missing** | 6 refs trong CLAUDE.md trỏ đến file không tồn tại — agent không có routing map |
 
 ---
 
-## §5: Call Chain (raw/ver-3 focused)
+## §5: Call Chain (skills/ver-3 focused)
 
 ```mermaid
 flowchart TD
-    subgraph "raw/ver-3/ (Source of Truth)"
+    subgraph "skills/ver-3/ (Source of Truth)"
         SKM[skill-knowledge-miner/SKILL.md] -.->|BROKEN| KAR[karpathy-standards.md ❌]
         
         subgraph "10 Clean Skills"
@@ -147,9 +147,9 @@ flowchart TD
 ## §6: Evidence
 
 <evidence>
-  <file>raw/ver-3/skill-knowledge-miner/SKILL.md</file>
+  <file>skills/ver-3/skill-knowledge-miner/SKILL.md</file>
   <line>45</line>
-  <finding>Tham chiếu `.skill-context/karpathy-standards.md` — file không tồn tại trong toàn bộ codebase raw/ver-3/ lẫn .agents/skills/</finding>
+  <finding>Tham chiếu `.skill-context/karpathy-standards.md` — file không tồn tại trong toàn bộ codebase skills/ver-3/ lẫn .agents/skills/</finding>
 </evidence>
 
 <evidence>
@@ -159,12 +159,12 @@ flowchart TD
 </evidence>
 
 <evidence>
-  <file>raw/ver-3/</file>
-  <finding>120 files trong raw/ver-3/ hoàn toàn đồng bộ với .agents/skills/ (100% match). Brainstorming + context-before-fix tồn tại ở .agents/ nhưng không trong raw/ver-3/ (không thuộc Master Suite).</finding>
+  <file>skills/ver-3/</file>
+  <finding>120 files trong skills/ver-3/ hoàn toàn đồng bộ với .agents/skills/ (100% match). Brainstorming + context-before-fix tồn tại ở .agents/ nhưng không trong skills/ver-3/ (không thuộc Master Suite).</finding>
 </evidence>
 
 <evidence>
-  <file>raw/ver-3/production-quality-gatekeeper/knowledge/</file>
+  <file>skills/ver-3/production-quality-gatekeeper/knowledge/</file>
   <finding>creative-standards.md tồn tại (3.6K) — counter-check passes. Không phải missing ref.</finding>
 </evidence>
 
@@ -175,7 +175,7 @@ flowchart TD
 | Finding | Confidence | Method |
 |---------|-----------|--------|
 | karpathy-standards.md missing | 100% | find+grep across entire codebase |
-| 120/120 raw/ver-3 ↔ .agents synced | 100% | comm -12 diff |
+| 120/120 skills/ver-3 ↔ .agents synced | 100% | comm -12 diff |
 | All _shared refs valid | 100% | ls each referenced file |
 | All 11 skills' internal refs valid (except SKM) | 100% | read_file + ls verify |
 | workspce_tree.md missing | 100% | ls + find |
@@ -192,7 +192,7 @@ flowchart TD
 | ~~Q1~~ | ~~karpathy-standards.md~~ | ✅ **RESOLVED** — Copy vào `_shared/knowledge/`, fix ref path |
 | ~~Q2~~ | ~~workspce_tree.md~~ | ✅ **RESOLVED** — Tạo file routing map đầy đủ |
 | ~~Q3~~ | ~~architecture.md~~ | ✅ **RESOLVED** — Cập nhật nội dung lỗi thời, thêm audit note |
-| Q4 | Có muốn thêm brainstorming/ và context-before-fix vào raw/ver-3 để quản lý tập trung? | Steve |
+| Q4 | Có muốn thêm brainstorming/ và context-before-fix vào skills/ver-3 để quản lý tập trung? | Steve |
 
 ---
 
@@ -204,15 +204,15 @@ flowchart TD
 
 | File | Action | Before | After |
 |------|--------|--------|-------|
-| `raw/ver-3/_shared/knowledge/karpathy-standards.md` | **COPY** | ❌ Not found | ✅ 15.4K — từ `deep_work_by_steve/.skill-context/` |
-| `raw/ver-3/skill-knowledge-miner/SKILL.md:45` | **EDIT** | `.skill-context/karpathy-standards.md` (broken) | ✅ `../_shared/knowledge/karpathy-standards.md` |
-| `.agents/skills/` | **SYNC** | Outdated (thiếu `karpathy-standards.md`) | ✅ `cp -r raw/ver-3/* .agents/skills/` |
+| `skills/ver-3/_shared/knowledge/karpathy-standards.md` | **COPY** | ❌ Not found | ✅ 15.4K — từ `deep_work_by_steve/.skill-context/` |
+| `skills/ver-3/skill-knowledge-miner/SKILL.md:45` | **EDIT** | `.skill-context/karpathy-standards.md` (broken) | ✅ `../_shared/knowledge/karpathy-standards.md` |
+| `.agents/skills/` | **SYNC** | Outdated (thiếu `karpathy-standards.md`) | ✅ `cp -r skills/ver-3/* .agents/skills/` |
 
 ### 9.2 Verification Results
 
 | Check | Result |
 |-------|--------|
-| Karpathy file exists at destination | ✅ `/raw/ver-3/_shared/knowledge/karpathy-standards.md` — 15.4K |
+| Karpathy file exists at destination | ✅ `/skills/ver-3/_shared/knowledge/karpathy-standards.md` — 15.4K |
 | Ref path updated in SKILL.md | ✅ `../_shared/knowledge/karpathy-standards.md` |
 | Full integrity scan — 11/11 skill sources | ✅ **0 broken refs** |
 | raw ↔ .agents sync diff | ✅ **Empty** (brainstorming/ context-before-fix/ only in .agents/ — expected) |
@@ -220,7 +220,7 @@ flowchart TD
 
 ### 9.3 Final State
 
-- **120 files** raw/ver-3 ↔ .agents/skills 100% matched
+- **120 files** skills/ver-3 ↔ .agents/skills 100% matched
 - **11/11 skills** — all internal + cross refs valid
 - **0 broken references** trong Master Skill Suite
 - **`_shared/knowledge/`** tăng từ 4 → 5 files (thêm `karpathy-standards.md`)
@@ -231,9 +231,9 @@ flowchart TD
 
 **Summary**:
 - **~1~ 0 broken refs** trong Master Skill Suite ✅ ĐÃ FIX
-- **120/120 files** raw/ver-3 ↔ .agents/skills hoàn toàn đồng bộ
-- **11/11 skill sources** trong raw/ver-3 sạch refs hoàn toàn
+- **120/120 files** skills/ver-3 ↔ .agents/skills hoàn toàn đồng bộ
+- **11/11 skill sources** trong skills/ver-3 sạch refs hoàn toàn
 - **`workspce_tree.md`** ✅ ĐÃ TẠO — routing map đầy đủ
 - **`architecture.md`** ✅ ĐÃ CẬP NHẬT — xóa Tarot skills, sửa progressive disclosure, thêm audit note
 - **`_shared/knowledge/`** tăng từ 4 → 5 files (thêm `karpathy-standards.md`)
-- **1 open question**: brainstorming/ + context-before-fix có đưa vào raw/ver-3 không?
+- **1 open question**: brainstorming/ + context-before-fix có đưa vào skills/ver-3 không?

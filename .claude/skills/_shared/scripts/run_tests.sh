@@ -2,8 +2,8 @@
 set -e
 
 REPO_ROOT=$(pwd)
-VALIDATOR="python3 $REPO_ROOT/raw/ver-3/_shared/validators/schema_validator.py"
-FIXTURES_DIR="$REPO_ROOT/raw/ver-3/_shared/fixtures"
+VALIDATOR="python3 $REPO_ROOT/skills/ver-3/_shared/validators/schema_validator.py"
+FIXTURES_DIR="$REPO_ROOT/skills/ver-3/_shared/fixtures"
 
 echo "=== Running Schema Validation Tests ==="
 

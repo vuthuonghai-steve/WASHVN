@@ -64,7 +64,7 @@ prerequisites:
 
 **Role**: Nhận business-analysis.md + user_skill_request, output exploration.md + criteria.md. Tính SCS (1.0-5.0) và ghi frozen score với hysteresis flag (Γ-3 fix).
 
-### D6-1-1: `raw/ver-3/skill-explorer/SKILL.md`
+### D6-1-1: `skills/ver-3/skill-explorer/SKILL.md`
 
 ```yaml
 ---
@@ -111,7 +111,7 @@ Body: standard pattern with workflow_phases:
 </acceptance_criteria>
 ```
 
-### D6-1-2: `raw/ver-3/skill-explorer/knowledge/scs_reference_table.yaml`
+### D6-1-2: `skills/ver-3/skill-explorer/knowledge/scs_reference_table.yaml`
 
 YAML reference cho SCS calculation factors:
 
@@ -146,17 +146,17 @@ hysteresis_action:
   - post_cap_rule: "After 1 re-eval, if SCS still ∈ [2.7, 3.3], route to Branch B (Full OMSP) as conservative default. Do NOT trigger additional re-evals."
 ```
 
-### D6-1-3: `raw/ver-3/skill-explorer/templates/exploration_template.md`
+### D6-1-3: `skills/ver-3/skill-explorer/templates/exploration_template.md`
 
-### D6-1-4: `raw/ver-3/skill-explorer/templates/criteria_template.md`
+### D6-1-4: `skills/ver-3/skill-explorer/templates/criteria_template.md`
 
-### D6-1-5: `raw/ver-3/skill-explorer/loop/scs_audit_checklist.md`
+### D6-1-5: `skills/ver-3/skill-explorer/loop/scs_audit_checklist.md`
 
-### D6-1-6: `raw/ver-3/skill-explorer/scripts/compute_scs.py`
+### D6-1-6: `skills/ver-3/skill-explorer/scripts/compute_scs.py`
 
 Python helper script — given exploration raw data, output SCS score with hysteresis check.
 
-### D6-1-7: `raw/ver-3/skill-explorer/data/drc.yaml`
+### D6-1-7: `skills/ver-3/skill-explorer/data/drc.yaml`
 
 ---
 
@@ -164,7 +164,7 @@ Python helper script — given exploration raw data, output SCS score with hyste
 
 **Role**: Miner từ spec P6 — consume exploration.md, mine domain knowledge from local files + git history + any existing related skill patterns, output domain-handbook.md.
 
-### D6-2-1: `raw/ver-3/skill-knowledge-miner/SKILL.md`
+### D6-2-1: `skills/ver-3/skill-knowledge-miner/SKILL.md`
 
 ```yaml
 ---
@@ -187,7 +187,7 @@ Workflow phasesdatetime:
 ```markdown
 <workflow_phases>
 1. Read exploration.md + business-analysis.md (if available)
-2. <phase_scan_workspace>: Search for related skill knowledge/ docs, glossaries, exemplars in raw/ver-3/_shared/, .claude/knowledge/
+2. <phase_scan_workspace>: Search for related skill knowledge/ docs, glossaries, exemplars in skills/ver-3/_shared/, .claude/knowledge/
 3. <phase_extract_terms>: Identify domain-specific terms (≥10 in glossary)
 4. <phase_extract_antipatterns>: From miner_search_script (script below), find anti-patterns common trong domain
 5. <phase_extract_exemplars>: 1-2 reference implementations (canonical patterns)
@@ -211,7 +211,7 @@ Remaining 6 files analogous (knowledge/, templates/, loop/, scripts/mine_for_ter
 
 **Role**: Architect theo spec P1 — consume exploration.md + domain-handbook.md, output design.md (7-Zone mapping).
 
-### D6-3-1: `raw/ver-3/skill-architect/SKILL.md`
+### D6-3-1: `skills/ver-3/skill-architect/SKILL.md`
 
 ```yaml
 ---
@@ -257,7 +257,7 @@ Workflow:
 
 **Role**: Quality gatekeeper theo spec P1 + P3 — consume design.md, evaluate per META-1→3 criteria, write quality-matrix.yaml.
 
-### D6-4-1: `raw/ver-3/production-quality-gatekeeper/SKILL.md`
+### D6-4-1: `skills/ver-3/production-quality-gatekeeper/SKILL.md`
 
 ```yaml
 ---
@@ -310,7 +310,7 @@ Workflow:
 
 **Role**: Planner spec P3 — consume design.md + quality-matrix.yaml, produce todo.md (DAG).
 
-### D6-5-1: `raw/ver-3/skill-planner/SKILL.md`
+### D6-5-1: `skills/ver-3/skill-planner/SKILL.md`
 
 ```yaml
 ---
@@ -365,7 +365,7 @@ Workflow:
 
 **Role**: Builder — consume todo.md + design.md, build actual code + scripts + SKILL.md.
 
-### D6-6-1: `raw/ver-3/skill-builder/SKILL.md`
+### D6-6-1: `skills/ver-3/skill-builder/SKILL.md`
 
 ```yaml
 ---
@@ -388,7 +388,7 @@ Workflow:
 ```markdown
 <workflow_phases>
 1. Read todo.md, design.md, quality-matrix.yaml
-2. <phase_orient>: Determine target skill's full path (raw/ver-3/<target_skill>/ + .claude/skills/<target_skill>/)
+2. <phase_orient>: Determine target skill's full path (skills/ver-3/<target_skill>/ + .claude/skills/<target_skill>/)
 3. <phase_task_iteration>: For each task in todo.md (in DAG order):
    a. Read task's zone target
    b. Write file content per design.md spec
@@ -424,7 +424,7 @@ Workflow:
 
 **Role**: Code reviewer theo spec P5 — consume build-log.md, run static analysis, output review-report.md.
 
-### D6-7-1: `raw/ver-3/production-code-reviewer/SKILL.md`
+### D6-7-1: `skills/ver-3/production-code-reviewer/SKILL.md`
 
 ```yaml
 ---
@@ -471,7 +471,7 @@ Workflow:
 
 **Role**: Security audit — consume build-log.md, OWASP top 10 + secret scan + unsafe patterns check.
 
-### D6-8-1: `raw/ver-3/skill-security-reviewer/SKILL.md`
+### D6-8-1: `skills/ver-3/skill-security-reviewer/SKILL.md`
 
 ```yaml
 ---
@@ -608,7 +608,7 @@ echo "AC-5 PASS"
 ### AC-6 — Schema validator passes on every artifact
 ```bash
 for artifact in exploration criteria design quality-matrix todo build-log review-report audit-metrics security-review; do
-  python3 raw/ver-3/_shared/validators/schema_validator.py --artifact $artifact --path .skill-context/mock-prompt-cleaner/$artifact* 2>&1 | grep -q "PASS" || exit 1
+  python3 skills/ver-3/_shared/validators/schema_validator.py --artifact $artifact --path .skill-context/mock-prompt-cleaner/$artifact* 2>&1 | grep -q "PASS" || exit 1
 done
 echo "AC-6 PASS"
 ```
@@ -643,7 +643,7 @@ For each skill (8 iterations):
 9. **Fix findings** until score ≥70%
 10. **Test invoke skill** with mock data (skill-explorer receives mock business-analysis.md, etc.)
 11. **Commit atomic** per skill: `phase-6: <skill-name> built + tested`
-12. **Deploy** via deploy script (move raw/ver-3/<skill-name>/ to .claude/skills/<skill-name/>)
+12. **Deploy** via deploy script (move skills/ver-3/<skill-name>/ to .claude/skills/<skill-name/>)
 
 After all 8 deployed:
 - Run AC-1 to AC-8 sequentially

@@ -49,7 +49,7 @@ Giới hạn trong phạm vi:
 
 Không bao gồm:
   - Source code implementation (chưa có)
-  - raw/ver-3/ skills source
+  - skills/ver-3/ skills source
   - Runtime .claude/skills/
 ```
 

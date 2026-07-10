@@ -151,7 +151,7 @@ phase_2_todo_checklist:
       subtasks:
         - "[ ] Tạo file tại .claude/hooks/events/pre-tool-use_write_gate.sh"
         - "[ ] Viết code đọc stdin và trích xuất tool_input.file_path bằng jq"
-        - "[ ] Định nghĩa regex kiểm tra danh sách cho phép (Allowlist): .claude/, raw/ver-3/, .skill-context/, docs/context-to-work/, Temps/spec/"
+        - "[ ] Định nghĩa regex kiểm tra danh sách cho phép (Allowlist): .claude/, skills/ver-3/, .skill-context/, docs/context-to-work/, Temps/spec/"
         - "[ ] Trả về exit 2 và in thông điệp lỗi ra stderr nếu path không khớp Allowlist"
         - "[ ] Trả về exit 0 nếu path hợp lệ"
         - "[ ] Thiết lập graceful degradation: nếu jq không available, exit 2 (fail closed) và ghi lỗi ra stderr"

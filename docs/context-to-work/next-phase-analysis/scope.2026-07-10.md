@@ -14,7 +14,7 @@ Xác định phase tiếp theo cần triển khai trong **Master Skill Suite Reb
 2. `Temps/spec/architects/shared/` — thiết kế kiến trúc 5-Layer pipeline + quality gates
 3. `Temps/spec/architects/indexes/` — tra cứu spec theo role/domain/design
 4. `skills/ver-3/roadmaps/` — roadmap source files cho từng phase
-5. Filesystem state thực tế của `raw/ver-3/`
+5. Filesystem state thực tế của `skills/ver-3/`
 
 ---
 
@@ -109,7 +109,7 @@ out_of_scope:
 | Task | Deliverable | Hiện trạng |
 |:-----|:------------|:-----------|
 | 1 | Plan Durante — review spec P0-P7 | Chưa làm |
-| 2 | 14 schemas (`raw/ver-3/_shared/schemas/`) | Stub `# schema stub — Phase 4 fill` |
+| 2 | 14 schemas (`skills/ver-3/_shared/schemas/`) | Stub `# schema stub — Phase 4 fill` |
 | 3 | `schema_validator.py` (~250 dòng) | Empty dir (chỉ .gitkeep) |
 | 4 | `artifact_lifecycle.py` (~150 dòng) | Empty dir |
 | 5 | `drc_contract_template.yaml` | Chưa tồn tại |
@@ -218,9 +218,9 @@ Gánh nặng block:
 - `Temps/spec/architects/{P0-P7}/` — ~45 spec files, ~2,049 dòng
 - `skills/ver-3/roadmaps/04-skill-pipeline-scaffold.md` — Phase 4 roadmap (501 dòng)
 - `skills/ver-3/roadmaps/05-skill-build-ba-pipeline.md` — Phase 5 roadmap (642 dòng)
-- `raw/ver-3/_shared/schemas/` — 14 schema stubs (31 bytes each)
-- `raw/ver-3/_shared/validators/` — empty
-- `raw/ver-3/ba-{elicitor,analyst,synthesizer}/` — empty SKILL.md + .gitkeep
+- `skills/ver-3/_shared/schemas/` — 14 schema stubs (31 bytes each)
+- `skills/ver-3/_shared/validators/` — empty
+- `skills/ver-3/ba-{elicitor,analyst,synthesizer}/` — empty SKILL.md + .gitkeep
 
 ### 6.2 Output scope
 - Scope document này (không fix code)
@@ -241,13 +241,13 @@ Gánh nặng block:
 
 ### 7.1 Files (Phase 4 scope)
 ```
-raw/ver-3/_shared/schemas/            ← 14 files cần author (từ stub)
-raw/ver-3/_shared/validators/         ← 2 scripts cần tạo mới
-raw/ver-3/_shared/templates/          ← 3 templates cần tạo mới
-raw/ver-3/_shared/knowledge/          ← karpathy-standards.md cần tạo
-raw/ver-3/_shared/data/               ← artifact_registry.yaml cần tạo
-raw/ver-3/_shared/scripts/            ← drc_resolver.py cần tạo
-raw/ver-3/_shared/tests/              ← 28 fixtures cần tạo
+skills/ver-3/_shared/schemas/            ← 14 files cần author (từ stub)
+skills/ver-3/_shared/validators/         ← 2 scripts cần tạo mới
+skills/ver-3/_shared/templates/          ← 3 templates cần tạo mới
+skills/ver-3/_shared/knowledge/          ← karpathy-standards.md cần tạo
+skills/ver-3/_shared/data/               ← artifact_registry.yaml cần tạo
+skills/ver-3/_shared/scripts/            ← drc_resolver.py cần tạo
+skills/ver-3/_shared/tests/              ← 28 fixtures cần tạo
 ```
 
 ### 7.2 Functions/APIs (Phase 4 scope)
@@ -269,37 +269,37 @@ raw/ver-3/_shared/tests/              ← 28 fixtures cần tạo
 ## §8: Evidence
 
 <evidence>
-<file>raw/ver-3/_shared/schemas/exploration.schema.yaml</file>
+<file>skills/ver-3/_shared/schemas/exploration.schema.yaml</file>
 <line>1</line>
 <finding>Schema stub: chỉ có `# schema stub — Phase 4 fill` — chưa có field definitions</finding>
 </evidence>
 
 <evidence>
-<file>raw/ver-3/_shared/schemas/criteria.schema.json</file>
+<file>skills/ver-3/_shared/schemas/criteria.schema.json</file>
 <line>1</line>
 <finding>JSON stub: `{}` — empty object, chưa có criteria schema</finding>
 </evidence>
 
 <evidence>
-<file>raw/ver-3/_shared/validators/</file>
+<file>skills/ver-3/_shared/validators/</file>
 <line>1</line>
 <finding>Validators directory empty — schema_validator.py và artifact_lifecycle.py chưa tồn tại</finding>
 </evidence>
 
 <evidence>
-<file>raw/ver-3/ba-elicitor/SKILL.md</file>
+<file>skills/ver-3/ba-elicitor/SKILL.md</file>
 <line>1</line>
 <finding>BA skill: 0 byte — chưa có nội dung SKILL.md thực tế</finding>
 </evidence>
 
 <evidence>
-<file>raw/ver-3/ba-analyst/SKILL.md</file>
+<file>skills/ver-3/ba-analyst/SKILL.md</file>
 <line>1</line>
 <finding>BA skill: 0 byte — chưa có nội dung SKILL.md thực tế</finding>
 </evidence>
 
 <evidence>
-<file>raw/ver-3/ba-synthesizer/SKILL.md</file>
+<file>skills/ver-3/ba-synthesizer/SKILL.md</file>
 <line>1</line>
 <finding>BA skill: 0 byte — chưa có nội dung SKILL.md thực tế</finding>
 </evidence>

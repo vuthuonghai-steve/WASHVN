@@ -314,7 +314,7 @@ echo "B3 PASS — agents integration"
 ### B4: Schema DRC integration test
 
 ```bash
-python3 raw/ver-3/_shared/scripts/drc_resolver.py --all
+python3 skills/ver-3/_shared/scripts/drc_resolver.py --all
 # Expect exit 0 — all 11 skills have valid DRC pointing to existing schemas
 echo "B4 PASS — DRC integration"
 ```

@@ -29,7 +29,7 @@ prerequisites:
 
 ## Skill 1: `sandbox-tester` (Stage 4)
 
-### D7-1-1: `raw/ver-3/sandbox-tester/SKILL.md`
+### D7-1-1: `skills/ver-3/sandbox-tester/SKILL.md`
 
 ```yaml
 ---
@@ -105,7 +105,7 @@ must_not:
 <output_contract>
 - file_id: verification
   path: .skill-context/{target_skill}/verification.md
-  schema: raw/ver-3/_shared/schemas/verification.schema.yaml
+  schema: skills/ver-3/_shared/schemas/verification.schema.yaml
   lifecycle: WORM
 - file_id: rollback_request (conditional)
   path: .skill-context/{target_skill}/rollback_request.yaml
@@ -130,7 +130,7 @@ must_not:
 </failure_modes>
 ```
 
-### D7-1-2: `raw/ver-3/sandbox-tester/knowledge/docker_patterns.md`
+### D7-1-2: `skills/ver-3/sandbox-tester/knowledge/docker_patterns.md`
 
 Knowledge doc about Docker isolation patterns:
 
@@ -139,14 +139,14 @@ Knowledge doc about Docker isolation patterns:
 
 ## Pattern 1: Pure Python skill testing
 FROM python:3.10-slim
-COPY raw/ver-3/<target_skill>/ /sandbox/
+COPY skills/ver-3/<target_skill>/ /sandbox/
 WORKDIR /sandbox/
 RUN pip install --no-cache-dir <deps>
 CMD ["python3", "scripts/validate_outputs.py"]
 
 ## Pattern 2: Shell script skill testing
 FROM bash:5
-COPY raw/ver-3/<target_skill>/ /sandbox/
+COPY skills/ver-3/<target_skill>/ /sandbox/
 WORKDIR /sandbox/
 CMD ["bash", "scripts/run_test.sh"]
 
@@ -154,7 +154,7 @@ CMD ["bash", "scripts/run_test.sh"]
 FROM python:3.10-slim
 # Need jq for hooks
 RUN apt-get update && apt-get install -y jq && rm -rf /var/lib/apt/lists/*
-COPY raw/ver-3/<target_skill>/ /sandbox/
+COPY skills/ver-3/<target_skill>/ /sandbox/
 WORKDIR /sandbox/
 # Hooks need stdin JSON
 CMD ["echo $TEST_JSON | bash scripts/hook_under_test.sh"]
@@ -162,12 +162,12 @@ CMD ["echo $TEST_JSON | bash scripts/hook_under_test.sh"]
 ## Pattern 4: Network-isolated
 FROM python:3.10-slim
 # Disable network at build AND run
-COPY raw/ver-3/<target_skill>/ /sandbox/
+COPY skills/ver-3/<target_skill>/ /sandbox/
 WORKDIR /sandbox/
 # docker run --network=none ...
 ```
 
-### D7-1-3: `raw/ver-3/sandbox-tester/templates/verification_template.md`
+### D7-1-3: `skills/ver-3/sandbox-tester/templates/verification_template.md`
 
 ```markdown
 ---
@@ -213,7 +213,7 @@ Target stage: Stage 1 (re-design)
 Action: bk-dated to skill-architect for redesign
 ```
 
-### D7-1-4: `raw/ver-3/sandbox-tester/templates/rollback_request_template.yaml`
+### D7-1-4: `skills/ver-3/sandbox-tester/templates/rollback_request_template.yaml`
 
 ```yaml
 # Triggered when verification.md verdict = FAIL
@@ -228,9 +228,9 @@ target_stage: "Stage 1"  # architect re-design
 requested_at: <timestamp>
 ```
 
-### D7-1-5: `raw/ver-3/sandbox-tester/loop/sandbox_checklist.md`
+### D7-1-5: `skills/ver-3/sandbox-tester/loop/sandbox_checklist.md`
 
-### D7-1-6: `raw/ver-3/sandbox-tester/scripts/build_and_run.py`
+### D7-1-6: `skills/ver-3/sandbox-tester/scripts/build_and_run.py`
 
 Master script — orchestrates docker build + run + log aggregation:
 
@@ -253,9 +253,9 @@ Usage:
 # 7. If FAIL: write rollback_request.yaml
 ```
 
-### D7-1-7: `raw/ver-3/sandbox-tester/data/drc.yaml`
+### D7-1-7: `skills/ver-3/sandbox-tester/data/drc.yaml`
 
-### D7-1-8: `raw/ver-3/sandbox-tester/loop/rollback_decision_tree.md`
+### D7-1-8: `skills/ver-3/sandbox-tester/loop/rollback_decision_tree.md`
 
 ```markdown
 # Rollback Decision Tree
@@ -275,7 +275,7 @@ Usage:
 
 ## Skill 2: `indexer` (Stage 5)
 
-### D7-2-1: `raw/ver-3/indexer/SKILL.md`
+### D7-2-1: `skills/ver-3/indexer/SKILL.md`
 
 ```yaml
 ---
@@ -309,7 +309,7 @@ Workflow:
 
 <output_contract>
 - file_id: readme
-  path: raw/ver-3/<skill>/README.md
+  path: skills/ver-3/<skill>/README.md
   schema: skill README template
 - file_id: llms_txt_update
   path: ./llms.txt (workspace root)
@@ -367,7 +367,7 @@ python3 .claude/skills/sandbox-tester/scripts/build_and_run.py --target-skill $T
 # Verify:
 test -f .skill-context/$TARGET/verification.md
 # Verify schema:
-python3 raw/ver-3/_shared/validators/schema_validator.py --artifact verification --path .skill-context/$TARGET/verification.md
+python3 skills/ver-3/_shared/validators/schema_validator.py --artifact verification --path .skill-context/$TARGET/verification.md
 echo "AC-3 PASS"
 ```
 

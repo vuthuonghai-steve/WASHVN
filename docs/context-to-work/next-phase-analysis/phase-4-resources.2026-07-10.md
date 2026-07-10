@@ -18,7 +18,7 @@
 6. **28 test fixtures** (2 per schema)
 7. **1 knowledge doc** (`karpathy-standards.md`)
 
-**Path**: `raw/ver-3/_shared/` (nơi lưu tất cả deliverables)
+**Path**: `skills/ver-3/_shared/` (nơi lưu tất cả deliverables)
 **Dependency**: Phase 0 (✅ done — scaffold + suite_config.yaml)
 **Downstream**: Phase 5 (BA Skills), Phase 6 (Main Pipeline), Phase 7 (Sandbox+Indexer)
 
@@ -77,12 +77,12 @@
 
 | Resource | Status | Note |
 |:---------|:-------|:-----|
-| `raw/ver-3/_shared/schemas/` (14 files) | ⬜ Stub | `# schema stub — Phase 4 fill` |
-| `raw/ver-3/_shared/validators/` | ⬜ Empty | Chỉ `.gitkeep` |
-| `raw/ver-3/_shared/scripts/` | ⬜ Empty | Chỉ `.gitkeep` |
-| `raw/ver-3/_shared/templates/` | ⬜ Empty | Chỉ `.gitkeep` |
-| `raw/ver-3/_shared/knowledge/` | ⬜ Empty | Chỉ `.gitkeep` |
-| `raw/ver-3/_shared/data/` | ⬜ Empty | Chỉ `.gitkeep` |
+| `skills/ver-3/_shared/schemas/` (14 files) | ⬜ Stub | `# schema stub — Phase 4 fill` |
+| `skills/ver-3/_shared/validators/` | ⬜ Empty | Chỉ `.gitkeep` |
+| `skills/ver-3/_shared/scripts/` | ⬜ Empty | Chỉ `.gitkeep` |
+| `skills/ver-3/_shared/templates/` | ⬜ Empty | Chỉ `.gitkeep` |
+| `skills/ver-3/_shared/knowledge/` | ⬜ Empty | Chỉ `.gitkeep` |
+| `skills/ver-3/_shared/data/` | ⬜ Empty | Chỉ `.gitkeep` |
 
 ---
 
@@ -390,7 +390,7 @@ optional:
 
 ### 4.1 schema_validator.py
 
-**Path**: `raw/ver-3/_shared/validators/schema_validator.py`
+**Path**: `skills/ver-3/_shared/validators/schema_validator.py`
 **Dependencies**: `pyyaml`, `jsonschema`, `click` (CLI)
 **Size**: ~250 dòng
 **Exit codes**: 0=pass, 1=validation error, 2=path error, 3=config error
@@ -414,7 +414,7 @@ python3 schema_validator.py --skills-registry                          # Cross-c
 
 ### 4.2 artifact_lifecycle.py
 
-**Path**: `raw/ver-3/_shared/validators/artifact_lifecycle.py`
+**Path**: `skills/ver-3/_shared/validators/artifact_lifecycle.py`
 **Size**: ~150 dòng
 
 **Checks**:
@@ -428,7 +428,7 @@ python3 schema_validator.py --skills-registry                          # Cross-c
 
 ### 4.3 drc_resolver.py
 
-**Path**: `raw/ver-3/_shared/scripts/drc_resolver.py`
+**Path**: `skills/ver-3/_shared/scripts/drc_resolver.py`
 **Size**: ~150 dòng
 
 **CLI Interface**:
@@ -440,7 +440,7 @@ python3 drc_resolver.py --registry-only --registry <path>  # Verify registry con
 
 **Checks**:
 1. Mỗi skill frontmatter `output_contract` path tồn tại
-2. Schema file referenced tồn tại trong `raw/ver-3/_shared/schemas/`
+2. Schema file referenced tồn tại trong `skills/ver-3/_shared/schemas/`
 3. Path template resolve được
 4. Input/output contracts match artifact_registry.yaml
 
@@ -450,7 +450,7 @@ python3 drc_resolver.py --registry-only --registry <path>  # Verify registry con
 
 ### 5.1 DRC Contract Template
 
-**Path**: `raw/ver-3/_shared/templates/drc_contract_template.yaml`
+**Path**: `skills/ver-3/_shared/templates/drc_contract_template.yaml`
 **Format**: YAML
 **Source spec**: `roadmaps/04` D4-4 (đã có template mẫu chi tiết)
 **Purpose**: Output contract format cho mỗi skill Phase 5-7
@@ -484,7 +484,7 @@ state_persistence:
 
 ### 5.2 Skill Skeleton Template
 
-**Path**: `raw/ver-3/_shared/templates/skill_skeleton.md`
+**Path**: `skills/ver-3/_shared/templates/skill_skeleton.md`
 **Format**: Markdown + YAML frontmatter
 **Source spec**: `roadmaps/04` D4-6 (đã có skeleton mẫu)
 
@@ -503,7 +503,7 @@ name, description, suite, version, category, stage, target_variable, tags, when_
 
 ### 5.3 Skill README Template
 
-**Path**: `raw/ver-3/_shared/templates/skill_readme_template.md`
+**Path**: `skills/ver-3/_shared/templates/skill_readme_template.md`
 **Format**: Markdown
 **Source spec**: `roadmaps/04` D4-5 (đã có template mẫu)
 
@@ -513,7 +513,7 @@ name, description, suite, version, category, stage, target_variable, tags, when_
 
 ## §6: artifact_registry.yaml Specifications
 
-**Path**: `raw/ver-3/_shared/artifact_registry.yaml`
+**Path**: `skills/ver-3/_shared/artifact_registry.yaml`
 **Format**: YAML
 **Entries**: 14 (mapping đến 14 schemas)
 **Source spec**: `roadmaps/04` D4-7 + `Temps/spec/architects/P0/artifact-registry.md`
@@ -527,7 +527,7 @@ artifacts:
     format: <markdown|yaml|json>
     created_by: <skill/agent name>
     consumed_by: [<skill names>]
-    schema: raw/ver-3/_shared/schemas/<schema_file>
+    schema: skills/ver-3/_shared/schemas/<schema_file>
     lifecycle: <WORM|append-only|versioned>
 ```
 
@@ -564,7 +564,7 @@ artifacts:
 
 ## §7: Test Fixture Specifications
 
-**Path**: `raw/ver-3/_shared/test_fixtures/`
+**Path**: `skills/ver-3/_shared/test_fixtures/`
 **Total**: 28 files (2 per schema: 1 valid + 1 broken)
 
 **Naming convention**:
@@ -691,13 +691,13 @@ Batch 7:  ─── Knowledge Doc + AC Run
 
 ```yaml
 phase_4_deliverables:
-  schemas: 14 files → raw/ver-3/_shared/schemas/
-  validators: 2 scripts → raw/ver-3/_shared/validators/
-  scripts: 1 resolver → raw/ver-3/_shared/scripts/
-  templates: 3 files → raw/ver-3/_shared/templates/
-  registry: 1 file → raw/ver-3/_shared/artifact_registry.yaml
-  fixtures: 28 files → raw/ver-3/_shared/test_fixtures/
-  knowledge: 1 file → raw/ver-3/_shared/knowledge/karpathy-standards.md
+  schemas: 14 files → skills/ver-3/_shared/schemas/
+  validators: 2 scripts → skills/ver-3/_shared/validators/
+  scripts: 1 resolver → skills/ver-3/_shared/scripts/
+  templates: 3 files → skills/ver-3/_shared/templates/
+  registry: 1 file → skills/ver-3/_shared/artifact_registry.yaml
+  fixtures: 28 files → skills/ver-3/_shared/test_fixtures/
+  knowledge: 1 file → skills/ver-3/_shared/knowledge/karpathy-standards.md
 
 key_resources:
   primary_spec: "skills/ver-3/roadmaps/04-skill-pipeline-scaffold.md"

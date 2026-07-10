@@ -77,7 +77,7 @@ It ONLY plans — no implementation code or architecture design is created here.
     - file_id: "execution_plan"
       path_template: ".skill-context/{target_skill}/todo.md"
       format: "markdown"
-      schema: "raw/ver-3/_shared/schemas/todo.schema.yaml"
+      schema: "skills/ver-3/_shared/schemas/todo.schema.yaml"
 </output_contract>
 
 ---
