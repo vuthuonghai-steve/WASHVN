@@ -1,0 +1,46 @@
+skill_name: "ba-analyst"
+skill_version: "0.0.1"
+suite: "WASHVN"
+last_updated: "2026-07-11"
+
+inputs:
+  - name: "elicitation_report"
+    path_template: ".skill-context/{feature}/ba-elicitor/elicitation-report.md"
+    format: "markdown"
+    schema: "skills/ver-3/_shared/schemas/elicitation.schema.yaml"
+    required: true
+    consumed_by: "ba-analyst"
+    downstream_phase: "ba-0.5"
+
+  - name: "thought_cache"
+    path_template: ".skill-context/{feature}/ba-elicitor/thought-cache.yaml"
+    format: "yaml"
+    schema: "skills/ver-3/_shared/schemas/thought-cache.schema.yaml"
+    required: false
+    consumed_by: "ba-analyst"
+    downstream_phase: "ba-0.5"
+
+outputs:
+  - file_id: "analysis_report"
+    path_template: ".skill-context/{feature}/ba-analyst/analysis-report.md"
+    format: "markdown"
+    schema: "skills/ver-3/_shared/schemas/analysis.schema.yaml"
+    lifecycle_status: "WORM"
+    versioning: "semver"
+
+routing:
+  upstream_skills:
+    - "ba-elicitor"
+  downstream_skills:
+    - "ba-synthesizer"
+  fallback_targets:
+    - trigger: "validation_fail"
+      target_skill: "ba-elicitor"
+      target_stage: "re-elicit"
+
+state_persistence:
+  context_bus_write: true
+  state_yaml_write: true
+  fields_to_write:
+    - "feature_name"
+    - "analysis_report_path"

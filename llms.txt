@@ -1,0 +1,26 @@
+# WASHVN Master Skill Suite
+
+> LLM-readable index of installed Claude Code skills in this workspace. Paths point to the active runtime (`.claude/skills/`). Source of truth for builds: `skills/ver-3/`. Registry: `skills-registry.json`.
+
+## BA Pipeline (Stages -1 → -0.5 → -0.2)
+
+- [ba-analyst](.claude/skills/ba-analyst/SKILL.md) - Phân tích, thiết kế kỹ thuật, phân loại yêu cầu FR/NFR, vẽ Mermaid diagrams, viết Gherkin scenarios từ elicitation-report.
+- [ba-elicitor](.claude/skills/ba-elicitor/SKILL.md) - BA Pipeline Stage -1: khơi gợi, chuẩn hóa yêu cầu thô, lượng hóa NFR. Kích hoạt vector space chuyên gia BA qua 6 mindset keywords + BABOK/ISO 25010.
+- [ba-synthesizer](.claude/skills/ba-synthesizer/SKILL.md) - BA Synthesizer - Hợp nhất, kiểm định chéo và đánh giá chất lượng tài liệu nghiệp vụ
+
+## Master Skill Suite (8-Stage Pipeline)
+
+- [production-code-reviewer](.claude/skills/production-code-reviewer/SKILL.md) - Google Code Reviewer - Phân tích tĩnh code, phát hiện bug, placeholder và chấm điểm chất lượng
+- [production-quality-gatekeeper](.claude/skills/production-quality-gatekeeper/SKILL.md) - Quality Gatekeeper - Đóng cổng thiết kế và chạy phản biện tự động nâng cấp chất lượng bản vẽ
+- [skill-architect](.claude/skills/skill-architect/SKILL.md) - Architect - Thiết kế kiến trúc kỹ năng theo mô hình 7 Zones và tạo sơ đồ Mermaid chi tiết
+- [skill-builder](.claude/skills/skill-builder/SKILL.md) - Builder - Xây dựng mã nguồn thực tế và scripts cho kỹ năng đích mà không có placeholder
+- [skill-explorer](.claude/skills/skill-explorer/SKILL.md) - Explorer - Khảo sát tài nguyên, kiến thức, tiêu chuẩn và đánh giá độ phức tạp SCS trước khi thiết kế
+- [skill-knowledge-miner](.claude/skills/skill-knowledge-miner/SKILL.md) - Knowledge Miner - Khai thác và lượng hóa tri thức đặc thù dự án hoặc các API liên quan
+- [skill-planner](.claude/skills/skill-planner/SKILL.md) - Planner - Lập kế hoạch thực thi dạng DAG dựa trên các tiêu chí test case và bản vẽ thiết kế
+- [skill-security-reviewer](.claude/skills/skill-security-reviewer/SKILL.md) - Security Reviewer - Thực hiện đánh giá an ninh cho mã nguồn của kỹ năng dựa trên OWASP
+
+## Unregistered (present in runtime, NOT in skills-registry.json)
+
+- [context-before-fix](.claude/skills/context-before-fix/SKILL.md) - Skill phân tích scope vấn đề trước khi fix. Trigger khi user/agent có issue, bug, cần sửa, hoặc thêm mới tính năng. Output: scope context document tại docs/context-to-work/{feature-name}/. KHÔNG sửa code — chỉ document findings.  _(needs registry entry)_
+- [indexer](.claude/skills/indexer/SKILL.md) - (no description)  _(needs registry entry)_
+- [sandbox-tester](.claude/skills/sandbox-tester/SKILL.md) - (no description)  _(needs registry entry)_
