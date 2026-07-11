@@ -1,0 +1,79 @@
+$schema: "http://json-schema.org/draft-07/schema#"
+$id: "washvn://schemas/thought-cache"
+title: "Thought Cache Schema"
+description: "Schema for the thought cache artifact (skill-explorer — cognitive trace including thought blocks, stakeholder empathy, and defensive reasoning)"
+type: "object"
+required:
+  - skill_name
+  - thought_blocks
+  - stakeholder_empathy
+  - defensive_reasoning
+additionalProperties: false
+properties:
+  skill_name:
+    type: "string"
+    pattern: "^[a-z][a-z0-9-]*$"
+    description: "The unique name of the skill in kebab-case"
+  thought_blocks:
+    type: "array"
+    items:
+      type: "object"
+      required:
+        - id
+        - topic
+        - content
+        - signals
+      additionalProperties: false
+      properties:
+        id:
+          type: "string"
+        topic:
+          type: "string"
+        content:
+          type: "string"
+        signals:
+          type: "object"
+          required:
+            - s1_negation
+            - s2_reverse_question
+            - s3_multi_stakeholder
+            - s4_constraint_anchoring
+          additionalProperties: false
+          properties:
+            s1_negation:
+              type: "boolean"
+            s2_reverse_question:
+              type: "boolean"
+            s3_multi_stakeholder:
+              type: "boolean"
+            s4_constraint_anchoring:
+              type: "boolean"
+    description: "Cognitive thought blocks with cognitive signal markers"
+  stakeholder_empathy:
+    type: "array"
+    items:
+      type: "object"
+      required:
+        - role
+        - pain
+      additionalProperties: false
+      properties:
+        role:
+          type: "string"
+        pain:
+          type: "string"
+    description: "Stakeholder roles and their primary pain points"
+  defensive_reasoning:
+    type: "array"
+    items:
+      type: "object"
+      required:
+        - guardrail
+        - rationale
+      additionalProperties: false
+      properties:
+        guardrail:
+          type: "string"
+        rationale:
+          type: "string"
+    description: "Defensive reasoning guardrails with supporting rationale"

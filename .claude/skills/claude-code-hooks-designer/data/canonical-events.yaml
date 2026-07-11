@@ -1,0 +1,138 @@
+# Single source of truth: 30 canonical Claude Code hook events.
+# Source: domain-handbook.md §2 + hooks-reference.md §1 (canonical event table).
+# [TỪ DESIGN §2.1, §3 data/canonical-events.yaml] [TỪ HANDBOOK §2 G1]
+#
+# Fields per event:
+#   name:            event identifier (exact, as fired by Claude Code)
+#   phase:           lifecycle phase
+#   matcher_support: true if event accepts a matcher string (exact/OR/regex)
+#   blocking_capable:true if a hook on this event can BLOCK (deny) the action
+#
+# NOTE (discrepancy): design.md / quality-matrix.yaml state "20/30 matcher-supporting".
+# The canonical table (hooks-reference.md §1) yields 19 supporting / 11 not.
+# Grounded here to the table = source of truth. Flagged in build-log (R-extra).
+schema_version: "1.0.0"
+event_count: 30
+matcher_supporting_count: 19
+blocking_events: ["PreToolUse"]
+events:
+  - name: SessionStart
+    phase: session-start
+    matcher_support: false
+    blocking_capable: false
+  - name: Setup
+    phase: session-start
+    matcher_support: false
+    blocking_capable: false
+  - name: UserPromptSubmit
+    phase: per-turn
+    matcher_support: true
+    blocking_capable: false
+  - name: UserPromptExpansion
+    phase: per-turn
+    matcher_support: true
+    blocking_capable: false
+  - name: PreToolUse
+    phase: tool-lifecycle
+    matcher_support: true
+    blocking_capable: true
+  - name: PermissionRequest
+    phase: tool-lifecycle
+    matcher_support: false
+    blocking_capable: false
+  - name: PermissionDenied
+    phase: tool-lifecycle
+    matcher_support: false
+    blocking_capable: false
+  - name: PostToolUse
+    phase: tool-lifecycle
+    matcher_support: true
+    blocking_capable: false
+  - name: PostToolUseFailure
+    phase: tool-lifecycle
+    matcher_support: true
+    blocking_capable: false
+  - name: PostToolBatch
+    phase: tool-lifecycle
+    matcher_support: false
+    blocking_capable: false
+  - name: Notification
+    phase: any
+    matcher_support: true
+    blocking_capable: false
+  - name: MessageDisplay
+    phase: per-turn
+    matcher_support: true
+    blocking_capable: false
+  - name: SubagentStart
+    phase: orchestration
+    matcher_support: true
+    blocking_capable: false
+  - name: SubagentStop
+    phase: orchestration
+    matcher_support: true
+    blocking_capable: false
+  - name: TaskCreated
+    phase: orchestration
+    matcher_support: true
+    blocking_capable: false
+  - name: TaskCompleted
+    phase: orchestration
+    matcher_support: true
+    blocking_capable: false
+  - name: TeammateIdle
+    phase: orchestration
+    matcher_support: true
+    blocking_capable: false
+  - name: InstructionsLoaded
+    phase: session-start
+    matcher_support: false
+    blocking_capable: false
+  - name: ConfigChange
+    phase: runtime
+    matcher_support: true
+    blocking_capable: false
+  - name: CwdChanged
+    phase: runtime
+    matcher_support: true
+    blocking_capable: false
+  - name: FileChanged
+    phase: runtime
+    matcher_support: true
+    blocking_capable: false
+  - name: WorktreeCreate
+    phase: runtime
+    matcher_support: true
+    blocking_capable: false
+  - name: WorktreeRemove
+    phase: runtime
+    matcher_support: true
+    blocking_capable: false
+  - name: Elicitation
+    phase: per-turn
+    matcher_support: true
+    blocking_capable: false
+  - name: ElicitationResult
+    phase: per-turn
+    matcher_support: true
+    blocking_capable: false
+  - name: PreCompact
+    phase: session-end
+    matcher_support: false
+    blocking_capable: false
+  - name: PostCompact
+    phase: session-end
+    matcher_support: false
+    blocking_capable: false
+  - name: Stop
+    phase: session-end
+    matcher_support: false
+    blocking_capable: false
+  - name: StopFailure
+    phase: session-end
+    matcher_support: false
+    blocking_capable: false
+  - name: SessionEnd
+    phase: session-end
+    matcher_support: false
+    blocking_capable: false

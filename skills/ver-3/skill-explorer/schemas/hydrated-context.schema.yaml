@@ -1,0 +1,94 @@
+$schema: "http://json-schema.org/draft-07/schema#"
+$id: "washvn://schemas/hydrated-context"
+title: "Hydrated Context Schema"
+description: "Schema for the hydrated context artifact (skill-explorer — deep exploration output including glossary, NFR, edge cases, data contracts, zone map, and must-not rules)"
+type: "object"
+required:
+  - skill_name
+  - stage
+  - glossary
+  - nfr
+  - edge_cases
+  - data_contracts
+  - zone_map
+  - must_not
+additionalProperties: false
+properties:
+  skill_name:
+    type: "string"
+    pattern: "^[a-z][a-z0-9-]*$"
+    description: "The unique name of the skill in kebab-case"
+  stage:
+    type: "string"
+    const: "exploration"
+    description: "Pipeline stage identifier — must be 'exploration'"
+  glossary:
+    type: "array"
+    minItems: 10
+    items:
+      type: "object"
+      required:
+        - term
+        - definition
+      additionalProperties: false
+      properties:
+        term:
+          type: "string"
+        definition:
+          type: "string"
+    description: "Domain glossary with at least 10 entries"
+  nfr:
+    type: "array"
+    items:
+      type: "object"
+      required:
+        - id
+        - requirement
+        - constraint
+      additionalProperties: false
+      properties:
+        id:
+          type: "string"
+        requirement:
+          type: "string"
+        constraint:
+          type: "string"
+          enum:
+            - hard
+            - soft
+    description: "Non-functional requirements with constraint hardness"
+  edge_cases:
+    type: "array"
+    items:
+      type: "object"
+      required:
+        - scenario
+        - expected
+      additionalProperties: false
+      properties:
+        scenario:
+          type: "string"
+        expected:
+          type: "string"
+    description: "Edge case scenarios and expected outcomes"
+  data_contracts:
+    type: "object"
+    required:
+      - input
+      - output
+    additionalProperties: false
+    properties:
+      input:
+        type: "string"
+      output:
+        type: "string"
+    description: "Input/output data contract schema references"
+  zone_map:
+    type: "object"
+    description: "Mapping of skill zones to file paths or responsibilities"
+  must_not:
+    type: "array"
+    minItems: 1
+    items:
+      type: "string"
+    description: "Hard constraints — behavior the skill MUST NOT exhibit"

@@ -1,0 +1,37 @@
+skill_name: "skill-explorer-main-build"
+elicitation_date: "2026-07-11"
+
+business_thought_process:
+  - "Systems Thinking: skill-explorer v1.0 là mắt xích Stage 0 trong 8-stage pipeline. Dual-stream output (hydrated-context.yaml + thought-cache.yaml) thay đổi toàn bộ downstream: skill-architect hiện chỉ đọc exploration.md (dòng 36 SKILL.md architect). Thay đổi này tạo feedback loop — mọi schema mới phải đồng bộ qua artifact_registry.yaml để schema_validator.py quét được. Đóng gói sai → WORM integrity violation tại Stage 4."
+  - "Root Cause Isolation: v0.0.2 thiếu cognitive depth không phải lỗi template mà do thiết kế single-stream. 5 Whys: tại sao architect nhận context mỏng? → exploration.md monolithic → không tách technical/cognitive → LLM phải tự infer domain anchors từ prose dài → drift. Nguyên nhân gốc: thiếu Dual Knowledge Stream principle (#4), không phải thiếu section."
+  - "First Principles: sự thật cơ bản — YAML schema có additionalProperties:false (exploration.schema.yaml dòng 12) → thêm field vào exploration.md frontmatter sẽ BREAK validation. Token budget cứng: L2_limit 2200 (SKILL.md explorer dòng 42). thought-cache.yaml 100-200 dòng ≈ 1500-3000 tokens → vi phạm nếu không tách riêng file. Do đó dual-stream BẮT BUỘC tách file, không nhét vào 1 frontmatter."
+  - "Impact Analysis: sửa exploration.schema.yaml ảnh hưởng: (1) schema_validator.py --validate_all bỏ qua artifact không có trong registry → cần 2 entry mới; (2) skill-architect SKILL.md boot sequence đọc exploration.md → breaking change; (3) init_context.py handle_single_init chỉ tạo 1 file → cần init 2 file mới. Propagation: 1 schema change → 4 file downstream."
+  - "Structural Decomposition: Epic 'tích hợp 7 LLM principles' → Features: F1 dual-stream output, F2 binary gates, F3 YAML resilience, F4 negative space, F5 graceful degradation. Mỗi feature → User Story: 'Architect đọc được thought-cache.yaml' → Acceptance: artifact có registry entry + schema + validator PASS."
+
+stakeholder_empathy:
+  - "End-User (Steve + AI agents): goals=[nhận dual-stream context chuẩn để architect design ít drift], pain_points=[exploration.md đơn tuyến thiếu cognitive depth, tái sử dụng kém, phải re-read prose dài]"
+  - "Skill Developer/Maintainer (ba-pipeline + builder): goals=[schema rõ ràng, validate cơ học được], pain_points=[thiếu schema cho 2 artifact mới, artifact_registry.yaml chưa có entry, init_context.py chưa init]"
+  - "Downstream Consumer (skill-architect): goals=[đọc đúng format đầu vào ổn định], pain_points=[hiện chỉ đọc exploration.md (SKILL.md dòng 36), dual-stream là breaking change chưa có kế hoạch migrate]"
+  - "Security Reviewer: goals=[prompt injection containment, YAML resilience L1-L3], pain_points=[v0.0.2 thiếu fallback matrix F1-F19, thiếu YAML cross-ref check, thought-cache chứa raw external prompts chưa sanitize]"
+
+reverse_questions:
+  - "Điều gì sai nếu input bị prompt-injected qua web resource mà không có YAML Resilience L3 cross-ref check?"
+  - "Boundary nào bị phá vỡ nếu hydrated-context.yaml vượt 50 dòng → vi phạm token_budget L2_limit 2200?"
+  - "Luồng nào bị bỏ sót nếu skill-architect chỉ đọc exploration.md mà không đọc thought-cache.yaml (downstream breaking change)?"
+  - "Rủi ro khi stakeholder bảo mật bị bỏ qua trong dual-stream: thought-cache chứa raw external prompts chưa sanitize?"
+  - "Nếu schema_validator.py không có registry entry cho hydrated-context.yaml thì artifact không được validate → WORM integrity violation?"
+
+confidence_breakdown:
+  scope_clarity: 0.95
+  requirement_stability: 0.82
+  stakeholder_coverage: 0.90
+  nfr_quantification: 0.80
+  overall: 0.80
+
+uncertainty_areas:
+  - "[CẦN LÀM RÕ] Output strategy: giữ exploration.md + thêm 2 artifact, hay thay thế hoàn toàn bằng 3 artifact riêng?"
+  - "[CẦN LÀM RÕ] SCS score: giữ single-pass (Stage 0) hay chuyển 2-phase (Stage 0.5 + Stage 1.5)?"
+  - "[CẦN LÀM RÕ] Fallback matrix subset: implement bao nhiêu trong F1-F19 cho v1.0?"
+  - "[CẦN LÀM RÕ] Binary gates META-2.1: implement ngay Stage 0 hay chỉ downstream?"
+  - "[CẦN LÀM RÕ] thought-cache.yaml schema: standalone schema riêng hay extend exploration.schema.yaml?"
+  - "[CẦN LÀM RÕ] artifact_registry.yaml: thêm 2 entry (hydrated_context, thought_cache) với lifecycle WORM?"

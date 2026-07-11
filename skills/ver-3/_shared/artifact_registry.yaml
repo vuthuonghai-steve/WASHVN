@@ -197,3 +197,25 @@ artifacts:
       - "skill-hydrator"
     schema: "skills/ver-3/_shared/schemas/domain-handbook.schema.yaml"
     lifecycle: "WORM"
+
+  - artifact_id: "exploration_hydrated_context"
+    file_name: "hydrated-context.yaml"
+    path_template: ".skill-context/{target_skill}/hydrated-context.yaml"
+    format: "yaml"
+    created_by: "skill-explorer"
+    consumed_by:
+      - "skill-planner"
+      - "skill-builder"
+    schema: "skills/ver-3/skill-explorer/schemas/hydrated-context.schema.yaml"
+    lifecycle: "WORM"
+
+  - artifact_id: "exploration_thought_cache"
+    file_name: "thought-cache.yaml"
+    path_template: ".skill-context/{target_skill}/thought-cache.yaml"
+    format: "yaml"
+    created_by: "skill-explorer"
+    consumed_by:
+      - "skill-planner"
+      - "skill-builder"
+    schema: "skills/ver-3/skill-explorer/schemas/thought-cache.schema.yaml"
+    lifecycle: "WORM"

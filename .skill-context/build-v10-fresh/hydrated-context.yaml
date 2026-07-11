@@ -1,0 +1,62 @@
+# Generated hydrated-context.yaml (technical stream) — keep ≤50 lines.
+
+skill_name: "build-v10-fresh"
+stage: "exploration"
+glossary:
+  - term: "Domain Anchoring"
+    definition: "Binding every design decision to a real business domain concept, not abstract tech patterns."
+  - term: "Thought Block"
+    definition: "A self-contained cognitive trace recording deep reasoning, negation checks, and stakeholder perspective on one topic."
+  - term: "Hydrated Context"
+    definition: "A rich context artifact linking technical contracts (NFR, data contracts) with cognitive depth (thought blocks, guardrails)."
+  - term: "Dual Context Ingestion"
+    definition: "Simultaneously consuming structured technical requirements and unstructured business intent before generating output."
+  - term: "SCS"
+    definition: "Skill Complexity Score — a 1-5 rating of a skill's process steps, API interactions, SKILL.md size, and security sensitivity."
+  - term: "Binary Gate"
+    definition: "A hard pass/fail checkpoint that blocks pipeline progression until its criteria are met (e.g., schema validation, zero-placeholder check)."
+  - term: "META-2.1"
+    definition: "A quality criterion measuring semantic depth — the richness of domain-specific vocabulary, thought blocks, and contextual anchoring in skill artifacts."
+  - term: "YAML Resilience"
+    definition: "The ability to detect, report, and auto-repair malformed YAML during pipeline execution without hard-crashing."
+  - term: "Negative Space"
+    definition: "The set of behaviors, inputs, and states a system MUST NOT exhibit — systematically documented alongside positive requirements."
+  - term: "Context Bus"
+    definition: "The shared state layer across pipeline stages — a single source of truth carrying artifacts, decisions, and handoff conditions."
+  - term: "Graceful Degradation"
+    definition: "Falling back to a reduced but functional mode when a non-critical dependency or optional artifact is missing."
+  - term: "7 Golden Standards"
+    definition: "Seven quality axes: Reusability, Composability, Maintainability, Security, Context Efficiency, Portability, and Reliability."
+nfr:
+  - id: "NFR-01"
+    requirement: "Hydrated-context YAML must validate against its schema before handoff to planner."
+    constraint: "hard"
+  - id: "NFR-02"
+    requirement: "Every glossary term must be domain-specific, not generic dictionary definitions."
+    constraint: "soft"
+  - id: "NFR-03"
+    requirement: "Must-not list must contain at least one item addressing prompt-injection or data leakage."
+    constraint: "hard"
+edge_cases:
+  - scenario: "Skill name contains uppercase letters violating kebab-case pattern"
+    expected: "Schema validation rejects the artifact with a clear message pointing to the skill_name field."
+  - scenario: "Glossary contains fewer than 10 entries"
+    expected: "Validation fails with minItems violation; pipeline blocks until ≥10 entries are provided."
+  - scenario: "A must-not rule contradicts a positive requirement in the design"
+    expected: "Gatekeeper stage detects the contradiction and flags it for manual review before proceeding."
+data_contracts:
+  input: "Exploration output markdown (exploration.md) — parsed into structured YAML fields"
+  output: "Validated hydrated-context.yaml — consumes by planner and builder stages"
+zone_map:
+  core: ["SKILL.md"]
+  knowledge: ["knowledge/*.md"]
+  policy: ["policy/*.md"]
+  loop: ["loop/*.md"]
+  scripts: ["scripts/*.py"]
+  templates: ["templates/*.template"]
+  data: ["data/*.yaml"]
+  schemas: ["schemas/*.schema.yaml"]
+must_not:
+  - "Include speculative features or abstractions not traced to the exploration report."
+  - "Leave placeholder values (TODO, FIXME, TBD) in the output YAML."
+  - "Contradict the must_not rules defined in the exploration report's rules_for_ai section."

@@ -1,0 +1,24 @@
+#!/bin/bash
+# Command hook skeleton — SELECT EXACTLY ONE blocking format (A or B). NEVER both.
+# [TỪ DESIGN §8 R5] [TỪ HANDBOOK §6.6]
+set -euo pipefail
+INPUT=$(cat)
+# --- evaluation logic here ---
+# CONDITION = your gate test
+# ---------------------------------------------------------------------------
+# FORMAT A (exit 0 + JSON deny on stdout) — choose this OR Format B, not both
+# if [ CONDITION ]; then
+#   cat <<'EOF'
+# {"permissionDecision": "deny", "reason": "..."}
+# EOF
+#   exit 0
+# fi
+# exit 0
+# ---------------------------------------------------------------------------
+# FORMAT B (exit code 2 + stderr message) — choose this OR Format A, not both
+# if [ CONDITION ]; then
+#   echo "Hook blocked: ..." >&2
+#   exit 2
+# fi
+# exit 0
+# ---------------------------------------------------------------------------

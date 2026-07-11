@@ -90,3 +90,6 @@ properties:
   thought_cache_ref:
     type: "string"
     description: "Path to thought-cache.yaml"
+  hydrated_context_ref:
+    type: "string"
+    description: "Path to hydrated-context.yaml"

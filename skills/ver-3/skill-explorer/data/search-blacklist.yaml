@@ -1,0 +1,18 @@
+# data/search-blacklist.yaml
+# Thư mục và tệp tin bị loại bỏ khi quét codebase
+blacklist_folders:
+  - ".git"
+  - ".pytest_cache"
+  - "__pycache__"
+  - "node_modules"
+  - "venv"
+  - "env"
+  - "dist"
+  - "build"
+  - "tmp"
+
+blacklist_files:
+  - ".gitignore"
+  - "package-lock.json"
+  - "yarn.lock"
+  - "pnpm-lock.yaml"

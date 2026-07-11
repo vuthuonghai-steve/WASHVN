@@ -1,0 +1,32 @@
+# Generated thought-cache.yaml (cognitive stream) — thought blocks ≥200 words each.
+
+skill_name: "build-v10-final"
+thought_blocks:
+  - id: "tb-1"
+    topic: "Balancing generic reuse vs domain specificity in skill design"
+    content: >-
+      The central tension in building a reusable skill is that generic abstractions serve no one well, yet overly specific rules collapse under domain shift. A skill whose policy layer hard-codes one team's workflow cannot be adopted by another team without forking — and forking defeats the purpose of a shared suite. The designer must therefore identify which knowledge is invariant across contexts (e.g., YAML resilience, schema validation patterns, binary gate semantics) and which is context-variant (domain glossary, NFR thresholds, stakeholder roles). This is not a technical problem; it is a cognitive mapping problem. The invariant core must be small, tested, and composable; the variant periphery must be replaceable without touching core logic. What happens when a team demands a deviation from the invariant core — say, relaxing the hard constraint on schema validation from fail-block to warn-only? Is that a legitimate fork or a violation of the binary gate contract? The agent must decide, and the decision must be traced back to the original exploration report's must_not rules. Failure to document this boundary leads to semantic drift: the skill passes validation but serves the wrong purpose — a PASS-form, FAIL-meaning outcome. The developer (Steve) needs visible guardrails that prevent this drift without requiring manual review of every diff. The end-user agent needs a clear error message when it crosses a boundary, not silent corruption of the output. The constraint here is architectural: the binary gate mechanism must distinguish between configurable thresholds (soft) and invariant rules (hard) without exposing the hard rules to casual override. This requires a two-tier policy model where hard constraints are code-enforced and soft constraints are YAML-configurable — a pattern that adds mechanical complexity but preserves semantic integrity across reuse boundaries.
+    signals:
+      s1_negation: true
+      s2_reverse_question: true
+      s3_multi_stakeholder: true
+      s4_constraint_anchoring: true
+  - id: "tb-2"
+    topic: "Preventing silent output corruption through defensive reasoning"
+    content: >-
+      A skill that generates structured output (YAML contracts, markdown reports) must assume its own reasoning will be incomplete or biased. The most dangerous failure mode is not a hard crash — it is a perfectly valid YAML file that encodes the wrong business logic. This is the PASS-form, FAIL-meaning trap: the validator says green, but the content is semantically wrong. How can a mechanical validator catch a semantic error without understanding the domain? The answer is that it cannot — but it can enforce structural constraints that make semantic errors harder to hide. If every thought block must contain a reverse question (S2) and a negation clause (S1), then the absence of critical thinking becomes detectable. If stakeholder empathy sections must list at least two conflicting perspectives (S3), then the agent cannot paper over disagreement. If every constraint must be tagged as hard or soft (S4), then the pipeline can enforce hard constraints mechanically. A thought block that merely paraphrases the input without questioning it should fail its own signals check — but who checks the checker? The agent (builder) must not silently accept a thought block that claims all four signals are present when the content is shallow. The system must therefore provide a cross-check: a secondary validator that reads the content and verifies the signal flags independently, or at minimum a manual review gate that triggers when confidence drops below 85%. Steve as skill author must trust that the pipeline catches shallow reasoning before it propagates to the builder. The người dùng (downstream agent consuming the skill) must trust that every constraint in the output was actively reasoned about — not just templated in. The ràng buộc (constraint) here is that mechanical verification has a hard ceiling: it detects absence of structure, not absence of truth. The pipeline must therefore escalate to human review when it detects structural signals but cannot assess semantic depth — a graceful degradation path that preserves safety without blocking velocity.
+    signals:
+      s1_negation: true
+      s2_reverse_question: true
+      s3_multi_stakeholder: true
+      s4_constraint_anchoring: true
+stakeholder_empathy:
+  - role: "Steve (skill author)"
+    pain: "Cannot visually inspect every thought block for depth; needs automated signal detection that reliably distinguishes shallow from deep reasoning."
+  - role: "AI coding agent (consumer)"
+    pain: "Silently accepts shallow context when the schema passes, producing downstream artifacts that look correct but miss critical business nuance."
+defensive_reasoning:
+  - guardrail: "Every thought block must be cross-validated by a separate script that independently checks signal presence from content."
+    rationale: "Prevents the agent from self-declaring signal flags without actually embedding the corresponding reasoning patterns in the text."
+  - guardrail: "Output confidence score must drop to <50% if any thought block fails signal cross-validation, blocking handoff to builder."
+    rationale: "A single shallow block contaminates the entire context; the pipeline must fail closed rather than let plausible-but-shallow output proceed."

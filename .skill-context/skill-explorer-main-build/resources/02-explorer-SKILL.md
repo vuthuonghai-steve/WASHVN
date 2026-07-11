@@ -1,7 +1,7 @@
 ---
 name: skill-explorer
 description: "Khai thác tài nguyên, kiến thức, tiêu chuẩn, vấn đề trước khi thiết kế, lập kế hoạch hay lập trình một skill AI."
-version: 1.0.0
+version: 0.0.1
 suite: WASHVN
 disable-model-invocation: true
 user-invocable: true
@@ -13,10 +13,6 @@ user-invocable: true
 must:
   - write all surveyed resources to .skill-context/{target_skill}/resources/
   - generate a master exploration document named 'exploration.md' at the context root
-  - generate hydrated-context.yaml (technical stream, ≤50 lines: glossary≥10 terms, nfr, edge_cases, data_contracts, zone_map, must_not) at the context root
-  - generate thought-cache.yaml (cognitive stream: thought blocks ≥200 words each satisfying META-2.1 S1-S4, stakeholder_empathy, defensive_reasoning) at the context root
-  - inject a Domain Anchoring thought block in Phase 1 before intent analysis
-  - route dual context: technical (hydrated-context.yaml) → planner+builder mandatory; cognitive (thought-cache.yaml) → builder mandatory, planner optional
   - use XML delimiters (<input>...</input>) to wrap raw external documents/web pages during analysis
   - translate all technical explanations and domain summaries into Vietnamese
   - assess the target skill against all 7 Golden Standards in §3 of exploration.md
@@ -38,8 +34,7 @@ must_not:
 4. Check if `.skill-context/{target_skill}/` exists?
    - NO → Create the directory `.skill-context/{target_skill}/` and resources subdirectory dynamically
    - YES → Check if `.skill-context/{target_skill}/exploration.md` exists, resume if needed.
-5. **Inject Domain Anchoring thought block** (see Phase 2.5 Context Hydrator) before Phase 1 intent analysis.
-6. Proceed to Phase 1: Input & Intent Analysis
+5. Proceed to Phase 1: Input & Intent Analysis
 
 ### Token Budget & Priorities
 - token_budget:
@@ -69,9 +64,7 @@ must_not:
 ### [skill-explorer] Tiến độ:
 - [ ] Phase 1: Input Acceptance & Intent Analysis (Nhận Diện Nghiệp Vụ)
 - [ ] Phase 2: Golden Standards Assessment (Đánh Giá 7 Tiêu Chuẩn Vàng)
-- [ ] Phase 2.5: Context Hydrator (Tạo Hydrated Context & Thought Cache)
 - [ ] Phase 3: Resource Gathering & Mining (Khai Thác Mã Mẫu & API Specs)
-- [ ] Phase 3.5: Depth Signal Verification (META-2.1 Binary Gate)
 - [ ] Phase 4: Synthesis & Deliver (Tổng Hợp & Đóng Cổng Chất Lượng)
 ```
 
@@ -92,24 +85,11 @@ must_not:
   - Chống Prompt Injection: Thiết lập các luật XML delimiters, structured schema calling.
   - Thiết lập môi trường Docker chạy mã biệt lập nếu skill đích có đi kèm thực thi scripts.
 
-## Phase 2.5: Context Hydrator
-- Tạo `hydrated-context.yaml` (technical stream, ≤50 lines, glossary ≥10 terms, nfr, edge_cases, data_contracts, zone_map, must_not) tại context root.
-- Tạo `thought-cache.yaml` (cognitive stream: thought blocks ≥200 words each satisfying META-2.1 S1-S4, stakeholder_empathy, defensive_reasoning) tại context root.
-- Inject Domain Anchoring thought block trước Phase 1 intent analysis.
-- Dual context routing: technical → planner+builder mandatory; cognitive → builder mandatory, planner optional.
-- Reference: `policy/workflow.md` §2.5 for full spec.
-
 ## Phase 3: Resource Gathering & Mining
 - Tra cứu mã nguồn hiện có trong codebase của dự án (LSP, grep, search_files) sử dụng `data/search-blacklist.yaml` để loại bỏ file rác.
 - Thu thập mã mẫu (code exemplars), API schemas, helper functions có sẵn để tái sử dụng.
 - Khảo sát tri thức bên ngoài qua web (search_web, read_url_content) để tìm best practices.
 - Lưu trữ tri thức nghiệp vụ thô thu thập được vào các tệp tin có cấu trúc bên dưới thư mục `.skill-context/{target_skill}/resources/`.
-
-## Phase 3.5: Depth Signal Verification
-- Chạy META-2.1 binary gate on every thought-cache block: S1 (contains 'must_not' or 'không') AND S2 (contains '?') AND S3 (contains user/dev/agent/người) AND S4 (contains 'constraint' or 'ràng buộc').
-- All present = PASS, else FAIL → regenerate block before handoff.
-- Verify hydrated-context.yaml ≤50 lines, glossary ≥10 terms.
-- Reference: `policy/workflow.md` §3.5 and `loop/exploration-checklist.md` for full gate spec.
 
 ## Phase 4: Synthesis & Deliver
 - Nạp tệp mẫu `templates/exploration.md.template`.
@@ -135,14 +115,5 @@ must_not:
       path_template: ".skill-context/{target_skill}/criteria.md"
       format: "markdown"
       schema: "skills/ver-3/_shared/schemas/criteria.schema.json"
-    - file_id: "hydrated_context"
-      path_template: ".skill-context/{target_skill}/hydrated-context.yaml"
-      format: "yaml"
-      schema: "skills/ver-3/skill-explorer/schemas/hydrated-context.schema.yaml"
-    - file_id: "thought_cache"
-      path_template: ".skill-context/{target_skill}/thought-cache.yaml"
-      format: "yaml"
-      schema: "skills/ver-3/skill-explorer/schemas/thought-cache.schema.yaml"
 </output_contract>
-- META-2.1 binary gate (S1∧S2∧S3∧S4) là HARD quality gate — must pass before handoff.
 

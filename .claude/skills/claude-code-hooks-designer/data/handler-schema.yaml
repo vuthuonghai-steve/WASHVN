@@ -1,0 +1,30 @@
+# Handler field schema + defaults + dual-format blocking (A/B).
+# Source: domain-handbook.md §6.3, §6.6 + hooks-reference.md §3.1. [TỪ DESIGN §2.1, §8 R5]
+schema_version: "1.0.0"
+handler:
+  required: [event]
+  optional:
+    type: { enum: [command, prompt, agent], default: command }
+    script: { type: path, for: command }
+    prompt: { type: string, for: [prompt, agent], supports: "$ARGUMENTS" }
+    model: { type: string, for: prompt }
+    timeout: { type: integer, unit: seconds, default_command: 30, default_prompt: 30, default_agent: 60 }
+    continueOnBlock: { type: boolean, default: false, valid_events: [Stop, SubagentStop] }
+    if: { type: condition, operators: ["==", "!=", "=~", "in"], context: [tool.name, tool.params.*, event.type, session.projectDir] }
+    description: { type: string }
+    matcher: { type: string, inherits_from_parent: true }
+dual_format_blocking:
+  must_not_mix: true
+  format_a:
+    signature: "exit 0 + JSON deny on stdout"
+    json: '{ "permissionDecision": "deny", "reason": "..." }'
+    precedence: "takes priority if detected"
+  format_b:
+    signature: "exit code 2 + message on stderr"
+    precedence: "assumed if no Format A detected"
+  rule: "MUST NOT mix Format A and Format B in one script. [TỪ HANDBOOK §6.6]"
+  recommendation: "Format B for simple gates; Format A for audit chains."
+defaults:
+  command_timeout: 30
+  prompt_timeout: 30
+  agent_timeout: 60

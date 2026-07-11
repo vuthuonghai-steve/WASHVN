@@ -1,0 +1,34 @@
+{
+  "hooks": {
+    "{{event_name}}": [
+      {
+        "matcher": "{{matcher_raw}}",
+        "hooks": [
+          {
+            "type": "{{handler_type}}",
+            {{#if_eq handler_type "command"}}
+            "command": "{{handler_command_or_script}}",
+            {{/if_eq}}
+            {{#if_eq handler_type "prompt"}}
+            "prompt": "{{handler_prompt}}",
+            "model": "{{handler_model}}",
+            {{/if_eq}}
+            {{#if_eq handler_type "agent"}}
+            "prompt": "{{handler_prompt}}",
+            {{/if_eq}}
+            "timeout": {{timeout_seconds}},
+            {{#if continueOnBlock}}
+            "continueOnBlock": true,
+            {{/if}}
+            {{#if if_condition}}
+            "if": "{{if_condition}}",
+            {{/if}}
+            "description": "{{handler_description}}"
+          }
+        ]
+      }
+    ]
+  }
+}
+# [TỬ DESIGN §6 IP#2] JSON fragment merged into target settings.json by scripts/settings_writer.py.
+# For agent_frontmatter target, emit under agent YAML frontmatter `hooks:` instead.

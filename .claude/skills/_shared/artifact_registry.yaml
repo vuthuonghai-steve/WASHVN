@@ -117,6 +117,7 @@ artifacts:
     consumed_by:
       - "scs-router"
       - "skill-knowledge-miner"
+      - "ba-analyst"
     schema: "skills/ver-3/_shared/schemas/elicitation.schema.yaml"
     lifecycle: "WORM"
 
@@ -138,7 +139,52 @@ artifacts:
     consumed_by:
       - "scs-router"
       - "skill-architect"
+      - "skill-explorer"
     schema: "skills/ver-3/_shared/schemas/synthesis.schema.yaml"
+    lifecycle: "WORM"
+
+  - artifact_id: "raw_request"
+    file_name: "raw-request.md"
+    path_template: ".skill-context/{feature_name}/ba-pipeline/raw-request.md"
+    format: "markdown"
+    created_by: "ba-pipeline-runner"
+    consumed_by:
+      - "ba-elicitor"
+    schema: "skills/ver-3/_shared/schemas/elicitation.schema.yaml"
+    lifecycle: "WORM"
+
+  - artifact_id: "thought_cache"
+    file_name: "thought-cache.yaml"
+    path_template: ".skill-context/{feature_name}/ba-pipeline/thought-cache.yaml"
+    format: "yaml"
+    created_by: "ba-elicitor"
+    consumed_by:
+      - "ba-analyst"
+      - "ba-synthesizer"
+    schema: "skills/ver-3/_shared/schemas/elicitation.schema.yaml"
+    lifecycle: "WORM"
+
+  - artifact_id: "input_artifact_name"
+    file_name: "input-artifact-name.yaml"
+    path_template: ".skill-context/{feature_name}/ba-pipeline/drc-input.yaml"
+    format: "yaml"
+    created_by: "ba-pipeline-runner"
+    consumed_by:
+      - "ba-elicitor"
+      - "ba-analyst"
+      - "ba-synthesizer"
+    schema: "skills/ver-3/_shared/schemas/drc.schema.yaml"
+    lifecycle: "WORM"
+
+  - artifact_id: "output_artifact_id"
+    file_name: "output-artifact-id.yaml"
+    path_template: ".skill-context/{feature_name}/ba-pipeline/drc-output.yaml"
+    format: "yaml"
+    created_by: "ba-pipeline-runner"
+    consumed_by:
+      - "skill-explorer"
+      - "skill-architect"
+    schema: "skills/ver-3/_shared/schemas/drc.schema.yaml"
     lifecycle: "WORM"
 
   - artifact_id: "domain_handbook"
@@ -150,4 +196,26 @@ artifacts:
       - "skill-architect"
       - "skill-hydrator"
     schema: "skills/ver-3/_shared/schemas/domain-handbook.schema.yaml"
+    lifecycle: "WORM"
+
+  - artifact_id: "exploration_hydrated_context"
+    file_name: "hydrated-context.yaml"
+    path_template: ".skill-context/{target_skill}/hydrated-context.yaml"
+    format: "yaml"
+    created_by: "skill-explorer"
+    consumed_by:
+      - "skill-planner"
+      - "skill-builder"
+    schema: "skills/ver-3/skill-explorer/schemas/hydrated-context.schema.yaml"
+    lifecycle: "WORM"
+
+  - artifact_id: "exploration_thought_cache"
+    file_name: "thought-cache.yaml"
+    path_template: ".skill-context/{target_skill}/thought-cache.yaml"
+    format: "yaml"
+    created_by: "skill-explorer"
+    consumed_by:
+      - "skill-planner"
+      - "skill-builder"
+    schema: "skills/ver-3/skill-explorer/schemas/thought-cache.schema.yaml"
     lifecycle: "WORM"

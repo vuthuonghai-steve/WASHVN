@@ -1,0 +1,31 @@
+# Matcher character-set classification rules.
+# The matcher mode is INFERRED from character set, NOT declared by a flag.
+# Source: domain-handbook.md §6.2 + hooks-reference.md §2. [TỪ DESIGN §2.1, §8 R1]
+schema_version: "1.0.0"
+exact_allowed_chars: "[a-zA-Z0-9\\- ,|]"
+rules:
+  - id: exact_or
+    condition: "matcher contains ONLY exact_allowed_chars"
+    mode: "exact_or"
+    semantics: >
+      Split by comma, whitespace-trim each token, exact match.
+      Pipe '|' segments are OR alternatives (whitespace around pipes stripped).
+    examples:
+      - '"bash" -> exact match bash'
+      - '"Read, Write, Edit" -> match any of three'
+      - '"PreToolUse|Stop" -> match PreToolUse or Stop'
+  - id: regex
+    condition: "matcher contains ANY char outside exact_allowed_chars"
+    mode: "regex"
+    semantics: "Compiled as case-insensitive JS-compatible regex."
+    examples:
+      - '"^git" -> tool name starts with git'
+      - '"\\.(env|secret)$" -> tools acting on .env/.secret files'
+footgun:
+  rule: "A literal '.' in the matcher forces regex mode."
+  example: '"codegraph.explore" is treated as REGEX, NOT exact."
+  warning: >
+    Tool names containing a period (e.g. 'codegraph.explore', 'my.tool') are
+    silently classified as REGEX. The skill MUST warn the user when a matcher
+    containing '.' is supplied for an exact-match intent. [TỪ HANDBOOK §10 insight 1]"
+  detection: "matcher contains '.' => set warning=true, mode='regex'"

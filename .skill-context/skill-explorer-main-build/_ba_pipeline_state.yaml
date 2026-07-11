@@ -1,0 +1,13 @@
+feature_name: skill-explorer-main-build
+stages:
+  elicitor:
+    status: completed
+    artifact: .skill-context/skill-explorer-main-build/ba-elicitor/elicitation-report.md
+  analyst:
+    status: completed
+    artifact: .skill-context/skill-explorer-main-build/ba-analyst/analyst-output.md
+  synthesizer:
+    status: completed
+    artifact: .skill-context/skill-explorer-main-build/ba-synthesizer/business-analysis.md
+current_stage: synthesizer
+status: completed

@@ -1,0 +1,8 @@
+{
+  "type": "prompt",
+  "prompt": "Evaluate the following hook context: $ARGUMENTS. Return JSON: {\"ok\": boolean, \"reason\": string}.",
+  "model": "claude-3-5-haiku",
+  "timeout": 45,
+  "continueOnBlock": {{continueOnBlock}}
+}
+# [TỪ DESIGN §3 templates/handler-prompt.template] Optional. Single-turn semantic eval.

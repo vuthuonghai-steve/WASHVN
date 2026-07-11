@@ -1,0 +1,97 @@
+# zone-map.yaml — skill-explorer v1.0 Zone Mapping
+# Consumer: skill-planner
+# Trace: [TỪ SCOPE §7][TỪ HANDBOOK §2.A][REQ-01→04]
+name: skill-explorer
+version: 1.0.0
+suite: WASHVN
+stage: architect
+artifact: zone-map.yaml
+
+zones:
+  core:
+    files: [SKILL.md]
+    change: modify
+    reason: "boot + thought-block injection + dual context routing + binary gate config"
+    principles: [1, 4, 5]
+
+  knowledge:
+    files:
+      - path: knowledge/exploration-standards.md
+        change: modify
+        reason: "expand 7 Golden Standards + integrate 7 LLM principles + SCS 2-phase"
+        principles: [1, 3, 5]
+      - path: knowledge/security-standards.md
+        change: modify
+        reason: "+ YAML Resilience L1-L3 + sampling audit"
+        principles: [5, 7]
+
+  policy:
+    files:
+      - path: policy/workflow.md
+        change: modify
+        reason: "+ Phase 2.5 Context Hydrator, + Phase 3.5 Depth Signal Verification"
+        principles: [3, 5]
+      - path: policy/guardrails.md
+        change: modify
+        reason: "G1-G5 → G1-G7 (+dual-stream-integrity, +depth-gate)"
+        principles: [6]
+      - path: policy/output-spec.md
+        change: modify
+        reason: "restructure: 3 artifacts thay 1"
+        principles: [4]
+
+  loop:
+    files:
+      - path: loop/exploration-checklist.md
+        change: modify
+        reason: "soft checklist → binary gates + META-2.1 signals"
+        principles: [5, 6]
+
+  scripts:
+    files:
+      - path: scripts/init_context.py
+        change: modify
+        reason: "init 3 artifacts (exploration + hydrated + thought cache); split copies all"
+        principles: [4]
+
+  templates:
+    files:
+      - path: templates/exploration.md.template
+        change: modify
+        reason: "+ references to hydrated-context + thought-cache"
+        principles: [4]
+      - path: templates/hydrated-context.yaml.template
+        change: create
+        reason: "NEW technical stream template"
+        principles: [4]
+      - path: templates/thought-cache.yaml.template
+        change: create
+        reason: "NEW cognitive stream template"
+        principles: [1, 4]
+
+  data:
+    files: [data/search-blacklist.yaml]
+    change: none
+    reason: "no change"
+
+  schemas:                                  # NEW zone
+    files:
+      - path: schemas/hydrated-context.schema.yaml
+        change: create
+        reason: "standalone technical contracts schema"
+        principles: [4]
+      - path: schemas/thought-cache.schema.yaml
+        change: create
+        reason: "standalone cognitive depth schema (REQ-05)"
+        principles: [1, 4]
+
+shared_dependency:
+  - path: _shared/schemas/exploration.schema.yaml
+    change: modify
+    reason: "additive: + hydrated_context_ref; keep additionalProperties:false (REQ-16)"
+
+summary:
+  total_files: 15
+  create: 4
+  modify: 10
+  none: 1

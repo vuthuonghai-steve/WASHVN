@@ -1,0 +1,136 @@
+# data-contracts.yaml — skill-explorer v1.0 Data Contracts
+# Consumers: skill-builder, schema_validator
+# Trace: [TỪ HANDBOOK §2.B-E][REQ-05,06,11,12,13,16,19,20]
+name: skill-explorer
+version: 1.0.0
+suite: WASHVN
+stage: architect
+artifact: data-contracts.yaml
+
+# ── Output artifacts (3, additive from v0.0.2's 1) ──────────────
+artifacts:
+  - id: exploration_report
+    path: ".skill-context/{target_skill}/exploration.md"
+    format: "markdown + frontmatter"
+    schema: "_shared/schemas/exploration.schema.yaml"   # extended additive
+    consumer: [skill-architect]
+    trace: "[REQ-04][Q3 additive]"
+
+  - id: hydrated_context
+    path: ".skill-context/{target_skill}/hydrated-context.yaml"
+    format: yaml
+    schema: "schemas/hydrated-context.schema.yaml"       # standalone NEW
+    size_budget: {lines: "≤50", gate: hard}              # REQ-11
+    consumer: ["skill-planner (mandatory)", "skill-builder (mandatory)"]
+    contains: [glossary, nfr, edge_cases, data_contracts, zone_map, must_not]
+    trace: "[REQ-03,11,19]"
+
+  - id: thought_cache
+    path: ".skill-context/{target_skill}/thought-cache.yaml"
+    format: yaml
+    schema: "schemas/thought-cache.schema.yaml"          # standalone NEW REQ-05
+    size_budget: {lines: "100-200", gate: soft}          # REQ-12
+    consumer: ["skill-planner (optional)", "skill-builder (mandatory)"]
+    contains: [thought_blocks, stakeholder_empathy, defensive_reasoning]
+    trace: "[REQ-05,12,20]"
+
+  - id: test_criteria
+    path: ".skill-context/{target_skill}/criteria.md"
+    format: markdown
+    consumer: [skill-tester]
+
+# ── Schema: exploration.schema.yaml additive extension ──────────
+exploration_schema_extension:
+  base: "_shared/schemas/exploration.schema.yaml"
+  keep: {additionalProperties: false}                     # REQ-16
+  existing_ref: thought_cache_ref                         # already present
+  add_property:
+    hydrated_context_ref:
+      type: string
+      description: "Path to hydrated-context.yaml"
+  trace: "[Q1 verified — additive safe]"
+
+# ── Schema: hydrated-context.schema.yaml (standalone) ───────────
+hydrated_context_schema:
+  required: [skill_name, stage, glossary, nfr, edge_cases, data_contracts, zone_map, must_not]
+  additionalProperties: false
+  properties:
+    skill_name: {type: string, pattern: "^[a-z][a-z0-9-]*$"}
+    stage: {type: string, const: exploration}
+    glossary:
+      type: array
+      minItems: 10                                         # REQ-19
+      items: {required: [term, definition]}
+    nfr:
+      type: array
+      items: {required: [id, requirement, constraint]}     # constraint: hard|soft
+    edge_cases:
+      type: array
+      items: {required: [scenario, expected]}
+    data_contracts: {required: [input, output]}
+    zone_map: {type: object}
+    must_not: {type: array, minItems: 1}
+
+# ── Schema: thought-cache.schema.yaml (standalone REQ-05) ───────
+thought_cache_schema:
+  required: [skill_name, thought_blocks, stakeholder_empathy, defensive_reasoning]
+  additionalProperties: false
+  properties:
+    skill_name: {type: string, pattern: "^[a-z][a-z0-9-]*$"}
+    thought_blocks:
+      type: array
+      items:
+        required: [id, topic, content, signals]
+        properties:
+          content: {type: string, min_words: 200}          # REQ-20 (validated by script)
+          signals:
+            required: [s1_negation, s2_reverse_question, s3_multi_stakeholder, s4_constraint_anchoring]
+            types: boolean
+    stakeholder_empathy:
+      type: array
+      items: {required: [role, pain]}
+    defensive_reasoning:
+      type: array
+      items: {required: [guardrail, rationale]}
+
+# ── Quality gates chain (mechanical) ────────────────────────────
+gates:
+  META_2_1:                                                # REQ-07,15
+    condition: "s1 AND s2 AND s3 AND s4"
+    type: hard
+    verify: regex_script
+    definitions:
+      s1: '"must_not" in block.lower() OR "không" in block'
+      s2: '"?" in block'
+      s3: 'any(user|dev|agent|người) in block'
+      s4: '"constraint" in block.lower() OR "ràng buộc" in block'
+    fail_action: "WARNING if word_count<100 else FAIL"
+  L2_token_budget: {limit: 2200, type: hard, fail: request_compression}   # REQ-13
+  yaml_resilience:                                         # REQ-08,14
+    L1_syntax: {handler: "yaml.safe_load + auto-repair", max_attempts: 2, on_exhaust: hard_halt}
+    L2_schema: {handler: "required keys+types", max_attempts: 2, on_exhaust: hard_halt}
+    L3_crossref: {handler: "path exists + non-empty", critical: hard_halt, non_critical: graceful_degrade}
+  sampling_audit: {default: "30%", on_fail: "100%", relax: "8 consecutive PASS → 15%"}  # REQ-17
+  max_iterations_per_stage: 3                              # REQ-18
+
+# ── Fallback matrix subset F1-F4 (REQ-10, Q6) ───────────────────
+fallback_matrix:
+  history_mode: append-only
+  cases:
+    - {id: F1, name: missing_skill_context, trigger: "skill_name not found", action: "ask user context", severity: major}
+    - {id: F2, name: ambiguous_intent, trigger: "confidence <70%", action: "halt + present analysis + ask confirm", severity: major}
+    - {id: F3, name: prompt_injection, trigger: "L1 fail after 2 attempts", action: hard_halt, severity: critical}
+    - {id: F4, name: schema_validation_fail, trigger: "L2 fail after 2 attempts", action: "hard_halt escalate stage1", severity: critical}
+
+# ── Artifact registry (WORM, REQ-06) ────────────────────────────
+registry_entries:
+  target: "artifact_registry.yaml"
+  mode: WORM
+  entries:
+    - {id: hydrated_context, path: "hydrated-context.yaml", schema: "schemas/hydrated-context.schema.yaml"}
+    - {id: thought_cache, path: "thought-cache.yaml", schema: "schemas/thought-cache.schema.yaml"}
+
+validation_command: |
+  python3 skills/ver-3/_shared/validators/schema_validator.py \
+    --schema schemas/hydrated-context.schema.yaml \
+    .skill-context/{target_skill}/hydrated-context.yaml

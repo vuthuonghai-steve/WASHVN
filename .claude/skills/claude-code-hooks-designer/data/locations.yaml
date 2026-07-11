@@ -1,0 +1,30 @@
+# 5 hook settings locations with ascending merge precedence (last writer wins by merge).
+# Source: domain-handbook.md §7.1 + hooks-and-events.md §3.1. [TỪ DESIGN §2.1, §8 R2]
+schema_version: "1.0.0"
+precedence_ascending: true
+note: "Higher priority overrides lower for the SAME event+matcher pair at handler level."
+locations:
+  - priority: 1
+    key: user
+    scope: all-projects
+    file: "~/.claude/settings.json"
+  - priority: 2
+    key: project
+    scope: single-project
+    file: ".claude/settings.json"
+    default_target: true
+  - priority: 3
+    key: local
+    scope: single-project-gitignored
+    file: ".claude/settings.local.json"
+  - priority: 4
+    key: plugin
+    scope: per-plugin
+    file: "plugin manifest registry"
+  - priority: 5
+    key: agent_frontmatter
+    scope: per-agent
+    file: ".claude/agents/<name>.md (YAML frontmatter hooks:)"
+nested_merge:
+  status: "empirical-unconfirmed"
+  policy: "WARN only. Do NOT auto-merge conflicting matcher groups. [TỪ DESIGN §9 Q7]"

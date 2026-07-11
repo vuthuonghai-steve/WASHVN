@@ -1,0 +1,7 @@
+{
+  "type": "agent",
+  "prompt": "Investigate the following hook context: $ARGUMENTS",
+  "timeout": 120,
+  "description": "Multi-turn semantic audit (experimental)"
+}
+# [TỪ DESIGN §3 templates/handler-agent.template] Optional. Experimental, high latency.
