@@ -2,7 +2,19 @@
 
 > Tra cứu spec theo **vai trò** trong pipeline
 
-## BA Elicitor
+## BA Chain (extension — not in original spec)
+
+> Runtime mở rộng BA thành 3-skill chain, chạy độc lập qua `ba-pipeline-runner` (KHÔNG qua `pipeline-orchestrator`). Gốc spec chỉ có "BA Elicitor" 1 stage.
+
+| Phase | File | Content |
+|:---|:---|:---|
+| P1 | `scs-routing.md` | Input to SCS evaluation (ba-elicitor) |
+| P2 | `thought-cache-check.md` | F16, F17, F19 — thought-cache quality |
+| P5 | `fallback-matrix-full.md` | F16-F19 fallbacks |
+| — | `ba-pipeline-runner` agent | Orchestrate elicitor→analyst→synthesizer chain |
+| — | `quality-scorer` agent | META-1→3 scoring (maps to Spec Gatekeeper P1) |
+
+## BA Elicitor (Stage -1, L0)
 
 | Phase | File | Content |
 |:---|:---|:---|

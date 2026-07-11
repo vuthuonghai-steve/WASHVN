@@ -15,7 +15,7 @@ User business request
   ↓
 ba-elicitor (Stage BA-1)        → elicitation-report.md   [thought-cache created]
   ↓
-ba-analyst (Stage BA-0.5)       → analysis-report.md      [NFR quantified]
+ba-analyst (Stage BA-0.5)       → analyst-output.md      [NFR quantified]
   ↓
 ba-synthesizer (Stage BA-0.2)   → business-analysis.md    [synthesized, cross-validated]
   ↓
@@ -327,7 +327,7 @@ Thêm 1 `.gitkeep` file để maintain dir. Assets sẽ fill nếu cần diagram
 
 ## 2. ba-analyst Skill (Stage BA-0.5)
 
-> Skill thứ 2 — consumes elicitation-report, outputs analysis-report
+> Skill thứ 2 — consumes elicitation-report, outputs analyst-output
 
 ### D5-2-1: `skills/ver-3/ba-analyst/SKILL.md`
 
@@ -357,7 +357,7 @@ Body sections tương tự ba-elicitor structure (identity, safety, knowledge_an
 2. <phase_classify>: Phân loại requirements: Functional Requirements (FR) vs Non-Functional (NFR)
 3. <phase_quantify_nfrs>: Convert qualitative NFRs → measurable metrics (e.g., "fast response" → "<200ms latency at 95th percentile")
 4. <phase_interlock>: Cross-reference stakeholder goals vs NFRs (ensure each main goal has ≥1 NFR)
-5. <phase_emit_analysis>: Write analysis-report.md
+5. <phase_emit_analysis>: Write analyst-output.md
 </workflow_phases>
 
 <input_contract>
@@ -372,7 +372,7 @@ Body sections tương tự ba-elicitor structure (identity, safety, knowledge_an
 
 <output_contract>
 - file_id: analysis_report
-  path: .skill-context/{feature_name}/ba-analyst/analysis-report.md
+  path: .skill-context/{feature_name}/ba-analyst/analyst-output.md
   schema: skills/ver-3/_shared/schemas/analysis.schema.yaml
 </output_contract>
 
@@ -410,14 +410,14 @@ Script check NFR quantification (regex detect number + unit).
 ```yaml
 ---
 name: ba-synthesizer
-description: "Skill Stage BA-0.2. Trigger khi elicitation-report.md AND analysis-report.md available. Synthesize 2 artifacts thành business-analysis.md (single source of truth cho downstream pipeline). Cross-validate congruence between elicitation nuance và analysis structure."
+description: "Skill Stage BA-0.2. Trigger khi elicitation-report.md AND analyst-output.md available. Synthesize 2 artifacts thành business-analysis.md (single source of truth cho downstream pipeline). Cross-validate congruence between elicitation nuance và analysis structure."
 suite: WASHVN
 version: 0.0.1
 category: hierarchical-micro-skill
 stage: "BA Stage -0.2"
 target_variable: feature_name
 tags: [ba, synthesis, business-analysis, cross-validation]
-when_to_use: "After ba-analyst produces analysis-report.md → invoke để synthesize final business-analysis.md. Skill final trong BA pipeline. Output feeds vào skill-explorer Stage 0."
+when_to_use: "After ba-analyst produces analyst-output.md → invoke để synthesize final business-analysis.md. Skill final trong BA pipeline. Output feeds vào skill-explorer Stage 0."
 last_updated: 2026-07-04
 output_contract: ".skill-context/{feature_name}/ba-synthesizer/drc.yaml"
 ---
@@ -427,7 +427,7 @@ Quan trọng workflow phases:
 
 ```markdown
 <workflow_phases>
-1. Read elicitation-report.md AND analysis-report.md AND thought-cache.yaml
+1. Read elicitation-report.md AND analyst-output.md AND thought-cache.yaml
 2. <phase_cross_validate>:
    - Check every stakeholder goal in elicitation có ≥1 FR/NFR trong analysis
    - Check every reverse question addressed
@@ -444,7 +444,7 @@ Quan trọng workflow phases:
   path: .skill-context/{feature_name}/ba-elicitor/elicitation-report.md
   required: true
 - name: analysis_report
-  path: .skill-context/{feature_name}/ba-analyst/analysis-report.md
+  path: .skill-context/{feature_name}/ba-analyst/analyst-output.md
   required: true
 - name: thought_cache
   path: .skill-context/{feature_name}/thought-cache.yaml
@@ -596,7 +596,7 @@ Should be verified through AC-7 (same test path).
 
 6. **Invoke quality-scorer** audit, fix.
 
-7. **Test ba-analyst** with output từ step 4's elicitation-report. Verify analysis-report.md created.
+7. **Test ba-analyst** with output từ step 4's elicitation-report. Verify analyst-output.md created.
 
 8. **Build ba-synthesizer** (D5-3-1 to D5-3-6). Commit per group.
 

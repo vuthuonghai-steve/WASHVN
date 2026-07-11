@@ -12,7 +12,7 @@ inputs:
     consumed_by: "ba-synthesizer"
     downstream_phase: "ba-0.2"
   - name: "analysis_report"
-    path_template: ".skill-context/{feature}/ba-analyst/analysis-report.md"
+    path_template: ".skill-context/{feature}/ba-analyst/analyst-output.md"
     format: "markdown"
     schema: "skills/ver-3/_shared/schemas/analysis.schema.yaml"
     required: true

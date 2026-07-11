@@ -1,0 +1,38 @@
+skill_name: "sample_search_feature"
+elicitation_date: "2026-07-11"
+
+# REQUIRED (per elicitation.schema.yaml)
+business_thought_process:
+  - "Systems Thinking: feature is one node in e-commerce browse/discovery chain; depends on catalog, index, ranking, and downstream analytics. Feedback loop: poor relevance reduces conversion."
+  - "Root Cause Isolation: missing NFR baseline traced to absent performance/security requirements in source brief, not a UI problem."
+  - "First Principles: fundamental need is retrieval of relevant catalog items; presentation is secondary. Strip framework assumptions."
+  - "Impact Analysis: changing ranking formula propagates to results page layout, click-through metrics, and merchandiser controls."
+  - "Structural Decomposition: Epic Search -> Features Query/Filter/Sort/Render -> User Stories pending clarification of data source and pagination."
+
+stakeholder_empathy:
+  - "End-User (Online Shopper): goal find relevant products efficiently; pain irrelevant results and slow loads."
+  - "System Operator (Merchandiser): goal influence ranking and promotions; pain no ranking config surface defined."
+  - "Developer/Maintainer: goal stable search API and data contract; pain undefined catalog source."
+  - "Security Reviewer: goal safe handling of user input; pain unvalidated query string risk of injection."
+
+reverse_questions:
+  - "What if user input contains injection payload in keyword field?"
+  - "What boundary breaks if NFR latency is never quantified?"
+  - "Which path (happy/alternative/exception) is missing for empty-result and timeout?"
+  - "What risk appears if security reviewer is excluded from search input design?"
+  - "What happens when price filter min exceeds max?"
+  - "What if catalog service is unavailable during search?"
+
+# OPTIONAL (extended depth)
+confidence_breakdown:
+  scope_clarity: 0.5
+  requirement_stability: 0.4
+  stakeholder_coverage: 0.7
+  nfr_quantification: 0.3
+  overall: 0.45
+
+uncertainty_areas:
+  - "[CẦN LÀM RÕ] data source for product catalog (DB vs search engine)."
+  - "[CẦN LÀM RÕ] relevance ranking algorithm and tunability."
+  - "[CẦN LÀM RÕ] pagination model and results-per-page."
+  - "[CẦN LÀM RÕ] latency/throughput/availability targets."

@@ -1,0 +1,15 @@
+feature_name: mock-cart-feature
+stages:
+  elicitor:
+    status: completed
+    artifact: .skill-context/mock-cart-feature/ba-elicitor/elicitation-report.md
+  analyst:
+    status: failed
+    artifact: .skill-context/mock-cart-feature/ba-analyst/analysis-report.md
+    note: "BLOCKED — write gate rejects subagent writes to ba-analyst/ zone (platform guard: 'Subagents should return findings as text, not write report files'). Content produced, not persisted."
+  synthesizer:
+    status: pending
+    artifact: .skill-context/mock-cart-feature/ba-synthesizer/business-analysis.md
+current_stage: analyst
+status: failed
+blocker: "Environment write-gate blocks persisting analysis-report.md / business-analysis.md. Stage 2 content ready as text; needs manual persist or hook allowlist for ba-analyst/ + ba-synthesizer/ zones."

@@ -1,7 +1,7 @@
 # Interlock Checklist — BA Analyst Quality Gates
 
 > [!NOTE]
-> Quality Gate tự động cho `analysis-report.md`. 100% pass (không BORDERLINE) mới ghi file.
+> Quality Gate tự động cho `analyst-output.md`. 100% pass (không BORDERLINE) mới ghi file.
 > Nếu bất kỳ QG nào FAIL → quay lại phase tương ứng sửa trước khi viết artifact.
 
 ```yaml
@@ -60,7 +60,7 @@ quality_gates:
 
 ### Phase E — Traceability & Gate
 - [ ] **Must**: validate_metrics.py → 8/8 PASS (exit 0)?
-- [ ] **Must**: schema_validator.py --path analysis-report.md → exit 0 (4 required fields)?
+- [ ] **Must**: schema_validator.py --path analyst-output.md → exit 0 (4 required fields)?
 - [ ] **Must**: Trace tags [TỪ INPUT]/[SUY LUẬN]/[CẦN LÀM RÕ] gắn đầy đủ?
 
 ## Approval Thresholds

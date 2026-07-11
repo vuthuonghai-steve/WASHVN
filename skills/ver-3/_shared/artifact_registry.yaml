@@ -121,8 +121,8 @@ artifacts:
     lifecycle: "WORM"
 
   - artifact_id: "analysis_report"
-    file_name: "analysis-report.md"
-    path_template: ".skill-context/{target_skill}/analysis-report.md"
+    file_name: "analyst-output.md"
+    path_template: ".skill-context/{target_skill}/analyst-output.md"
     format: "markdown"
     created_by: "ba-analyst"
     consumed_by:

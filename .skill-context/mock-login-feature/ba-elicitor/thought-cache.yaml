@@ -1,0 +1,34 @@
+skill_name: "mock-login-feature"
+elicitation_date: "2026-07-11"
+
+business_thought_process:
+  - "Systems Thinking: Login page là entry point bảo mật của web app; lỗi ở đây phá vỡ toàn bộ downstream session và data access. Phải coi là boundary bảo mật, không chỉ UI form."
+  - "Root Cause Isolation: 'Secure login' gốc rễ là (1) credential không lộ, (2) chống automated attack, (3) session lifecycle an toàn — không phải chỉ render form."
+  - "First Principles: Password không bao giờ lưu plaintext; transport bắt buộc TLS; thử sai phải giới hạn. Đây là sự thật cơ bản, không phụ thuộc framework."
+  - "Impact Analysis: Thiếu rate-limit → brute-force account takeover; remember-me vô hạn → session hijack tồn tại lâu; không lockout → credential stuffing."
+  - "Structural Decomposition: Epic 'Secure Login' → FR-1 auth email/pwd (P0) + FR-2 remember-me (P2 optional) → User Story: login success / wrong password retry / lockout."
+
+stakeholder_empathy:
+  - "End-User: mục tiêu đăng nhập nhanh gọn, không bị khóa oan, nhớ phiên nếu tick remember-me. Pain: form lỗi, quên mật khẩu, bị lock tài khoản."
+  - "System Operator: mục tiêu uptime ổn định dưới login burst. Pain: DB timeout khi nhiều user login đồng thời."
+  - "Developer/Maintainer: mục tiêu code dễ test, schema session rõ ràng. Pain: logic lockout và refresh-token phức tạp, thiếu contract."
+  - "Security Reviewer: mục tiêu không lộ credential, chống brute-force, session an toàn. Pain: thiếu rate-limit, remember-me không expiry, password plaintext."
+
+reverse_questions:
+  - "Điều gì sai nếu password lưu plaintext và DB bị leak?"
+  - "Boundary nào bị phá vỡ nếu remember-me không có expiry (session tồn tại vĩnh viễn)?"
+  - "Luồng nào bị bỏ sót nếu không có lockout khi thử sai nhiều lần (brute-force)?"
+  - "Rủi ro nào xảy ra khi bỏ qua Security Reviewer — attacker credential stuffing không bị chặn?"
+  - "Nếu không lượng hóa rate-limit threshold, làm sao biết hệ thống đủ an toàn (NFR mơ hồ)?"
+
+confidence_breakdown:
+  scope_clarity: 0.8
+  requirement_stability: 0.7
+  stakeholder_coverage: 0.85
+  nfr_quantification: 0.6
+  overall: 0.72
+
+uncertainty_areas:
+  - "[CẦN LÀM RÕ] ngưỡng rate-limit (số lần thử / cửa sổ thời gian) chưa confirm."
+  - "[CẦN LÀM RÕ] thời hạn remember-me session (expiry days) chưa confirm."
+  - "[CẦN LÀM RÕ] phạm vi lockout: block user account hay block IP."

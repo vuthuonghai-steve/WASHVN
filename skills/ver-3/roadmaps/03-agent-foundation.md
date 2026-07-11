@@ -224,7 +224,7 @@ hooks:
 
 **Workflow**:
 1. Invoke `skill ba-elicitor` (Phase 5 xây) → elicite thông tin user, output `elicitation-report.md`
-2. Invoke `skill ba-analyst` → phân tích elicitation report, output `analysis-report.md`
+2. Invoke `skill ba-analyst` → phân tích elicitation report, output `analyst-output.md`
 3. Invoke `skill ba-synthesizer` → hợp latest analysis, output `business-analysis.md`
 4. Update `.skill-context/{feature}/_ba_pipeline_state.yaml` với lifecycle status
 

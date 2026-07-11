@@ -49,7 +49,7 @@ Mỗi file đặc tả cấu trúc JSON-schema hoặc YAML-schema:
 | `verification.schema.yaml` | verification.md (Sandbox PASS/FAIL) | YAML |
 | `security-review.schema.yaml` | security-review.md (OWASP check) | YAML |
 | `elicitation.schema.yaml` | elicitation-report.md (BA output) | YAML |
-| `analysis.schema.yaml` | analysis-report.md (BA output) | YAML |
+| `analysis.schema.yaml` | analyst-output.md (BA output) | YAML |
 | `synthesis.schema.yaml` | business-analysis.md (BA synthesized) | YAML |
 | `domain-handbook.schema.yaml` | domain-handbook.md (Miner output) | YAML |
 

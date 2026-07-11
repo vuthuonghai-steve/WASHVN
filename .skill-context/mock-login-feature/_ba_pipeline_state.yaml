@@ -1,0 +1,14 @@
+feature_name: mock-login-feature
+stages:
+  elicitor:
+    status: completed
+    artifact: .skill-context/mock-login-feature/ba-elicitor/elicitation-report.md
+  analyst:
+    status: completed_inline
+    artifact: DELIVERED_AS_TEXT (subagent Write blocked for report files)
+  synthesizer:
+    status: completed_inline
+    artifact: DELIVERED_AS_TEXT (subagent Write blocked for report files)
+current_stage: synthesizer
+status: completed_with_inline_delivery
+note: "BA sub-agents not registered (F1 fallback inline). analysis-report.md + business-analysis.md delivered as text in runner response due to Write hook blocking report .md files for subagents."

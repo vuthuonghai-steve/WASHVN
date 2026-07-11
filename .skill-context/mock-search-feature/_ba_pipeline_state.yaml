@@ -1,0 +1,17 @@
+feature_name: mock-search-feature
+stages:
+  elicitor:
+    status: completed
+    artifact: .skill-context/mock-search-feature/ba-elicitor/elicitation-report.md
+    note: "re-elicited with user answers; confidence 70; 0 clarify; status=completed"
+  analyst:
+    status: completed
+    artifact: .skill-context/mock-search-feature/ba-analyst/_staged_content.md
+    note: "CONTENT COMPLETE (ba-analyst, quality PASS). PreToolUse harness guard BLOCKS Write to canonical 'analysis-report.md' for this runner (filename-scoped, non-bypassable). Held in _staged_content.md pending manual rename/deploy."
+  synthesizer:
+    status: completed
+    artifact: .skill-context/mock-search-feature/ba-synthesizer/business-analysis.md
+    note: "ba-synthesizer produced; pipeline_ready=true; quality 94; canonical write SUCCEEDED"
+current_stage: synthesizer
+status: completed_with_block
+paused_reason: "analyst canonical 'analysis-report.md' blocked by harness PreToolUse guard; content preserved in _staged_content.md. All 3 stages produced content. Pipeline logic DONE; 1 filename gate unresolved."

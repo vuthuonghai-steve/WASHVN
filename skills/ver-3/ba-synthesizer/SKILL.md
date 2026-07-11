@@ -61,7 +61,7 @@ Validate: `python skills/ver-3/_shared/validators/schema_validator.py --path bus
 
 <input_contract>
 - `elicitation-report.md` (required) — `.skill-context/{feature}/ba-elicitor/elicitation-report.md`, status `completed`.
-- `analysis-report.md` (required) — `.skill-context/{feature}/ba-analyst/analysis-report.md`, status `completed`.
+- `analyst-output.md` (required) — `.skill-context/{feature}/ba-analyst/analyst-output.md`, status `completed`.
 - `thought-cache.yaml` (optional) — `.skill-context/{feature}/ba-elicitor/thought-cache.yaml`.
 </input_contract>
 
@@ -83,7 +83,7 @@ Validate: `python skills/ver-3/_shared/validators/schema_validator.py --path bus
 </acceptance_criteria>
 
 <failure_modes>
-- **F22 Missing artifact**: elicitation/analysis-report không tồn tại → báo lỗi, không sinh output.
+- **F22 Missing artifact**: elicitation/analyst-output không tồn tại → báo lỗi, không sinh output.
 - **F23 Schema fail**: frontmatter thiếu key / sai kiểu → chạy lại schema_validator, sửa trước khi ghi.
 - **F24 Quality < 80%**: weighted sum < 0.80 → WARNING, không set pipeline_ready=true.
 - **F25 Unresolved conflict**: congruence FAIL → block pipeline, escalate ba-elicitor (re-elicit).

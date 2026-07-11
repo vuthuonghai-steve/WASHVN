@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""validate_metrics.py — Binary quality gate for ba-analyst analysis-report.md.
+"""validate_metrics.py — Binary quality gate for ba-analyst analyst-output.md.
 
 Validates 8 mechanical criteria (C1-C8). No NLP scoring. Exit 0 = all pass, 1 = fail.
 Stdlib + PyYAML + Click only. Schema is read-only (skills/ver-3/_shared/schemas/analysis.schema.yaml).
@@ -117,7 +117,7 @@ def check_c8(fm):
 
 
 @click.command()
-@click.option("--artifact", required=True, type=click.Path(exists=True), help="Path to analysis-report.md")
+@click.option("--artifact", required=True, type=click.Path(exists=True), help="Path to analyst-output.md")
 @click.option("--schema", type=click.Path(exists=True), help="Path to analysis.schema.yaml (unused for C-criteria, kept for parity)")
 def main(artifact, schema):
     try:

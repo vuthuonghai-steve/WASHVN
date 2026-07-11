@@ -20,8 +20,10 @@ spec/architects/
 ├── P6-deconstructor-and-miner/        ← Migration: Deconstructor + Miner Analyzer
 ├── P7-delta-planning-and-builder/     ← Update: Delta Planning + In-place Builder
 ├── shared/                            ← Cross-cutting references
-└── indexes/                           ← Tra cứu theo 3 chiều
+└── indexes/                           ← Tra cứu theo 4 chiều (role, domain, design, built-unit)
 ```
+
+> **📌 BA Chain (extension):** Spec gốc định nghĩa BA = 1 stage (BA Elicitor). Runtime mở rộng thành 3-skill chain (`ba-elicitor`→`ba-analyst`→`ba-synthesizer`) chạy qua `ba-pipeline-runner`, + `quality-scorer` (maps to Spec Gatekeeper). Không wire vào `pipeline-orchestrator` (by design). Inventory đầy đủ tại `indexes/by-built-unit.md`.
 
 ---
 
@@ -49,6 +51,7 @@ Mỗi vai trò trong pipeline được gom vào một bảng đầy đủ:
 
 | Role | Phase files chính |
 |:---|:---|
+| BA Chain (extension) | ba-pipeline-runner, quality-scorer → see `indexes/by-built-unit.md` |
 | BA Elicitor | P1, P2, P5 |
 | SCS Router | P1, P5 |
 | Miner | P6, P2, P5 |

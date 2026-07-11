@@ -10,7 +10,7 @@ Mục tiêu: (1) phát hiện sớm mâu thuẫn chéo giữa Sequence Diagram �
 
 ## §1. Cross-Reference Validation Rules (Quy tắc Kiểm định Chéo)
 
-Quét 2 nguồn (`elicitation-report.md` + `analysis-report.md`) để đối chiếu tính nhất quán.
+Quét 2 nguồn (`elicitation-report.md` + `analyst-output.md`) để đối chiếu tính nhất quán.
 
 ### Rule 1 — Actor-Entity Matching (SD ↔ ERD)
 - **Mô tả**: Mọi Actor/Participant trong Sequence Diagram phải có thực thể (bảng) tương ứng trong ERD.

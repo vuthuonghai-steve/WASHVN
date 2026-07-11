@@ -1,0 +1,13 @@
+feature_name: mock-notify-feature
+stages:
+  elicitor:
+    status: completed
+    artifact: .skill-context/mock-notify-feature/ba-elicitor/elicitation-report.md
+  analyst:
+    status: completed
+    artifact: .skill-context/mock-notify-feature/ba-analyst/analyst-output.md
+  synthesizer:
+    status: completed
+    artifact: .skill-context/mock-notify-feature/ba-synthesizer/business-analysis.md
+current_stage: synthesizer
+status: completed

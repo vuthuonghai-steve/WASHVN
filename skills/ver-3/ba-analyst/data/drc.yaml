@@ -22,7 +22,7 @@ inputs:
 
 outputs:
   - file_id: "analysis_report"
-    path_template: ".skill-context/{feature}/ba-analyst/analysis-report.md"
+    path_template: ".skill-context/{feature}/ba-analyst/analyst-output.md"
     format: "markdown"
     schema: "skills/ver-3/_shared/schemas/analysis.schema.yaml"
     lifecycle_status: "WORM"

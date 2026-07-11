@@ -6,7 +6,9 @@
 
 | Layer | Name | Responsibility | Components |
 |:---|:---|:---|:---|
-| **L0** | Intake & Routing | Receive requests, assess complexity, route | BA Elicitor, SCS Router |
+| **L0** | Intake & Routing | Receive requests, assess complexity, route | BA Elicitor (→ BA Chain: elicitor→analyst→synthesizer via `ba-pipeline-runner`), SCS Router |
+
+> **BA Chain note:** Spec gốc định nghĩa BA ở dạng 1 stage (BA Elicitor, sinh `business-analysis.md`). Runtime mở rộng thành 3-skill chain — `ba-elicitor` (Stage -1) → `ba-analyst` (Stage -0.5) → `ba-synthesizer` (Stage -0.2) — chạy độc lập qua `ba-pipeline-runner` agent, KHÔNG qua `pipeline-orchestrator` (by design: orchestrator chỉ lo Branch B, SCS≥3.0). Xem `indexes/by-built-unit.md` để inventory đầy đủ. |
 | **L1** | Knowledge Foundation | Mine knowledge, build domain-handbook | Miner |
 | **L2** | Design & Contract | Static design, semantic anchors, contracts | Architect, Spec Gatekeeper |
 | **L3** | Planning & Verification | Context hydration, planning, drift detection | Hydrator, Planner, Drift Detector |

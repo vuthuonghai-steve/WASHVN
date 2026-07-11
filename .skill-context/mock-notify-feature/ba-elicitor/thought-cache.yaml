@@ -1,0 +1,32 @@
+skill_name: "notify-feature"
+elicitation_date: "2026-07-11"
+
+business_thought_process:
+  - "Systems Thinking: Tính năng thông báo là mắt xích trong tổng thể ứng dụng di động; nó phụ thuộc vào dịch vụ push nền tảng (FCM/APNs), vòng đời device token, và cổng preference của người dùng. Phân tích tác động chéo cho thấy sự kiện đơn hàng, mention, và system alert đều hội tụ vào một Delivery Pipeline duy nhất, do đó mọi lỗi ở lớp token hoặc preference sẽ lan truyền đến cả ba luồng. Cần thiết kế feedback loop qua delivery receipt để đo tỷ lệ đến (delivery rate) thực tế."
+  - "Root Cause Isolation: Khi người dùng báo không nhận được thông báo, triệu chứng thường bị quy kết sai cho lời gọi gửi (send call). Bóc tách gốc rễ qua 5 Whys chỉ ra nguyên nhân thường là device token hết hạn, hoặc preference bị tắt, hoặc dịch vụ push ngưng. Việc phân biệt triệu chứng (không đến) và nguyên nhân (token/preference/upstream) giúp định hướng quan sát (observability) vào đúng điểm đo."
+  - "First Principles: Về sự thật cơ bản, giao một thông báo thành công đòi hỏi ba điều kiện tiên quyết: device token hợp lệ đã đăng ký, sự đồng ý preference (opt-in) của người dùng, và một sự kiện nghiệp vụ hợp lệ. Không có giả định về giao thành công bắt buộc — push là best-effort. Giới hạn token và giới hạn thông lượng là ranh giới cứng cần tôn trọng ngay từ thiết kế."
+  - "Impact Analysis: Thay đổi preference của người dùng lan truyền ảnh hưởng mọi lượt phát sau (tác động downstream). Giới hạn thông lượng 100 rps tác động trực tiếp đến sự kiện đơn hàng dồn dập (burst) trong giờ cao điểm — nếu không có hàng đợi, thông báo sẽ rớt hoặc trễ. Rủi ro thiếu đo lường: operator không thể biết backlog tăng. Khoanh vùng ảnh hưởng giúp ưu tiên hàng đợi và cảnh báo sớm."
+  - "Structural Decomposition: Bẻ Epic (Notifications) thành hai Feature (Delivery, Preferences), mỗi Feature phân rã thành User Story: (1) người dùng cấu hình preference theo danh mục, (2) người dùng nhận cập nhật đơn hàng, (3) người dùng nhận mention, (4) hệ thống phát system alert. Mỗi story có tiêu chí nghiệm thu đo lường được (500ms p95, 100 rps, 99.9% sẵn sàng), tránh lộn xộn thông tin thành đơn vị tuyến tính có cấu trúc."
+
+stakeholder_empathy:
+  - "App User: mục tiêu nhận cảnh báo đúng lúc và liên quan, đồng thời kiểm soát nội dung nhận; pain point là mệt mỏi thông báo (notification fatigue) và bỏ lỡ cảnh báo quan trọng khi bị lẫn trong quá nhiều推送."
+  - "Mobile Engineer: mục tiêu giao hàng tin cậy với chi phí pin và mạng thấp; pain point là quản lý vòng đời device token và khác biệt hành vi giữa FCM (Android) và APNs (iOS)."
+  - "Security Reviewer: mục tiêu không rò rỉ dữ liệu nhạy cảm qua payload push và ép buộc đồng ý; pain point là PII lọt vào nội dung thông báo và khả năng vượt cổng preference."
+  - "System Operator: mục tiêu duy trì sẵn sàng 99.9% và thông lượng 100 rps; pain point là dịch vụ push bên thứ ba ngưng và tồn đọng (backlog) khi sự kiện dồn dập."
+
+reverse_questions:
+  - "Điều gì sai nếu device token hết hạn nhưng hệ thống vẫn cố gửi — có gây rò rỉ hoặc sập không?"
+  - "Boundary nào bị phá vỡ nếu preference không được ép buộc (opt-in bị bỏ qua) — vi phạm bảo mật hay luật?"
+  - "Luồng nào (Happy/Alternative/Exception) đang bị bỏ sót khi dịch vụ push ngưng hoàn toàn — có hàng đợi và cảnh báo operator không?"
+  - "Rủi ro nào xảy ra khi giới hạn 100 rps bị vượt trong giờ cao điểm — thông báo rớt hay trễ p95?"
+  - "Điều gì sai nếu payload chứa PII thô — ai có thể đọc được trên khóa khóa thiết bị (lock screen)?"
+
+confidence_breakdown:
+  scope_clarity: 0.85
+  requirement_stability: 0.90
+  stakeholder_coverage: 0.88
+  nfr_quantification: 0.95
+  overall: 0.88
+
+uncertainty_areas:
+  - "Không có vùng thiếu nghiêm trọng: mọi khoảng trống đã áp dụng default an toàn (simple text match, 12/page, 500ms p95, 100 rps, WCAG AA, 99.9%)."

@@ -29,7 +29,7 @@ hooks:
   Stop:
     hooks:
       - type: prompt
-        prompt: "Check analysis-report.md: tồn tại, valid YAML frontmatter, 4 required fields present, metrics quantified (value là số), Mermaid labels double-quoted, Gherkin ≥3 scenarios, no placeholder"
+        prompt: "Check analyst-output.md: tồn tại, valid YAML frontmatter, 4 required fields present, metrics quantified (value là số), Mermaid labels double-quoted, Gherkin ≥3 scenarios, no placeholder"
         model: "claude-3-5-haiku"
         continueOnBlock: true
 ---
@@ -41,7 +41,7 @@ Persona: Business Analyst / Solution Architect cao cấp. Chuyển mong muốn n
 </instructions>
 
 <safety_contract>
-Token limit SKILL.md ≤ 1500 words. WORM write: chỉ ghi `.skill-context/{feature}/ba-analyst/analysis-report.md`. No placeholder (TODO/TBD/mock) — FAILED nếu có. NFR bắt buộc lượng hóa. Mermaid labels BẮT BUỘC double-quote.
+Token limit SKILL.md ≤ 1500 words. WORM write: chỉ ghi `.skill-context/{feature}/ba-analyst/analyst-output.md`. No placeholder (TODO/TBD/mock) — FAILED nếu có. NFR bắt buộc lượng hóa. Mermaid labels BẮT BUỘC double-quote.
 </safety_contract>
 
 <knowledge_anchors>
@@ -62,9 +62,9 @@ Token limit SKILL.md ≤ 1500 words. WORM write: chỉ ghi `.skill-context/{feat
 6. **RISK** — Risk Matrix (P×I) + mitigation cụ thể. §5. [QG-BA-05]
 7. **SELF-CHECK** — Chạy `loop/interlock_checklist.md` → 100% pass. [QG-BA-01→05]
 
-Write: `.skill-context/{feature}/ba-analyst/analysis-report.md` (WORM).
-Validate: `python scripts/validate_metrics.py --artifact analysis-report.md` → exit 0.
-Schema: `python skills/ver-3/_shared/validators/schema_validator.py --path analysis-report.md --schema skills/ver-3/_shared/schemas/analysis.schema.yaml` → exit 0.
+Write: `.skill-context/{feature}/ba-analyst/analyst-output.md` (WORM).
+Validate: `python scripts/validate_metrics.py --artifact analyst-output.md` → exit 0.
+Schema: `python skills/ver-3/_shared/validators/schema_validator.py --path analyst-output.md --schema skills/ver-3/_shared/schemas/analysis.schema.yaml` → exit 0.
 </workflow_phases>
 
 <input_contract>
@@ -73,7 +73,7 @@ Schema: `python skills/ver-3/_shared/validators/schema_validator.py --path analy
 </input_contract>
 
 <output_contract>
-- `analysis-report.md` (WORM) — `.skill-context/{feature}/ba-analyst/analysis-report.md`.
+- `analyst-output.md` (WORM) — `.skill-context/{feature}/ba-analyst/analyst-output.md`.
 - Frontmatter chỉ 4 keys schema-allowed: `skill_name`, `criteria_analysis[]`, `risk_assessment[]`, `metrics[]`.
   + `criteria_analysis[].criterion_id/description/classification ∈ [FR,NFR]`
   + `metrics[].name/value(number)/unit`

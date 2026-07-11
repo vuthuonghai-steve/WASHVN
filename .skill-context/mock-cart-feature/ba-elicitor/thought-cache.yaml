@@ -1,0 +1,36 @@
+skill_name: "cart-feature"
+elicitation_date: "2026-07-11"
+
+# REQUIRED (per elicitation.schema.yaml)
+business_thought_process:
+  - "Systems Thinking: Cart không đứng riêng — nó là mắt xích giữa Product Catalog, Inventory và Payment Gateway. Một thao tác thêm item kích hoạt feedback loop: kiểm tồn kho, tính lại subtotal, và ảnh hưởng khả năng checkout. Phân tích tác động chéo cho thấy lỗi cổng thanh toán phải rollback trạng thái giỏ để tránh trừ tồn kho ảo."
+  - "Root Cause Isolation: Áp 5 Whys lên yêu cầu checkout — vì sao tổng tiền có thể sai? Vì thiếu quy tắc thuế/ship; vì input không định nghĩa; do đó gốc rễ là hợp đồng nghiệp vụ giá chưa xác định, không phải lỗi tính toán bề mặt."
+  - "First Principles: Bóc tách cart về sự thật cơ bản — nó là danh sách tham chiếu (product-id, quantity) kèm ràng buộc tồn kho và session ownership. Từ đó loại bỏ giả định về persistence để hỏi rõ lưu server-side hay client-side."
+  - "Impact Analysis: Thay đổi quy tắc quantity (giới hạn theo tồn kho) lan truyền downstream tới subtotal, checkout, và order. Phạm vi ảnh hưởng trung bình-cao; cần khoanh vùng ràng buộc trước khi ba-analyst thiết kế."
+  - "Structural Decomposition: Epic Cart-and-Checkout phân rã thành Feature Cart Management (add, adjust, remove) và Feature Checkout (pricing, payment, order creation), rồi xuống User Story và Acceptance Criteria từng FR theo MECE — không trùng, không sót."
+
+stakeholder_empathy:
+  - "Online Shopper: mục tiêu [thao tác giỏ trơn tru, checkout đáng tin cậy], pain point [mất giỏ khi reload, tổng tiền sai lệch, thanh toán thất bại không rõ lý do]."
+  - "Store Operator: mục tiêu [tối đa tỷ lệ chuyển đổi, đồng bộ tồn kho chính xác], pain point [oversell do race condition, tỷ lệ bỏ giỏ cao]."
+  - "Developer/Maintainer: mục tiêu [hợp đồng dữ liệu cart rõ ràng, thuận tiện mở rộng phương thức thanh toán], pain point [trạng thái giỏ phân tán client/server khó đồng bộ]."
+  - "Security Reviewer: mục tiêu [chống tamper giá và quantity phía client, bảo vệ dữ liệu thanh toán], pain point [thiếu server-side validation, session hijack, thiếu mã hóa transport]."
+
+reverse_questions:
+  - "Điều gì sai nếu input bị prompt-injected qua tên sản phẩm hoặc trường số lượng?"
+  - "Boundary nào bị phá vỡ nếu NFR latency và checkout success rate không được lượng hóa?"
+  - "Luồng nào bị bỏ sót — có xử lý guest-cart merge (Alternative) và tồn-kho-cạn tại checkout (Exception) chưa?"
+  - "Rủi ro nào xảy ra khi Security Reviewer bị bỏ qua trong luồng thanh toán tài chính?"
+  - "Điều gì xảy ra nếu hai tab cùng chỉnh một giỏ đồng thời (concurrency)?"
+
+# OPTIONAL (extended depth)
+confidence_breakdown:
+  scope_clarity: 0.7
+  requirement_stability: 0.65
+  stakeholder_coverage: 0.85
+  nfr_quantification: 0.7
+  overall: 0.72
+
+uncertainty_areas:
+  - "[CẦN LÀM RÕ] persistence giỏ hàng: guest-only, logged-in-only, hay hybrid có merge."
+  - "[CẦN LÀM RÕ] quy tắc pricing: thuế, phí vận chuyển, mã giảm giá có trong scope không."
+  - "[CẦN LÀM RÕ] giới hạn quantity tối đa mỗi item và thời điểm kiểm tồn kho."
