@@ -33,7 +33,7 @@ For each skill (3 vòng lặp):
   5. Tác giả loop/ kiểm soát chất lượng checklist
   6. Tác giả DRC YAML contract file
   7. Invoke aggregate-quality-gatekeeper agent (Phase 3) để audit
-  8. Fix findings → re-audit until ≥80% quality score
+  8. Fix findings → re-audit until ≥70% quality score  # aligned with AC-8 (L568/631); supersedes earlier ≥80% draft
   9. Test invoke skill với mock user request
   10. Deploy (move file từ skills/ver-3/ sang .claude/skills/ via deploy script)
 ```

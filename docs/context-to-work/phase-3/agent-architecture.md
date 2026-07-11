@@ -157,6 +157,7 @@ phase_3_agents:
     model: opus
     tools: [Read, Task]
     write_zone: ".skill-context/{feature}/ba-*"
+    state_ledger_validation_hook: true  # see §3-bis — BA runner writes _state_ledger.yaml, PostToolUse→validate-state-ledger.sh wired (ba-pipeline-runner.md L42-46)
     decomposition_from: "ba-pipeline-runner (gốc dồn orchestration + write gate → giữ BA orchestration ONLY)"
 
   4_design_validator:

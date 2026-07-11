@@ -17,7 +17,7 @@ hooks:
             INPUT=$(cat)
             FILE_PATH=$(echo "$INPUT" | jq -r '.params.filePath // empty')
             [ -z "$FILE_PATH" ] && exit 0
-            if [[ ! "$FILE_PATH" =~ \.skill-context/{skill}/quality- ]]; then
+            if [[ ! "$FILE_PATH" =~ \.skill-context/[^/]+/quality- ]]; then
               echo "BLOCKED: quality-scorer chỉ write .skill-context/{skill}/quality-*" >&2
               exit 2
             fi

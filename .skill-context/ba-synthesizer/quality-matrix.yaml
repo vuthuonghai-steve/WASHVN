@@ -1,0 +1,27 @@
+skill_name: ba-synthesizer
+meta_scores:
+  META-1:
+    score: 100
+    structural_integrity: "PASS — 7-Zone populated, frontmatter valid"
+    domain_anchoring: "PASS — BABOK ch.6, ISO 25010 mapping, MoSCoW, FMEA"
+  META-2:
+    score: 75
+    semantic_depth: "PARTIAL — 5 reverse-Q, 3 stakeholders, 100% anchoring; 0 explicit must_not lists"
+    reverse_q: "PASS — 5 aspects"
+  META-3:
+    score: 100
+    mechanical: "PASS — check_congruence.py 8/8 + schema_validator"
+    negative_space: "PASS — not responsible_for documented"
+    sandbox: "PASS — validator scripts run clean"
+overall_score: 91.67
+verdict: PASS
+signal_details:
+  evaluated_by: quality-scorer
+  gaps:
+    - id: META-2.1-S1
+      severity: medium
+      detail: "0 explicit must_not rules; prose negatives (CHỈ/KHÔNG) not converted. Does NOT block AC-8 (composite 91.67 ≥70)."
+  evidence:
+    - "META-1.1: BABOK ch.6, ISO 25010, MoSCoW, FMEA"
+    - "META-2.1: S2=5 aspects, S3=3 stakeholders (upstream elicitor/analyst + downstream explorer), S4=100% (threshold 0.80)"
+    - "META-3.1: check_congruence.py 8/8 PASS"

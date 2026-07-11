@@ -1,0 +1,11 @@
+schema_version: "1.0"
+skill_name: "ba-pipeline-runner"
+mode: "ba-sub-pipeline"
+current_stage: synthesizer
+stage_status: completed
+feature_name: upvote-board
+artifacts:
+  elicitor: .skill-context/upvote-board/ba-elicitor/elicitation-report.md
+  analyst: .skill-context/upvote-board/ba-analyst/analyst-output.md
+  synthesizer: .skill-context/upvote-board/ba-synthesizer/business-analysis.md
+status: completed

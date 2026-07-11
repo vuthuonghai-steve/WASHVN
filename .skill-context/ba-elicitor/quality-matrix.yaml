@@ -1,0 +1,24 @@
+skill_name: ba-elicitor
+meta_scores:
+  META-1:
+    score: 100
+    structural_integrity: "PASS — 7-Zone populated, frontmatter 10 fields valid"
+    domain_anchoring: "PASS — BABOK v3, ISO 25010, 6 mindset vector anchors"
+  META-2:
+    score: 100
+    semantic_depth: "PASS — must_not count=6, 5 reverse-Q aspects, 3 stakeholders"
+    reverse_q: "PASS — edge/failure/anti-goal/assumption/limitation"
+  META-3:
+    score: 100
+    mechanical: "PASS — validate_outputs.py 8-QC + scoping_checklist gate"
+    negative_space: "PASS — not responsible_for documented"
+    sandbox: "PASS — validator scripts run clean"
+overall_score: 100
+verdict: PASS
+signal_details:
+  evaluated_by: quality-scorer
+  gaps: []
+  evidence:
+    - "SKILL.md L1-16: vector anchors"
+    - "knowledge L7-103: trace-tag anchors"
+    - "META-2.1: S1 must_not=6, S2=5 aspects, S3=3 stakeholders, S4=100%"

@@ -2,7 +2,7 @@
 
 - **Date:** 2026-07-11
 - **Severity:** Medium (validation dead zone — không block pipeline, nhưng mất protection)
-- **Status:** Open — fix chưa apply
+- **Status:** Resolved — verified on-disk 2026-07-11 (runner writes canonical `_state_ledger.yaml` with 6 required fields; ledger path whitelisted in PreToolUse gate L32-35)
 - **Component:** `.claude/agents/ba-pipeline-runner.md` ↔ `.claude/hooks/validate-state-ledger.sh`
 - **Branch:** `feat/architect-v1`
 - **Phát hiện qua:** Phase 5 test — agent ghi `_ba_pipeline_state.yaml` (legacy) thay vì `_state_ledger.yaml` (canonical)

@@ -2,7 +2,7 @@
 
 - **Date:** 2026-07-11
 - **Severity:** High (pipeline break after stage completion)
-- **Status:** Analyzed — fix proposed, not yet applied
+- **Status:** Resolved — verified on-disk 2026-07-11 (runner uses `_state_ledger.yaml` + PostToolUse→validate-state-ledger.sh wired at ba-pipeline-runner.md L32-46)
 - **Component:** `.claude/agents/ba-pipeline-runner.md` + `.claude/hooks/events/*` + `.claude/hooks/validate-state-ledger.sh`
 - **Branch:** `feat/architect-v1`
 
