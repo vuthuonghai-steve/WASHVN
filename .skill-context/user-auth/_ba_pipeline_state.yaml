@@ -1,0 +1,13 @@
+feature_name: user-auth
+stages:
+  elicitor:
+    status: completed
+    artifact: .skill-context/user-auth/ba-elicitor/elicitation-report.md
+  analyst:
+    status: completed
+    artifact: .skill-context/user-auth/ba-analyst/analyst-output.md
+  synthesizer:
+    status: completed
+    artifact: .skill-context/user-auth/ba-synthesizer/business-analysis.md
+current_stage: synthesizer
+status: completed

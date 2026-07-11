@@ -1,5 +1,7 @@
 # Elicitation Patterns — BA Elicitor Knowledge Base
 
+> Consolidated từ 5 file old v0.0.2. Mỗi section là một **semantic vector anchor** (xem `synthesis-llm-principles.md` §1.1): các từ khóa/cấu trúc dưới đây kích hoạt vùng vector không gian chuyên gia BA trong LLM trước khi nó viết report.
+
 ---
 
 ## §1 Elicitation Rules & Master Prompt Architecture

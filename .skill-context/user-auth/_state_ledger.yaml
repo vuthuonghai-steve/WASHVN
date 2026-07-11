@@ -1,0 +1,21 @@
+schema_version: "1.0"
+skill_name: ba-pipeline-runner
+mode: ba-sub-pipeline
+feature_name: user-auth
+current_stage: synthesizer
+stage_status: completed
+artifacts:
+  elicitor: .skill-context/user-auth/ba-elicitor/elicitation-report.md
+  analyst: .skill-context/user-auth/ba-analyst/analyst-output.md
+  synthesizer: .skill-context/user-auth/ba-synthesizer/business-analysis.md
+stages:
+  elicitor:
+    status: completed
+    artifact: .skill-context/user-auth/ba-elicitor/elicitation-report.md
+  analyst:
+    status: completed
+    artifact: .skill-context/user-auth/ba-analyst/analyst-output.md
+  synthesizer:
+    status: completed
+    artifact: .skill-context/user-auth/ba-synthesizer/business-analysis.md
+status: completed

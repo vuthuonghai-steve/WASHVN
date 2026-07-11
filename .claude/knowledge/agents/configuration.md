@@ -266,6 +266,27 @@ python3 -c "import yaml; yaml.safe_load(open(sys.argv[1]))" \
 - [ ] `skills` field (if present) contains at most 3 skills
 - [ ] No invalid fields (only the 16 allowed fields and fork lifecycle metadata: version, status, parent, fork_rationale, suite)
 
+### 7.3 Cross-Check: Output Contract ↔ PreToolUse Write Gate Alignment ⚠️
+
+**Rule:** Mọi file path được liệt kê trong `<output_contract>` và `<constraints>.must` PHẢI được phép bởi `PreToolUse` Write gate regex (nếu agent có Write tool).
+
+**Vì sao:** Nếu không, agent sẽ bị chính hook của nó chặn — một class bug đã xảy ra với `ba-pipeline-runner` (`_state_ledger.yaml` bị chặn bởi Write gate vì regex quá hẹp, dù output_contract yêu cầu ghi file đó).
+
+**Cách kiểm tra:**
+```yaml
+cross_check:
+  1: "Liệt kê tất cả file paths từ output_contract (items 1..N)"
+  2: "Liệt kê tất cả file paths từ constraints.must"
+  3: "Với mỗi path, kiểm tra PreToolUse Write regex: path có được allow không?"
+  4: "Nếu bất kỳ path nào bị chặn → agent sẽ FAIL ở runtime → cần sửa regex"
+```
+
+**Checklist bổ sung cho agent có Write tool:**
+- [ ] Mọi output file trong `<output_contract>` được PreToolUse Write gate cho phép
+- [ ] Mọi file trong `<constraints>.must` được Write gate cho phép
+- [ ] Write gate regex không quá hẹp (missing paths) cũng không quá rộng (cho phép paths ngoài zone)
+- [ ] Nếu có `<constraints>.must_not` về write zone, nó không contradicted với must + output_contract
+
 ---
 
 ## 8. References

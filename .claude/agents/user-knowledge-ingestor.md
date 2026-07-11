@@ -14,13 +14,29 @@ hooks:
       hooks:
         - type: command
           command: |
+            set -euo pipefail
+            err_report() {
+              echo "[INGEST-HOOK-ERROR] Hook failed at line $1" >&2
+            }
+            trap 'err_report $LINENO' ERR
+
             INPUT=$(cat)
-            FILE_PATH=$(echo "$INPUT" | jq -r '.params.filePath // empty')
-            [ -z "$FILE_PATH" ] && exit 0
-            if [[ ! "$FILE_PATH" =~ \.skill-context/{skill}/user-contrib ]]; then
-              echo "BLOCKED: ingestor chỉ write .skill-context/{skill}/user-contrib*" >&2
+            if ! echo "$INPUT" | jq empty &>/dev/null; then
+              echo "Hook Error: Malformed JSON input" >&2
               exit 2
             fi
+
+            FILE_PATH=$(echo "$INPUT" | jq -r '.params.filePath // empty')
+            [ -z "$FILE_PATH" ] && exit 0
+
+            ALLOWED_PATTERN="\.skill-context/[^/]+/user-contrib"
+            if [[ ! "$FILE_PATH" =~ $ALLOWED_PATTERN ]]; then
+              REASON="BLOCKED: user-knowledge-ingestor chỉ được ghi vào .skill-context/{skill}/user-contrib*. Thực tế ghi: $FILE_PATH"
+              echo "$REASON" >&2
+              echo "{\"permissionDecision\": \"deny\", \"reason\": \"$REASON\"}"
+              exit 0
+            fi
+            exit 0
 ---
 
 <instructions priority="critical">

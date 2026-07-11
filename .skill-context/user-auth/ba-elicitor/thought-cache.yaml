@@ -1,0 +1,32 @@
+business_thought_process:
+- 'Systems Thinking: Auth là ranh giới tin cậy cốt lõi của toàn bộ app; mọi downstream
+  API phụ thuộc vào token hợp lệ. Feedback loop: failed attempts → lockout → giảm
+  brute force nhưng tăng friction UX. [SUY LUẬN]'
+- 'Root Cause Isolation: Rủi ro chiếm đoạt tài khoản thường xuất phát từ (1) reset
+  flow yếu, (2) refresh token không rotate, (3) thiếu MFA. Không giải quyết triệu
+  chứng mà giải quyết gốc: enforce MFA P1 + single-use reset + rotate refresh. [SUY
+  LUẬN]'
+- 'First Principles: Token phải stateless (JWT) hoặc stateful (opaque + store) — chọn
+  dựa trên nhu cầu revoke tức thời. Refresh 7 ngày bắt buộc có rotation + revocation
+  list để giới hạn blast radius. [SUY LUẬN]'
+- 'Impact Analysis: Đổi TTL access token (15min) không ảnh hưởng DB load nhiều; đổi
+  refresh rotation ảnh hưởng schema Session + logout-all logic. [SUY LUẬN]'
+- 'Structural Decomposition: Epic ''Secure Login'' → Features (email/pwd, OAuth, MFA,
+  session, reset, rate-limit) → User Stories → Acceptance Criteria (Gherkin). [SUY
+  LUẬN]'
+reverse_questions:
+- Nếu refresh token bị leak, hệ thống revoke thế nào trước khi 7 ngày hết hạn? [SUY
+  LUẬN]
+- Reset link có single-use và bind vào user session không? Nếu intercept thì sao?
+  [SUY LUẬN]
+- Rate-limit 5 attempts áp dụng per-IP hay per-account? Brute force qua nhiều IP?
+  [CẦN LÀM RÕ]
+- MFA TOTP bắt buộc cho mọi login hay chỉ device chưa trust? [CẦN LÀM RÕ]
+- OAuth fallback khi Google outage? [CẦN LÀM RÕ]
+stakeholder_empathy:
+- 'End-User: muốn login < 2s, không bị lockout oan; MFA chấp nhận nếu chỉ bắt khi
+  device lạ. [SUY LUẬN]'
+- 'Security Reviewer: cần refresh rotate + reset single-use + rate-limit đủ chặt.
+  [SUY LUẬN]'
+- 'System Operator: cần metric rate-limit hit + token revoke API. [SUY LUẬN]'
+- 'Developer: cần contract API đồng nhất web/mobile, tài liệu rõ ràng. [SUY LUẬN]'
