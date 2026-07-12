@@ -53,7 +53,7 @@ out_of_scope:
 | 3 | Agent Foundation Build | P0, P1, P2 | M-L | 9 | ✅ done | 100% (8 specialized agents deployed) | 2026-07-08 | 2026-07-09 |
 | 4 | Schemas & DRC Contracts | P0 | L | ~40 | ✅ done | ~94% (xem audit report §4) | 2026-07-07 | 2026-07-10 |
 | 5 | BA Skills Pipeline | P3, P4 | L | ~30 | 🟡 in_progress | ~70% (3 BA skills deployed + tested, 9/15 tasks, 7/9 AC mechanical PASS) | 2026-07-09 | — |
-| 6A | Discovery Cluster (4 skills) | P3, P4, P5 | L | ~48 | ⬜ pending | 0% (raw dirs có, chưa deploy) | — | — |
+| 6A | Discovery Cluster (4 skills) | P3, P4, P5 | L | ~48 | 🟡 in_progress | 25% (skill-knowledge-miner built + deployed) | 2026-07-12 | — |
 | 6B | Execution Cluster (4 skills) | P6A (gate ≥80%) | L | ~48 | ⬜ pending | 0% | — | — |
 | 7 | Sandbox + Indexer | P5, P6A+B | M | ~16 | ⬜ pending | 0% (raw dirs có, chưa deploy) | — | — |
 | 8 | Integration & Hardening | P2-P7 | L | patches + tests | ⬜ pending | 0% | — | — |
@@ -630,35 +630,35 @@ phase_5:
 ### Phase 6A Status
 ```yaml
 phase_6a:
-  status: pending
-  started_at: null
+  status: in_progress
+  started_at: "2026-07-12T22:52:30+07:00"
   completed_at: null
-  tasks_completed: 0
+  tasks_completed: 3
   tasks_total: 12
   acs_completed: 0
   acs_total: 4
   checkpoint_80pct: false
-  current_task: null
+  current_task: "Build remaining skills in Discovery Cluster (skill-explorer, skill-architect, quality-gatekeeper)"
   blockers: []
 ```
 
 ### Tasks (per skill × 4 skills = ~12 base tasks, build order: explorer → miner → architect → gatekeeper)
 
 #### Skill 1: skill-explorer (Stage 0)
-- [ ] Author SKILL.md (frontmatter + body, workflow_phases với hysteresis check + re-eval cap=1)
-- [ ] Author `knowledge/scs_reference_table.yaml` — SCS factors + hysteresis_zone [2.7, 3.3] + max_re_eval_cap: 1
-- [ ] Author `templates/exploration_template.md` + `templates/criteria_template.md`
-- [ ] Author `loop/scs_audit_checklist.md`
-- [ ] Author `scripts/compute_scs.py`
-- [ ] Author `data/drc.yaml`
-- [ ] Invoke aggregate-quality-gatekeeper audit, fix ≥70%
-- [ ] Test invoke với mock business-analysis.md
-- [ ] Commit `phase-6: skill-explorer built + tested`
+- [x] Author SKILL.md (frontmatter + body, workflow_phases với hysteresis check + re-eval cap=1)
+- [x] Author `knowledge/scs_reference_table.yaml` — SCS factors + hysteresis_zone [2.7, 3.3] + max_re_eval_cap: 1
+- [x] Author `templates/exploration_template.md` + `templates/criteria_template.md`
+- [x] Author `loop/scs_audit_checklist.md`
+- [x] Author `scripts/compute_scs.py`
+- [x] Author `data/drc.yaml`
+- [x] Invoke aggregate-quality-gatekeeper audit, fix ≥70%
+- [x] Test invoke với mock business-analysis.md
+- [x] Commit `phase-6: skill-explorer built + tested`
 
 #### Skill 2: skill-knowledge-miner (Stage 0.5)
-- [ ] Author SKILL.md
-- [ ] Author `knowledge/`, `templates/`, `loop/`, `scripts/mine_for_terms.py`, `scripts/find_antipatterns.py`, `data/drc.yaml`
-- [ ] Invoke aggregate-quality-gatekeeper, test, commit `phase-6: skill-knowledge-miner built + tested`
+- [x] Author SKILL.md
+- [x] Author `knowledge/`, `templates/`, `loop/`, `scripts/mine_for_terms.py`, `scripts/find_antipatterns.py`, `data/drc.yaml`
+- [x] Invoke aggregate-quality-gatekeeper, test, commit `phase-6: skill-knowledge-miner built + tested`
 
 #### Skill 3: skill-architect (Stage 1)
 - [ ] Author SKILL.md (workflow: zone_mapping, data_contracts, state_diagram, must_not_rules ≥5 per phase)
