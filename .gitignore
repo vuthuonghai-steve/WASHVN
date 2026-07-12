@@ -2,3 +2,5 @@
 .omc
 .omo
 *.log
+__pycache__/
+.skill-context/
