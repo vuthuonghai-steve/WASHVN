@@ -1,0 +1,69 @@
+skill_name: "skill-knowledge-miner"
+skill_version: "1.0.0"
+suite: "WASHVN"
+last_updated: "2026-07-12"
+
+inputs:
+  - name: "exploration_report"
+    path_template: ".skill-context/{target_skill}/exploration.md"
+    format: "markdown"
+    schema: "skills/ver-3/_shared/schemas/exploration.schema.yaml"
+    required: true
+    consumed_by: "skill-knowledge-miner"
+    downstream_phase: "phase-1-read-inputs"
+
+  - name: "synthesis_report"
+    path_template: ".skill-context/{target_skill}/business-analysis.md"
+    format: "markdown"
+    schema: "skills/ver-3/_shared/schemas/synthesis.schema.yaml"
+    required: false
+    consumed_by: "skill-knowledge-miner"
+    downstream_phase: "phase-1-read-inputs"
+
+  - name: "exploration_hydrated_context"
+    path_template: ".skill-context/{target_skill}/hydrated-context.yaml"
+    format: "yaml"
+    schema: "skills/ver-3/skill-explorer/schemas/hydrated-context.schema.yaml"
+    required: true
+    consumed_by: "skill-knowledge-miner"
+    downstream_phase: "phase-1-read-inputs"
+
+  - name: "exploration_thought_cache"
+    path_template: ".skill-context/{target_skill}/thought-cache.yaml"
+    format: "yaml"
+    schema: "skills/ver-3/skill-explorer/schemas/thought-cache.schema.yaml"
+    required: true
+    consumed_by: "skill-knowledge-miner"
+    downstream_phase: "phase-1-read-inputs"
+
+outputs:
+  - file_id: "domain_handbook"
+    path_template: ".skill-context/{target_skill}/domain-handbook.md"
+    format: "markdown"
+    schema: "skills/ver-3/_shared/schemas/domain-handbook.schema.yaml"
+    lifecycle_status: "WORM"
+    versioning: "semver"
+
+routing:
+  upstream_skills:
+    - "skill-explorer"
+  downstream_skills:
+    - "skill-architect"
+    - "skill-hydrator"
+  fallback_targets:
+    - trigger: "glossary_lt_10"
+      target_skill: "librarian-subagent"
+      target_stage: "deep-scan"
+    - trigger: "validation_fail"
+      target_skill: "ba-pipeline-runner"
+      target_stage: "escalate"
+
+state_persistence:
+  context_bus_write: true
+  state_yaml_write: true
+  fields_to_write:
+    - "skill_name"
+    - "stage"
+    - "glossary_count"
+    - "anti_patterns_count"
+    - "schema_valid"

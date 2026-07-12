@@ -1,0 +1,85 @@
+---
+skill_name: "{{SKILL_NAME}}"
+glossary:
+  - {term: "Term1", definition: "Definition1"}
+  - {term: "Term2", definition: "Definition2"}
+  - {term: "Term3", definition: "Definition3"}
+  - {term: "Term4", definition: "Definition4"}
+  - {term: "Term5", definition: "Definition5"}
+  - {term: "Term6", definition: "Definition6"}
+  - {term: "Term7", definition: "Definition7"}
+  - {term: "Term8", definition: "Definition8"}
+  - {term: "Term9", definition: "Definition9"}
+  - {term: "Term10", definition: "Definition10"}
+anti_patterns:
+  - {name: "Anti-pattern 1", symptom: "Symptom 1", solution: "Solution 1"}
+  - {name: "Anti-pattern 2", symptom: "Symptom 2", solution: "Solution 2"}
+  - {name: "Anti-pattern 3", symptom: "Symptom 3", solution: "Solution 3"}
+exemplars:
+  - name: "Exemplar 1"
+    description: "Description of exemplar 1"
+    reference_url_or_path: "path/to/exemplar"
+domain_anchors:
+  - "anchor-1-domain"
+  - "anchor-2-domain"
+  - "anchor-3-domain"
+success_criteria:
+  - "Success criterion 1"
+  - "Success criterion 2"
+error_boundaries:
+  - "Error boundary 1: description → fallback action"
+  - "Error boundary 2: description → fallback action"
+---
+
+# {{SKILL_NAME}} v{{VERSION}} — Cẩm Nang Tri Thức Chuyên Môn (Domain Handbook)
+
+> **Stage**: 0.7 (Knowledge Mining / Miner)
+> **Nguồn**: `exploration.md` + `hydrated-context.yaml` + `thought-cache.yaml` + `business-analysis.md`
+> **Mục đích**: Cấu trúc hóa tri thức mining để làm input cho Stage 1 (Architect)
+> **Ngày**: {{DATE}}
+
+<context>
+Cẩm nang này là bridging artifact giữa Stage 0.5 (Exploration) và Stage 1 (Architect) trong Master Skill Suite pipeline.
+Architect dùng §1 glossary + §3 exemplars để thiết kế 7-zone, §4 domain anchors để giữ ngữ nghĩa ổn định.
+</context>
+
+---
+
+## §1. Bối Cảnh & Thuật Ngữ Chuyên Ngành
+
+Mô tả bối cảnh và vị trí của skill trong pipeline. Glossary terms được định nghĩa trong YAML frontmatter.
+
+## §2. Sơ Đồ Kiến Trúc & Data Specifications
+
+### A. Cấu trúc 7-Zones
+```
+skill-name/
+├── SKILL.md
+├── knowledge/
+├── scripts/
+├── templates/
+├── data/
+├── loop/
+└── assets/
+```
+
+### B. Data Contract — Input/Output
+Mô tả input exploration.md, hydrated-context.yaml, thought-cache.yaml và output domain-handbook.md.
+
+## §3. Hướng Dẫn Thiết Kế & Mining Patterns
+
+### A. Mining Heuristics
+Các heuristic cho glossary extraction, anti-pattern detection, exemplar identification.
+
+### B. Integration Points
+Các file cần tạo/tương tác.
+
+## §4. Ranh Giới Xử Lý Lỗi & Anti-Patterns
+
+Các edge cases, anti-patterns, validation commands.
+
+---
+
+> **Handbook status**: [Mined / In Progress / Pending]
+> **Confidence**: [percentage]
+> **NO CODE CHANGES** — handbook only.
