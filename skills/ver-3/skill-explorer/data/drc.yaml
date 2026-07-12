@@ -1,0 +1,59 @@
+skill_name: "skill-explorer"
+skill_version: "1.0.0"
+suite: "WASHVN"
+last_updated: "2026-07-12"
+
+inputs:
+  - name: "synthesis_report"
+    path_template: ".skill-context/{target_skill}/business-analysis.md"
+    format: "markdown"
+    schema: "skills/ver-3/_shared/schemas/synthesis.schema.yaml"
+    required: false
+    consumed_by: "skill-explorer"
+    downstream_phase: "phase-1"
+
+outputs:
+  - file_id: "exploration_report"
+    path_template: ".skill-context/{target_skill}/exploration.md"
+    format: "markdown"
+    schema: "skills/ver-3/_shared/schemas/exploration.schema.yaml"
+    lifecycle_status: "WORM"
+    versioning: "semver"
+  - file_id: "test_criteria"
+    path_template: ".skill-context/{target_skill}/criteria.md"
+    format: "markdown"
+    schema: "skills/ver-3/_shared/schemas/criteria.schema.json"
+    lifecycle_status: "WORM"
+    versioning: "semver"
+  - file_id: "exploration_hydrated_context"
+    path_template: ".skill-context/{target_skill}/hydrated-context.yaml"
+    format: "yaml"
+    schema: "skills/ver-3/skill-explorer/schemas/hydrated-context.schema.yaml"
+    lifecycle_status: "WORM"
+    versioning: "semver"
+  - file_id: "exploration_thought_cache"
+    path_template: ".skill-context/{target_skill}/thought-cache.yaml"
+    format: "yaml"
+    schema: "skills/ver-3/skill-explorer/schemas/thought-cache.schema.yaml"
+    lifecycle_status: "WORM"
+    versioning: "semver"
+
+routing:
+  upstream_skills:
+    - "ba-synthesizer"
+  downstream_skills:
+    - "skill-knowledge-miner"
+    - "skill-architect"
+  fallback_targets:
+    - trigger: "validation_fail"
+      target_skill: "ba-pipeline-runner"
+      target_stage: "escalate"
+
+state_persistence:
+  context_bus_write: true
+  state_yaml_write: true
+  fields_to_write:
+    - "target_skill"
+    - "exploration_report_path"
+    - "criteria_report_path"
+    - "status"

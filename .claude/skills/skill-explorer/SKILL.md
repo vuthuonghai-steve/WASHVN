@@ -5,6 +5,9 @@ version: 1.0.0
 suite: WASHVN
 disable-model-invocation: true
 user-invocable: true
+tags: ["explorer", "discovery", "complexity-assessment", "scs"]
+when_to_use: "Dùng ở Stage 0 khi bắt đầu phân tích bối cảnh, khảo sát nghiệp vụ và đánh giá độ phức tạp SCS của một AI skill mới."
+output_contract: "skills/ver-3/skill-explorer/data/drc.yaml"
 ---
 
 # === BOOT CONFIGURATION (L0 — Anchor Rules) ===

@@ -15,7 +15,7 @@ inputs:
   - name: "thought_cache"
     path_template: ".skill-context/{feature}/ba-elicitor/thought-cache.yaml"
     format: "yaml"
-    schema: "skills/ver-3/_shared/schemas/thought-cache.schema.yaml"
+    schema: "skills/ver-3/_shared/schemas/elicitation.schema.yaml"
     required: false
     consumed_by: "ba-analyst"
     downstream_phase: "ba-0.5"

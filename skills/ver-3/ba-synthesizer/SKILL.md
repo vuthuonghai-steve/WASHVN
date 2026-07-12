@@ -8,7 +8,7 @@ stage: -0.2
 target_variable: "feature_name"
 tags: ["ba", "synthesis", "cross-validation", "quality-gate", "business-analysis"]
 when_to_use: "Khi cần hợp nhất và kiểm định chéo output từ ba-elicitor và ba-analyst, tạo business-analysis.md cho Phase 6 (skill-explorer)."
-output_contract: "skills/ver-3/_shared/templates/drc_contract_template.yaml"
+output_contract: "skills/ver-3/ba-synthesizer/data/drc.yaml"
 hooks:
   PreToolUse:
     - matcher: "Write"

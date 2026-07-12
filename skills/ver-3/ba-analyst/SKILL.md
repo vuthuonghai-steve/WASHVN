@@ -8,7 +8,7 @@ stage: -0.5
 target_variable: "feature_name"
 tags: ["ba", "analysis", "mermaid", "gherkin", "risk"]
 when_to_use: "Khi cần phân tích chi tiết từ elicitation-report (Stage BA-1 output) trước khi sang ba-synthesizer."
-output_contract: "skills/ver-3/_shared/templates/drc_contract_template.yaml"
+output_contract: "skills/ver-3/ba-analyst/data/drc.yaml"
 hooks:
   PreToolUse:
     - matcher: "Write"

@@ -21,7 +21,7 @@ outputs:
   - file_id: "thought_cache"
     path_template: ".skill-context/{feature_name}/ba-elicitor/thought-cache.yaml"
     format: "yaml"
-    schema: "skills/ver-3/ba-elicitor/templates/thought_cache_template.yaml"
+    schema: "skills/ver-3/_shared/schemas/elicitation.schema.yaml"
     lifecycle_status: "WORM"
     versioning: "semver"
 
