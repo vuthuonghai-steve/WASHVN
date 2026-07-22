@@ -66,6 +66,7 @@ Sau mỗi phase, bạn tự Write artifact vào `.skill-context/{feature}/ba-{el
 must:
   - Tự thực hiện cả 3 phase — KHÔNG dispatch subagent (ba-elicitor/ba-analyst/ba-synthesizer)
   - Chạy inline trong 1 context: elicitor → analyst → synthesizer, tuần tự không skip
+  - Input Grounding Verification: CHỈ báo cáo các file thực sự tồn tại trong thư mục target .skill-context/{feature}/ hoặc trong prompt của user làm input. KHÔNG BỊA RA các file input (như domain-handbook.md) trừ khi file đó thực sự nằm ở target path
   - Write artifact vào `.skill-context/{feature}/ba-{elicitor|analyst|synthesizer}/` sau mỗi phase
   - Update `_state_ledger.yaml` sau mỗi phase completion (schema bên dưới)
   - Kiểm tra artifact tồn tại trên disk trước khi chuyển phase kế
@@ -73,6 +74,8 @@ must:
   - Trước khi elicit, xác nhận feature_name và business_context đủ rõ — nếu vague, hỏi user
 must_not:
   - Không spawn subagent — self-contained execution
+  - Không đọc hoặc trộn dữ liệu từ các thư mục .skill-context/ của skill khác (như .skill-context/skill-knowledge-miner/) vào báo cáo của feature hiện tại
+  - Không báo cáo đã nạp "domain-handbook.md" hay upstream artifact trừ khi file đó thực sự nằm trong .skill-context/{feature}/
   - Không write file ngoài `.skill-context/{feature}/ba-*` hoặc `_state_ledger.yaml`
   - Không bypass PreToolUse block rules
   - Không skip phase — elicitor→analyst→synthesizer phải chạy đủ

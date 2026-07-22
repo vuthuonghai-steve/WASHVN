@@ -1,0 +1,67 @@
+skill_name: "skill-architect"
+skill_version: "3.0.0"
+suite: "WASHVN"
+last_updated: "2026-07-22"
+
+inputs:
+  - name: "exploration.md"
+    path_template: ".skill-context/{target_skill}/exploration.md"
+    format: "markdown"
+    schema: "skills/ver-3/_shared/schemas/exploration.schema.yaml"
+    required: true
+    consumed_by: "skill-architect"
+    downstream_phase: "P1-Read"
+
+  - name: "domain-handbook.md"
+    path_template: ".skill-context/{target_skill}/domain-handbook.md"
+    format: "markdown"
+    schema: "skills/ver-3/_shared/schemas/domain-handbook.schema.yaml"
+    required: true
+    consumed_by: "skill-architect"
+    downstream_phase: "P2-Zone-Mapping"
+
+  - name: "criteria.md"
+    path_template: ".skill-context/{target_skill}/criteria.md"
+    format: "markdown"
+    required: true
+    consumed_by: "skill-architect"
+    downstream_phase: "P6-Emit"
+
+outputs:
+  - file_id: "architect_design"
+    path_template: ".skill-context/{target_skill}/design.md"
+    format: "markdown"
+    schema: "skills/ver-3/_shared/schemas/design.schema.yaml"
+    lifecycle_status: "WORM"
+    versioning: "semver"
+
+  - file_id: "architect_drc"
+    path_template: "data/drc.yaml"
+    format: "yaml"
+    schema: "skills/ver-3/_shared/templates/drc_contract_template.yaml"
+    lifecycle_status: "WORM"
+    versioning: "semver"
+
+routing:
+  upstream_skills:
+    - skill-explorer
+    - skill-knowledge-miner
+  downstream_skills:
+    - production-quality-gatekeeper
+    - skill-planner
+  fallback_targets:
+    - trigger: "meta_gate_fail"
+      target_skill: "production-quality-gatekeeper"
+      target_stage: "validate"
+    - trigger: "drift_detected"
+      target_skill: "skill-architect"
+      target_stage: "revise"
+
+state_persistence:
+  context_bus_write: true
+  state_yaml_write: true
+  fields_to_write:
+    - design_md_path
+    - zone_mapping_complete
+    - arch_gate_status
+    - quality_matrix_score

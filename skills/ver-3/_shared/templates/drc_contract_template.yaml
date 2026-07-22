@@ -16,7 +16,7 @@ outputs:
   - file_id: "output_artifact_id"
     path_template: ".skill-context/{skill_name}/output_filename.md"
     format: "markdown"
-    schema: "skills/ver-3/_shared/schemas/criteria.schema.json"
+    schema: "skills/ver-3/_shared/schemas/design.schema.yaml"
     lifecycle_status: "WORM"
     versioning: "semver"
 

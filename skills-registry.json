@@ -68,6 +68,7 @@
       "type": "Type 1 (Monolithic Stage)",
       "target_variable": "target_skill",
       "role": "Architect - Thiết kế kiến trúc kỹ năng theo mô hình 7 Zones và tạo sơ đồ Mermaid chi tiết",
+      "lifecycle": "installed",
       "src_path": "skills/ver-3/skill-architect",
       "boot_file": "SKILL.md",
       "inputs": [
@@ -79,8 +80,12 @@
         {
           "file_id": "domain_handbook",
           "path_template": ".skill-context/{target_skill}/domain-handbook.md",
-          "format": "markdown",
-          "optional": true
+          "format": "markdown"
+        },
+        {
+          "file_id": "test_criteria",
+          "path_template": ".skill-context/{target_skill}/criteria.md",
+          "format": "markdown"
         }
       ],
       "outputs": [
@@ -89,6 +94,12 @@
           "path_template": ".skill-context/{target_skill}/design.md",
           "format": "markdown",
           "schema": "skills/ver-3/_shared/schemas/design.schema.yaml"
+        },
+        {
+          "file_id": "architect_drc",
+          "path_template": "data/drc.yaml",
+          "format": "yaml",
+          "schema": "skills/ver-3/_shared/templates/drc_contract_template.yaml"
         }
       ]
     },

@@ -2,8 +2,8 @@
 # [traced-to: agent-architecture.md §3-bis State Ledger Validation Hook]
 # Path: .claude/hooks/validate-state-ledger.sh
 # Trigger: PostToolUse trên Write|Edit match `_state_ledger.yaml` / `_ba_pipeline_state.yaml`
-# Purpose: Ngăn pipeline tê liệt do YAML parse error / schema violation trước
-#          khi agent kế tiếp đọc file hỏng (Λ-9 stage state leakage).
+# Purpose: Ngăn pipeline tê liệt do YAML parse error / schema violation / false completion
+#          trước khi agent kế tiếp đọc file hỏng (Λ-9 stage state leakage).
 # Compat: `_ba_pipeline_state.yaml` legacy pattern được giữ để backward compat
 #          trong quá trình migration → `_state_ledger.yaml` canonical naming.
 # Cost: free — pure bash + python, không tốn model token.
@@ -47,11 +47,12 @@ fi
 
 log_debug "Starting validation for: $FILE_PATH"
 
-# 2) Chạy Python để kiểm tra cấu trúc YAML & Schema đồng thời (try-except bọc kỹ)
+# 2) Chạy Python để kiểm tra cấu trúc YAML, Schema & Grounding Artifact Verification trên đĩa
 PYTHON_OUTPUT=$(python3 <<PYEOF
 import yaml
 import sys
 import json
+import os
 
 file_path = "$FILE_PATH"
 try:
@@ -68,18 +69,97 @@ if not isinstance(data, dict):
     print(json.dumps({"status": "schema_fail", "reason": "Root element of state ledger must be a YAML dictionary"}))
     sys.exit(0)
 
-required = ["schema_version", "skill_name", "mode", "current_stage", "stage_status", "artifacts"]
-missing = [r for r in required if r not in data]
+# Schema Detection: Canonical vs Legacy BA Pipeline State
+is_canonical = "skill_name" in data or "schema_version" in data
+is_ba_legacy = "feature_name" in data or "_ba_pipeline_state" in file_path
 
-if missing:
-    print(json.dumps({"status": "schema_fail", "reason": f"Missing required fields: {', '.join(missing)}"}))
+if not (is_canonical or is_ba_legacy):
+    print(json.dumps({"status": "schema_fail", "reason": "State ledger must contain 'skill_name' (canonical) or 'feature_name' (legacy)"}))
     sys.exit(0)
+
+if is_canonical:
+    req = ["current_stage"]
+    missing = [r for r in req if r not in data]
+    if missing:
+        print(json.dumps({"status": "schema_fail", "reason": f"Missing required fields in state ledger: {', '.join(missing)}"}))
+        sys.exit(0)
+elif is_ba_legacy:
+    req = ["feature_name", "stages", "current_stage"]
+    missing = [r for r in req if r not in data]
+    if missing:
+        print(json.dumps({"status": "schema_fail", "reason": f"Missing required fields in BA pipeline state: {', '.join(missing)}"}))
+        sys.exit(0)
+
+# Deterministic Grounding Verification: Verify that artifacts for completed stages actually exist on disk with real content
+stages_dict = data.get("stages", {})
+if isinstance(stages_dict, dict):
+    for stage_name, stage_info in stages_dict.items():
+        if not isinstance(stage_info, dict):
+            continue
+        status = str(stage_info.get("status", "")).lower()
+        gate_result = str(stage_info.get("gate_result", "")).lower()
+
+        is_completed = status in ["completed", "pass", "passed", "done"] or gate_result in ["pass", "passed"]
+
+        if is_completed:
+            artifacts = []
+            if "artifact" in stage_info:
+                art = stage_info["artifact"]
+                if isinstance(art, str):
+                    artifacts.append(art)
+                elif isinstance(art, list):
+                    artifacts.extend(art)
+            if "artifacts" in stage_info:
+                arts = stage_info["artifacts"]
+                if isinstance(arts, list):
+                    for item in arts:
+                        if isinstance(item, str):
+                            artifacts.append(item)
+                        elif isinstance(item, dict) and "path" in item:
+                            artifacts.append(item["path"])
+                elif isinstance(arts, str):
+                    artifacts.append(arts)
+
+            for art_path in artifacts:
+                abs_art = art_path if os.path.isabs(art_path) else os.path.abspath(os.path.join(os.getcwd(), art_path))
+                if not os.path.exists(abs_art):
+                    print(json.dumps({
+                        "status": "false_completion_fail",
+                        "reason": f"FALSE COMPLETION DETECTED in stage '{stage_name}'! Marked as '{status}', but declared artifact '{art_path}' DOES NOT EXIST on disk."
+                    }))
+                    sys.exit(0)
+                if os.path.getsize(abs_art) <= 10:
+                    print(json.dumps({
+                        "status": "false_completion_fail",
+                        "reason": f"FALSE COMPLETION DETECTED in stage '{stage_name}'! Marked as '{status}', but declared artifact '{art_path}' is empty or stub (size {os.path.getsize(abs_art)}B <= 10B)."
+                    }))
+                    sys.exit(0)
+
+top_artifacts = data.get("artifacts", [])
+if isinstance(top_artifacts, list):
+    for item in top_artifacts:
+        if isinstance(item, dict) and str(item.get("status", "")).lower() in ["completed", "pass", "passed", "done"]:
+            art_path = item.get("path")
+            if art_path:
+                abs_art = art_path if os.path.isabs(art_path) else os.path.abspath(os.path.join(os.getcwd(), art_path))
+                if not os.path.exists(abs_art):
+                    print(json.dumps({
+                        "status": "false_completion_fail",
+                        "reason": f"FALSE COMPLETION DETECTED in root artifacts list! Declared artifact '{art_path}' marked completed but DOES NOT EXIST on disk."
+                    }))
+                    sys.exit(0)
+                if os.path.getsize(abs_art) <= 10:
+                    print(json.dumps({
+                        "status": "false_completion_fail",
+                        "reason": f"FALSE COMPLETION DETECTED in root artifacts list! Declared artifact '{art_path}' is empty/stub (size {os.path.getsize(abs_art)}B <= 10B)."
+                    }))
+                    sys.exit(0)
 
 print(json.dumps({"status": "success"}))
 PYEOF
 )
 
-# Parse kết quả trả về từ Python script (chỉ lấy dòng cuối cùng đề phòng có cảnh báo/warning khác trước đó)
+# Parse kết quả trả về từ Python script
 LAST_LINE=$(echo "$PYTHON_OUTPUT" | tail -n 1)
 STATUS=$(echo "$LAST_LINE" | jq -r '.status // "error"' 2>/dev/null || echo "error")
 REASON=$(echo "$LAST_LINE" | jq -r '.reason // "Unknown python validation error"' 2>/dev/null || echo "Unknown python validation error")
@@ -99,7 +179,7 @@ jq -n \
     hookSpecificOutput: {
       hookEventName: "PostToolUse",
       decision: "block",
-      reason: ("State Ledger VALIDATION FAIL tại " + $file + ". Chi tiết: " + $reason + ". Agent ghi file phải auto-repair ngay trong turn tiếp theo — không để agent kế tiếp đọc file hỏng (Λ-9 stage state leakage).")
+      reason: ("State Ledger VALIDATION FAIL tại " + $file + ". Chi tiết: " + $reason + ". Agent ghi file phải auto-repair ngay trong turn tiếp theo — không để agent báo cáo hoàn thành ảo khi chưa tạo file thực tế (Λ-9 stage state leakage).")
     }
   }'
 

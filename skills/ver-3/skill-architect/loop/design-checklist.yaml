@@ -1,0 +1,182 @@
+# Design Quality Checklist (YAML Machine-Readable)
+# ver-3: Binary PASS/FAIL gates with META/ARCH framework
+# Severity: MUST (blocking), SHOULD (warning), INFO (advisory)
+
+version: "3.0.0"
+artifact_type: "design-quality-checklist"
+suite: "WASHVN"
+
+meta_gates:
+  meta_1_structural:
+    description: "Structural completeness — domain anchor, phases, zones, frontmatter"
+    severity: MUST
+    pass_condition: "all_components_pass"
+    components:
+      - id: M1-C1
+        description: "Domain anchor present in §1"
+        verification_method: "regex: trigger_keywords match domain-handbook glossary"
+        pass_fail: false
+      - id: M1-C2
+        description: "6 phases defined (P1-P6)"
+        verification_method: "regex: count phase headers in design.md"
+        pass_fail: false
+      - id: M1-C3
+        description: "7-zone mapping table complete"
+        verification_method: "script: count zone rows = 7, no blanks"
+        pass_fail: false
+      - id: M1-C4
+        description: "All required frontmatter fields present"
+        verification_method: "script: validate design.schema.yaml required_keys"
+        pass_fail: false
+
+  meta_2_semantic_depth:
+    description: "Semantic depth — S1, S2, S3, S4 (AND gate)"
+    severity: MUST
+    pass_condition: "all_components_pass"
+    components:
+      - id: M2-S1
+        description: "Negation density ≥5 must_not rules per phase (≥30 total)"
+        verification_method: "script: count must_not rules per phase section"
+        pass_fail: false
+      - id: M2-S2
+        description: "Reverse questions ≥4 per aspect (≥16 total)"
+        verification_method: "script: count questions in §8 sections"
+        pass_fail: false
+      - id: M2-S3
+        description: "Multi-stakeholder ≥2 distinct stakeholders"
+        verification_method: "regex: count stakeholder rows in §7"
+        pass_fail: false
+      - id: M2-S4
+        description: "Constraint anchoring (token, schema, path, freeze)"
+        verification_method: "regex: match (token|schema|path|freeze) in §5 or §10"
+        pass_fail: false
+
+  meta_3_mechanical:
+    description: "Mechanical verification — ARCH gates, token, placeholder"
+    severity: MUST
+    pass_condition: "all_components_pass"
+    components:
+      - id: M3-ARCH1
+        description: "ARCH-1 PASS (semantic anchors)"
+        verification_method: "regex: match anchor keywords in §1"
+        pass_fail: false
+      - id: M3-ARCH2
+        description: "ARCH-2 PASS (valid schemas)"
+        verification_method: "script: validate I/O schemas match template"
+        pass_fail: false
+      - id: M3-ARCH3
+        description: "ARCH-3 PASS (7-zone table complete)"
+        verification_method: "script: count zone rows = 7"
+        pass_fail: false
+      - id: M3-ARCH4
+        description: "ARCH-4 PASS (valid stateDiagram)"
+        verification_method: "regex: match stateDiagram-v2 syntax in §4"
+        pass_fail: false
+      - id: M3-BUILD31
+        description: "BUILD-3.1 SKILL.md ≤700 tokens"
+        verification_method: "script: tokenize SKILL.md, count ≤700"
+        pass_fail: false
+        severity: SHOULD
+      - id: M3-PLACEHOLDER
+        description: "Zero placeholder (TODO, FIXME, <!-- -->, xxx.md, pass(), mock())"
+        verification_method: "regex: (TODO|FIXME|<!--|xxx\\.md|pass\\(\\)|mock\\()"
+        pass_fail: false
+
+arch_gates:
+  arch_1:
+    description: "ARCH-1: Semantic anchors present in §1"
+    severity: MUST
+    verification_method: "regex: domain-handbook terms in §1"
+    pass_fail: false
+  arch_2:
+    description: "ARCH-2: Valid input/output schemas"
+    severity: MUST
+    verification_method: "script: validate frontmatter data_contracts"
+    pass_fail: false
+  arch_3:
+    description: "ARCH-3: Complete 7-zone table"
+    severity: MUST
+    verification_method: "script: count zone rows = 7, validate no blanks"
+    pass_fail: false
+  arch_4:
+    description: "ARCH-4: Valid Mermaid stateDiagram-v2"
+    severity: MUST
+    verification_method: "regex: stateDiagram-v2 in §4"
+    pass_fail: false
+
+acceptance_criteria:
+  ac_1:
+    description: "7-zone table with specific filenames and constraints"
+    severity: MUST
+    verification_method: "script: validate zone table format"
+    pass_fail: false
+  ac_2:
+    description: "≥1 Mermaid diagram (stateDiagram required in §4)"
+    severity: MUST
+    verification_method: "regex: stateDiagram-v2 in design.md"
+    pass_fail: false
+  ac_3:
+    description: "≥5 must_not rules per phase (≥30 total)"
+    severity: MUST
+    verification_method: "script: count per phase"
+    pass_fail: false
+  ac_4:
+    description: "≥4 reverse questions per aspect (≥16 total)"
+    severity: MUST
+    verification_method: "script: count questions per aspect"
+    pass_fail: false
+  ac_5:
+    description: "≥2 stakeholders with full profile"
+    severity: MUST
+    verification_method: "regex: count stakeholder rows in §7"
+    pass_fail: false
+  ac_6:
+    description: "Constraint anchoring documented"
+    severity: SHOULD
+    verification_method: "regex: token|schema ver|path fallback|freeze boundary"
+    pass_fail: false
+
+graceful_degradation:
+  token_exceeded:
+    description: "BUILD-3.1 token budget exceeded → degraded flag"
+    severity: SHOULD
+    verification_method: "regex: status: degraded in frontmatter"
+    pass_fail: false
+  template_missing:
+    description: "Missing template → inline fallback"
+    severity: INFO
+    verification_method: "regex: inline content fallback pattern"
+    pass_fail: false
+  schema_mismatch:
+    description: "Schema mismatch → annotate in §10 metadata"
+    severity: INFO
+    verification_method: "regex: schema_mismatch|schema_override in §10"
+    pass_fail: false
+
+handoff_readiness:
+  design_md_written:
+    description: "design.md exists at expected path"
+    severity: MUST
+    verification_method: "fs: check .skill-context/{target_skill}/design.md"
+    pass_fail: false
+  drc_yaml_written:
+    description: "data/drc.yaml exists at expected path"
+    severity: MUST
+    verification_method: "fs: check data/drc.yaml"
+    pass_fail: false
+  no_html_comments:
+    description: "No HTML comment placeholders in any file"
+    severity: MUST
+    verification_method: "regex: no <!-- --> in all files"
+    pass_fail: false
+  state_ledger_archived:
+    description: "State artifacts in .skill-context/{target_skill}/"
+    severity: SHOULD
+    verification_method: "fs: check skill-context dir"
+    pass_fail: false
+
+# Severity taxonomy
+severity_levels:
+  MUST: "Blocking — fail = cannot proceed to downstream stage"
+  SHOULD: "Warning — fail = caution but can proceed"
+  INFO: "Advisory — always shown for visibility"

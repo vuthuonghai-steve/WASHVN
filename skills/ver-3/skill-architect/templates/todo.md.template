@@ -1,0 +1,18 @@
+---
+skill_name: "{{skill_name}}"
+plan_version: "0.0.1"
+dependencies: {}
+---
+
+# Build Plan — {{skill_name}}
+
+## Tasks
+
+{% for task in tasks %}
+### {{task.id}}: {{task.title}}
+**Action**: {{task.action}}
+**Trace**: {{task.trace}}
+**Files**: {{task.files}}
+**Done when**: {{task.done_when}}
+**Blocker**: {{task.blocker}}
+{% endfor %}

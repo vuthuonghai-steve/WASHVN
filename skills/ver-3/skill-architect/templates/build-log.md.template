@@ -1,0 +1,9 @@
+# Build Log — {{skill_name}}
+
+## Task Execution
+
+{% for entry in log_entries %}
+### {{entry.task_id}}: {{entry.action}}
+- **Status**: {{entry.status}}
+- **Issues**: {{entry.issues}}
+{% endfor %}
